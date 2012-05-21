@@ -1,26 +1,26 @@
 (function(){
 
-    var addNamesIndex = function(tab) {
-            if( ! tab.alternatenames)
+    var addNamesIndex = function(place) {
+            if( ! place.alternatenames)
             {
-                    tab.alternatenames = '';
+                    place.alternatenames = '';
             }
 
             var names = [];
 
-            if(typeof tab.asciiname.toLowerCase == 'function') {
-                    names.push(tab.asciiname.toLowerCase());
+            if(typeof place.asciiname.toLowerCase == 'function') {
+                    names.push(place.asciiname.toLowerCase());
             }
 
-            if(typeof tab.alternatenames.split !== 'function')
+            if(typeof place.alternatenames.split !== 'function')
             {
-                    if(typeof tab.name.toLowerCase == 'function') {
-                            names.push(tab.name.toLowerCase());
+                    if(typeof place.name.toLowerCase == 'function') {
+                            names.push(place.name.toLowerCase());
                     }
             }
             else
             {
-                    tmpalt = tab.alternatenames.split(',');
+                    tmpalt = place.alternatenames.split(',');
 
                     for(i in tmpalt)
                     {
@@ -31,13 +31,13 @@
                     }
             }
 
-            tab.names = names;
+            place.names = names;
 
-            if(tab.longitude && tab.latitude) {
-                    tab.location = [tab.longitude, tab.latitude];
+            if(place.longitude && place.latitude) {
+                    place.location = [place.longitude, place.latitude];
             }
 
-            db.countries.update( { _id: tab._id }, tab);
+            db.countries.save(place);
     }
 
     db.countries.find().forEach(addNamesIndex);
