@@ -49,7 +49,8 @@ $es = Client::connection($URL);
 if (isset($es))
   {
     echo "Dropping current ElasticSearch index.\n";
-    $es->request("", "DELETE");
+    //    $es->request("", "DELETE");
+    $es->delete();
     echo "Indexing...\n";
     foreach ($cursor as $obj)
       {
