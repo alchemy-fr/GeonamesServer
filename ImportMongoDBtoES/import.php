@@ -1,9 +1,17 @@
 <?php
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use \ElasticSearch\Client;
 
 include("vars.php");
+
+if (isset($argv[1]) && !empty($argv[1]))
+  $varElasticSearchUrl = $argv[1];
+if (isset($argv[2]) && !empty($argv[2]))
+  $varMongoDbName = $argv[2];
+if (isset($argv[3]) && !empty($argv[3]))
+  $varMongoCollectionName = $argv[3];
 
 function getElasticSearchUrl($url, $db, $collection,
 			     $mongoDb, $mongoCollection) {
