@@ -1,4 +1,4 @@
-`<?php
+<?php
 require_once __DIR__ . '/vendor/autoload.php';
 
 use \ElasticSearch\Client;
@@ -19,6 +19,17 @@ function getElasticSearchUrl($url, $db, $collection,
     $url .= $mongoCollection . "/";
   return ($url);
 }
+
+function getUrl($url, $db, $mongoDb) {
+  if (substr($url, -1) != "/")
+    $url .= "/";
+  if (isset($db) && !empty($db))
+    $url .= $db . "/";
+  else
+    $url .= $mongoDb . "/";
+  return ($url);
+}
+
 
 try
 {
@@ -42,17 +53,29 @@ $URL = getElasticSearchUrl($varElasticSearchUrl,
 			   $varElasticSearchDB,
 			   $varElasticSearchCollection,
 			   $varMongoDbName,
-	$varMongoCollectionName);
+			   $varMongoCollectionName);
+
+
+$rootUrl = getUrl($varElasticSearchUrl,
+		  $varElasticSearchDB,
+		  $varMongoDbName);
+
+
 
 $es = Client::connection($URL);
-
 if (isset($es))
   {
+
     echo "Dropping current ElasticSearch index.\n";
-    //    $es->request("", "DELETE");
-    $es->delete();
-    echo "Indexing...\n";
-    foreach ($cursor as $obj)
+    exec("sh ./deleteIndex.sh $rootUrl" );
+    echo "Creating new index.\n";
+    exec("sh ./createIndex.sh $rootUrl");
+    echo "Setting geolocation parameters.\n";
+    exec("sh ./setGeolocation.sh $URL"."_mapping $varMongoCollectionName");
+
+    echo "\nIndexing...\n";
+  
+  foreach ($cursor as $obj)
       {
 	$i++;
 	$mongoid = $obj['_id'];
@@ -60,11 +83,10 @@ if (isset($es))
 	unset($obj['_id']);
 	$es->index($obj, $i);
       }
+  
     $es->refresh();
-    sleep($varUpdateTime);
-    $result = $es->request("_count", "GET");
-    $count = $result['count'];
-    echo "Successfully added $count entries.\n";
+
+    echo "$i entries proccessed.\n";
     exit();
-}
+  }
 echo "Couldn\'t connect to the ElasticSearch database.\n";
