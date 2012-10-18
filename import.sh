@@ -12,7 +12,7 @@ mongo geonames dropDB.js
 if [ $MONGO_VERSION -gt 1 ]; then
     mongoimport -d geonames -c countries --type tsv \
 	--fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
-	--stopOnError allCountries.txt
+	--stopOnError allCointries.txt
 else
     mongoimport -d geonames -c countries --type tsv \
 	--fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
@@ -22,3 +22,5 @@ fi
 rm allCountries.txt
 mongo geonames setupDB.js
 
+mongoimport -d geonames -c admincodes --type tsv --fields code,name --stopOnError admincodes.txt
+mongoimport -d geonames -c countrynames --type tsv --fields code,name --stopOnError countrynames.txt
