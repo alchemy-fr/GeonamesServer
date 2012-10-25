@@ -1,4 +1,5 @@
 
+mkdir data
 cd data
 
 rm -f GeoLiteCity.dat GeoLiteCity.dat.gz
