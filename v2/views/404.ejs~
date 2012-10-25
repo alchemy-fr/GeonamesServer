@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Page not found</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Page not found</h1>
+    <p>The Web site you seek<br />cannot be located but<br /> endless others exist.</p>
+  </body>
+</html>
