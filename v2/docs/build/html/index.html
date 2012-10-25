@@ -182,17 +182,19 @@ and ElasticSearch.</p>
 ElasticSearch. Otherwise, follow <a class="reference external" href="http://www.elasticsearch.org/guide/reference/setup/installation.html">the official guide</a>.</p>
 <p>Once both MongoDB and Elasticsearch installed, you need to fill the MongoDB
 database with geonames data, and then index this data with ElasticSearch.
-You can do all of it in just one step with the utility located in the
+You can do all of it in just a few steps with the import script located in the
 <strong>import</strong> folder.</p>
 <p>If your MongoDB database isn&#8217;t installed on <em>localhost:9200</em>, you migh want to
-change this value in <strong>import/import.sh</strong> and in <strong>import/scripts/vars.php.</strong></p>
-<p>Make sure that mongodb is running, then just run:</p>
-<div class="highlight-bash"><div class="highlight"><pre>sh import.sh
+change this value in <strong>import/import.sh</strong> and <strong>import/scripts/vars.php.</strong></p>
+<p>Make sure that mongodb is running, then just run the following commands while
+in the <strong>import</strong> folder:</p>
+<div class="highlight-bash"><div class="highlight"><pre>make install
+make import
 </pre></div>
 </div>
-<p>It will download the neccessary files from the geonames servers, format them
+<p>It will download the necessary files from the geonames servers, format them
 to make them work with MongoDB, import them to MongoDB, and index the new
-entries in ElasticSearch.</p>
+entries in ElasticSearch. The script uses <a class="reference external" href="http://getcomposer.org/">Composer</a>.</p>
 <p>From now on, you should be able to access to your ElasticSearch index through
 your web browser or through any request-forming tool (such as <strong>curl</strong>),
 as described <a class="reference external" href="http://www.elasticsearch.org/guide/reference/query-dsl/">here</a>.</p>
@@ -207,7 +209,7 @@ Once again, for <strong>homebrew</strong> users, a simple <strong>brew install n
 Otherwise, you can download it from the <a class="reference external" href="http://nodejs.org/">Node.js official website</a>.</p>
 <p>Finally, if you want the geolocation to work, you will need the <strong>libgeoip C
 library</strong>. You can either install it through a package manager
-(such as <strong>npm</strong>), or build it using the following commands (<a class="reference external" href="http://github.com/kuno/GeoIP">source</a>):</p>
+(such as <strong>homebrew</strong> or <strong>aptitude</strong>), or build it using the following commands (<a class="reference external" href="http://github.com/kuno/GeoIP">source</a>):</p>
 <div class="highlight-bash"><div class="highlight"><pre>wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.7.tar.gz
 tar -xvzf GeoIP-1.4.7.tar.gz
 <span class="nb">cd </span>GeoIP-1.4.7
@@ -228,9 +230,12 @@ in the same directory as the <strong>package.json</strong> file to install the s
 <p>The file <strong>vars.js</strong> contains some useful configuration variables. First, if
 your instance of ElasticSearch is different from default, you should change
 <strong>vars.es.host</strong> to your host.</p>
-<p>Attention, though we provide a <strong>GeoLiteCity.dat</strong> in the data folder, it
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Though we provided a <strong>GeoLiteCity.dat</strong> in the <strong>data</strong> folder, it
 might not be up-to-date, so you might want to re-download this file at
 <a class="reference external" href="http://geolite.maxmind.com/download/geoip/database/">http://geolite.maxmind.com/download/geoip/database/</a>.</p>
+</div>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
@@ -407,7 +412,7 @@ All you have to do is to run the following command in the root folder:</p>
 </div>
 <div class="section" id="contribute">
 <h2>Contribute<a class="headerlink" href="#contribute" title="Permalink to this headline">¶</a></h2>
-<p>You found a bug and resolve it ? You added a feature you want to share ?
+<p>You found a bug and resolved it ? You added a feature you want to share ?
 You optimized the code or made it more aesthetically pleasing ? You found
 a typo in this doc and fixed it ? Feel free to send a <a class="reference external" href="http://help.github.com/send-pull-requests/">Pull Request</a>
 on GitHub, we will be glad to merge your code.</p>
