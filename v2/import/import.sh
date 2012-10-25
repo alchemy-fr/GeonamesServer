@@ -22,7 +22,17 @@ fi
 rm allCountries.txt
 mongo geonames setupDB.js
 
+rm countryInfo.txt admin1CodesASCII.txt admincodes.txt countrynames.txt
+wget http://download.geonames.org/export/dump/admin1CodesASCII.txt
+cat admin1CodesASCII.txt | cut -f1,2 > admincodes.txt
+rm admin1CodesASCII.txt
+wget http://download.geonames.org/export/dump/countryInfo.txt
+cat countryInfo.txt | grep -v '^#' | cut -f1,5 > countrynames.txt
+rm countryInfo.txt
+
 mongoimport -d geonames -c admincodes --type tsv --fields code,name --stopOnError admincodes.txt
 mongoimport -d geonames -c countrynames --type tsv --fields code,name --stopOnError countrynames.txt
 
-php ./import.php http://localhost:9200/ geonames countries
+rm countrynames.txt admincodes.txt
+
+php ./index.php $1 geonames countries
