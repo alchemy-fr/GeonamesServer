@@ -10,6 +10,7 @@ vars.web.port = process.env.PORT || 3000;
 vars.es.host = "localhost:9200";
 vars.es.name = "geonames";
 vars.es.collection = "countries";
+vars.es.size = 30;
 
 vars.mongo.url = "geonames";
 vars.mongo.countrynames = "countrynames";

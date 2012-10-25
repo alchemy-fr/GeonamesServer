@@ -191,7 +191,8 @@ with the *country* parameter. Finally, you can add a *sort* parameter,
 with its only possible value being *population*. If this parameter is
 specified, the search will be sorted by population, instead of proximity.
 
-The results are limited to 30 entries.
+The results are limited to 30 entries by default. This value can be changed
+in **vars.js**.
 
 In case the sender's IP adress cannot be localized, the values
 **vars.geo.default_lat** and **vars.geo.default_lon** from **vars.js**

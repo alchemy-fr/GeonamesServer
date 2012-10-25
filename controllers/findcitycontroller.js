@@ -17,9 +17,9 @@ function getUrl(host, dbname, dbcollection)
 ** Query assembling function
 */
 
-function getQuery(name, codes, lon, lat, sort)
+function getQuery(name, codes, lon, lat, sort, size)
 {
-    var my_query = '{"size" : 30, "sort" : ';
+    var my_query = '{"size" : ' + size + ', "sort" : ';
     if (sort == "population")
 	my_query += '{"population" : {"order" : "desc" } }';
     else {
@@ -298,7 +298,9 @@ module.exports = function(app, express, vars) {
 				  if (codes.length == 0)
 				      return (sendEmptyResult(res));
 				  }
-				  my_body = getQuery(city_lower, codes, geoloc.lon, geoloc.lat, sort);
+				  my_body = getQuery(city_lower, codes,
+						     geoloc.lon, geoloc.lat,
+						     sort, vars.es.size);
 				  request({uri:my_url, body:my_body},
 					  function (error, response, body) {
 					      if (!error && response.statusCode == 200)
