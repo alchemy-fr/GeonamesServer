@@ -38,8 +38,8 @@ You can do all of it in just a few steps with the import script located in the
 If your MongoDB database isn't installed on *localhost:9200*, you migh want to 
 change this value in **import/import.sh** and **import/scripts/vars.php.** 
 
-Make sure that mongodb is running, then just run the following commands while
-in the **import** folder:
+Make sure that mongodb is running, then just run the following commands within
+the **import** folder:
 
 .. code-block:: bash
    
@@ -84,8 +84,7 @@ library**. You can either install it through a package manager
 Geonames Server
 +++++++++++++++
 
-Once the prerequisites installed, you can simply run **npm install** while
-in the same directory as the **package.json** file to install the server.
+Once the prerequisites installed, you can simply run **npm install** within the root directory to install the server.
 
 Configuration
 -------------
@@ -176,11 +175,11 @@ find_city
 Useful to find the nearest or the biggest cities matching the given request.
 Will parse city names to return everything that starts with the *city*
 parameter. You can also add a comma to this parameter, everything after which
-will be considered as a *country* parameter, filtering the cities to only the
-ones located in countries starting with the *country* parameter. Finally, you
-can add a *sort* parameter, with its only possible value being *population*.
-If this parameter is specified, the search will be sorted by population,
-instead of proximity.
+will be considered as a *country* parameter. This adds an extra filtering to
+the request, only searching through the cities located in countries starting 
+with the *country* parameter. Finally, you can add a *sort* parameter, 
+with its only possible value being *population*. If this parameter is
+specified, the search will be sorted by population, instead of proximity.
 
 The results are limited to 30 entries.
 
