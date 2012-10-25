@@ -2,10 +2,10 @@
 
 MONGO_VERSION=`mongo --version | sed -e "s|.*: \.*||" | cut -d "." -f -1`
 
-rm -f allCountries.zip allCountries.txt
-wget http://download.geonames.org/export/dump/allCountries.zip
-unzip allCountries.zip
-rm allCountries.zip
+#rm -f allCountries.zip allCountries.txt
+#wget http://download.geonames.org/export/dump/allCountries.zip
+#unzip allCountries.zip
+#rm allCountries.zip
 
 mongo geonames dropDB.js
 

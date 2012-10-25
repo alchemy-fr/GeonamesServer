@@ -38,12 +38,11 @@ You can do all of it in just one step with the utility located in the
 If your MongoDB database isn't installed on *localhost:9200*, you migh want to 
 change this value in **import/import.sh** and in **import/scripts/vars.php.** 
 
-Make sure that mongodb is running, then just run this command in the root
-folder:
+Make sure that mongodb is running, then just run:
 
 .. code-block:: bash
    
-   make import
+   sh import.sh
 
 It will download the neccessary files from the geonames servers, format them
 to make them work with MongoDB, import them to MongoDB, and index the new 
