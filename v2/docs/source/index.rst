@@ -35,11 +35,19 @@ database with geonames data, and then index this data with ElasticSearch.
 You can do all of it in just a few steps with the import script located in the 
 **import** folder.
 
-If your MongoDB database isn't installed on *localhost:9200*, you migh want to 
-change this value in **import/import.sh** and **import/scripts/vars.php.** 
+If your ElasticSearch instance isn't installed on *localhost:9200*, 
+you migh want to change this value in **import/scripts/vars.php.** 
 
 Make sure that mongodb is running, then just run the following commands within
 the **import** folder:
+
+.. code-block:: bash
+   
+   make install
+   sh import.sh $ELASTICSEARCH_URL
+
+If you installed ElasticSearch on *localhost:9200* (default value), you can 
+use these commands instead:
 
 .. code-block:: bash
    
