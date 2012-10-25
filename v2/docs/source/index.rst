@@ -84,7 +84,15 @@ library**. You can either install it through a package manager
 Geonames Server
 +++++++++++++++
 
-Once the prerequisites installed, you can simply run **npm install** within the root directory to install the server.
+Once the prerequisites installed, assuming you have **npm** installed, go to 
+the root folder and execute
+
+.. code-block:: bash
+
+   make install
+
+This will download the latest GeoIP data as well as all the packages this 
+server will need.
 
 Configuration
 -------------
@@ -92,12 +100,6 @@ Configuration
 The file **vars.js** contains some useful configuration variables. First, if 
 your instance of ElasticSearch is different from default, you should change 
 **vars.es.host** to your host.
-
-
-.. note::
-   Though we provided a **GeoLiteCity.dat** in the **data** folder, it 
-   might not be up-to-date, so you might want to re-download this file at
-   http://geolite.maxmind.com/download/geoip/database/.
 
 Usage
 -----
