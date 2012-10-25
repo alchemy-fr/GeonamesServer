@@ -39,7 +39,6 @@ function getUrl($url, $db, $mongoDb) {
   return ($url);
 }
 
-
 try
 {
   $m = new Mongo();
