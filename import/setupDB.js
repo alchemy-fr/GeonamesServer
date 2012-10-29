@@ -1,7 +1,10 @@
+j = 0;
+
 (function(){
 
     var addNamesIndex = function(place) {
-            if( ! place.alternatenames)
+		    
+        if( ! place.alternatenames)
             {
                     place.alternatenames = '';
             }
@@ -34,15 +37,27 @@
             place.names = names;
 
             if(place.longitude && place.latitude) {
-                    place.location = [place.longitude, place.latitude];
+		place.pin = new Array();
+		place.pin.location = new Array();
+		place.pin.location['lat'] = place.latitude;
+		place.pin.location['lon'] = place.longitude;
             }
 
             db.countries.save(place);
     }
 
-    db.countries.find().forEach(addNamesIndex);
-    db.countries.ensureIndex({ names : 1 });
-    db.places.ensureIndex({ loc : "2d" });
-    db.countries.ensureIndex({ countryCode : 1 });
 
+    var cur = db.countries.find();
+
+    while(cur.hasNext())
+	{
+	    j++;
+	    addNamesIndex(cur.next());
+	}
+    // db.countries.find().limit(100000000).forEach(addNamesIndex);
+    db.countries.ensureIndex({ names : 1 });
+    db.countries.ensureIndex({ loc : "2d" });
+    db.countries.ensureIndex({ countryCode : 1 });
+    print(j);
+    
 })();
