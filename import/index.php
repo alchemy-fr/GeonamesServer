@@ -1,11 +1,11 @@
 <?php
 
 if (isset($argv[1]) && !empty($argv[1]))
-  $varMongoDbName = $argv[1];
+  $varElasticSearchUrl = $argv[1];
 if (isset($argv[2]) && !empty($argv[2]))
-  $varElasticSearchUrl = $argv[2];
+  $varMongoDBName = $argv[2];
 if (isset($argv[3]) && !empty($argv[3]))
-  $varElasticSearchDB = $argv[3];
+  $varMongoCollectionName = $argv[3];
 	  
 
 require_once __DIR__ . '/vendor/autoload.php';
