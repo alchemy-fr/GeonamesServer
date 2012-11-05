@@ -82,14 +82,21 @@ if (isset($es))
     exec("sh ./scripts/setGeolocation.sh $URL"."_mapping $varMongoCollectionName");
 
     echo "\nIndexing...\n";
-  
+
   foreach ($cursor as $obj)
       {
 	$i++;
-	$mongoid = $obj['_id'];
-	
+	$mongoid = $obj['_id'];	
 	unset($obj['_id']);
-	$es->index($obj, $i);
+	$res = $es->index($obj);
+	if (!$res || !$res['ok'] || $res['ok'] == false)
+	  {
+	    echo "Error at entry $i:\n $res \n";
+	  }
+	if ($i % 100000 === 0) {
+	  $es->refresh();
+	  echo "Refreshed at $i entries\n";
+	  }
       }
   
     $es->refresh();
