@@ -1,5 +1,4 @@
 #!/bin/bash
-
 MONGO_VERSION=`mongo --version | sed -e "s|.*: \.*||" | cut -d "." -f -1`
 
 rm -f allCountries.zip allCountries.txt

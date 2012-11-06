@@ -39,21 +39,9 @@ function getUrl($url, $db, $mongoDb) {
   return ($url);
 }
 
-try
+function getCursor($collection)
 {
-  $m = new Mongo();
-  $db = $m->$varMongoDbName;
-}
-catch (MongoConnectionException $e)
-{
-  echo 'Couldn\'t connect to mongodb, is the "mongo" process running?';
-  exit();
-}
-
-echo "Connected to the database $varMongoDbName.\n";
-
-$collection = $db->$varMongoCollectionName;
-$cursor = $collection->find(array(
+  $cursor = $collection->find(array(
 				  'featureCode' => array('$in' => array('PPL',
 									'PPLA',
 									'PPLA2',
@@ -73,7 +61,25 @@ $cursor = $collection->find(array(
 									'STLMT'
 									))
 				  ));
-$cursor->immortal(true);
+  $cursor->immortal(true);
+  return ($cursor);
+}
+
+try
+{
+  $m = new Mongo();
+  $db = $m->$varMongoDbName;
+}
+catch (MongoConnectionException $e)
+{
+  echo 'Couldn\'t connect to mongodb, is the "mongo" process running?';
+  exit();
+}
+
+echo "Connected to the database $varMongoDbName.\n";
+
+$collection = $db->$varMongoCollectionName;
+$cursor = getCursor($collection);
 $i = 0;
 
 $URL = getElasticSearchUrl($varElasticSearchUrl,
@@ -102,24 +108,53 @@ if (isset($es))
 
     echo "\nIndexing...\n";
 
-  foreach ($cursor as $obj)
+    $conn = curl_init();
+    $flag = 0;
+
+    while ($flag == 0)
       {
-	$i++;
-	$mongoid = $obj['_id'];	
-	unset($obj['_id']);
-	$res = $es->index($obj);
-	if (!$res || !$res['ok'] || $res['ok'] == false)
-	  {
-	    echo "Error at entry $i:\n $res \n";
-	  }
-	if ($i % 100000 === 0) {
+	try {
+	  foreach ($cursor as $obj)
+	    {
+	      $i++;
+	      $mongoid = $obj['_id'];	
+	      unset($obj['_id']);
+	      curl_setopt($conn, CURLOPT_URL, $URL . $i);
+	      curl_setopt($conn, CURLOPT_POSTFIELDS, json_encode($obj));
+	      curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1) ;
+	      curl_setopt($conn, CURLOPT_CUSTOMREQUEST, strtoupper("PUT"));
+	      curl_setopt($conn, CURLOPT_FORBID_REUSE , 0) ;
+	      curl_setopt($conn, CURLOPT_CONNECTTIMEOUT, 0);
+	      curl_setopt($conn, CURLOPT_TIMEOUT, 60);
+	      try
+		{
+		  $res = curl_exec($conn);
+		  if (!$res || !$res['ok'] || $res['ok'] == false)
+		    echo "Error at entry $i:\n $res \n";
+		}
+	      catch (Exception $e)
+		{
+		  echo "An error ocurred: $e\nRetrying...\n";
+		  sleep(5);
+		  $res = curl_exec($conn);
+		  if (!$res || !$res['ok'] || $res['ok'] == false)
+		    echo "Error at entry $i:\n $res \n";
+		}
+	      if ($i % 100000 === 0) {
+		$es->refresh();
+		echo "Refreshed at $i entries\n";
+	      }
+	    }
+	  $flag = 1;
 	  $es->refresh();
-	  echo "Refreshed at $i entries\n";
+	}
+	catch (Exception $ex)
+	  {
+	    "Something went wrong within MongoDB: $ex\nRetrying...\n";
+	    $flag = 0;
+	    $cursor = getCursor($collection);
 	  }
       }
-  
-    $es->refresh();
-
     echo "$i entries proccessed.\n";
     exit();
   }
