@@ -53,8 +53,27 @@ catch (MongoConnectionException $e)
 echo "Connected to the database $varMongoDbName.\n";
 
 $collection = $db->$varMongoCollectionName;
-
-$cursor = $collection->find();
+$cursor = $collection->find(array(
+				  'featureCode' => array('$in' => array('PPL',
+									'PPLA',
+									'PPLA2',
+									'PPLA3',
+									'PPLA4',
+									'PPLC',
+									'PPLCH',
+									'PPLF',
+									'PPLG',
+									'PPLH',
+									'PPLL',
+									'PPLQ',
+									'PPLR',
+									'PPLS',
+									'PPLW',
+									'PPLX',
+									'STLMT'
+									))
+				  ));
+$cursor->immortal(true);
 $i = 0;
 
 $URL = getElasticSearchUrl($varElasticSearchUrl,
