@@ -77,13 +77,15 @@ Otherwise, you can download it from the `Node.js official website <http://nodejs
 
 Finally, if you want the geolocation to work, you will need the **libgeoip C
 library**. You can either install it through a package manager
-(such as **homebrew** or **aptitude**), or build it using the following commands (`source <http://github.com/kuno/GeoIP>`_):
+(if you use **aptitude** you should install the **libgeoip-dev** version), or
+build it using the following commands
+(`source <http://github.com/kuno/GeoIP>`_): 
 
 .. code-block:: bash
 
-   wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.7.tar.gz
-   tar -xvzf GeoIP-1.4.7.tar.gz
-   cd GeoIP-1.4.7
+   wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.8.tar.gz
+   tar -xvzf GeoIP-1.4.8.tar.gz
+   cd GeoIP-1.4.8
    ./configure --prefix=/usr
    make
    sudo make install
