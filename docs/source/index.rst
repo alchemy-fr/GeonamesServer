@@ -76,14 +76,15 @@ Once again, for **homebrew** users, a simple **brew install node** is enough.
 Otherwise, you can download it from the `Node.js official website <http://nodejs.org/>`_.
 
 Finally, if you want the geolocation to work, you will need the **libgeoip C
-library**. You can either install it through a package manager
-(such as **homebrew** or **aptitude**), or build it using the following commands (`source <http://github.com/kuno/GeoIP>`_):
+library**, version **1.4.8** or superior. You can either install it through a
+package manager (such as **homebrew** or **aptitude**), or build it using 
+the following commands (`source <http://github.com/kuno/GeoIP>`_): 
 
 .. code-block:: bash
 
-   wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.7.tar.gz
-   tar -xvzf GeoIP-1.4.7.tar.gz
-   cd GeoIP-1.4.7
+   wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.8.tar.gz
+   tar -xvzf GeoIP-1.4.8.tar.gz
+   cd GeoIP-1.4.8
    ./configure --prefix=/usr
    make
    sudo make install
@@ -108,7 +109,7 @@ Configuration
 The file **vars.js** contains some useful configuration variables. First, if 
 your instance of ElasticSearch is different from default, you should change 
 **vars.es.host** to your hostname. You can also change the port used by
-GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables.
+GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables. The **vars.js** file also contains a verbose option, which, when activated, displays the requests processed by the server.
 
 Usage
 -----

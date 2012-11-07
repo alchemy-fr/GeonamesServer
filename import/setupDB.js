@@ -48,13 +48,13 @@ j = 0;
 
 
     var cur = db.countries.find();
+    cur.immortal = true;
 
-    while(cur.hasNext())
-	{
-	    j++;
-	    addNamesIndex(cur.next());
-	}
-    // db.countries.find().limit(100000000).forEach(addNamesIndex);
+    cur.forEach(function(obj) {
+	    addNamesIndex(obj);
+	});
+	    
+
     db.countries.ensureIndex({ names : 1 });
     db.countries.ensureIndex({ loc : "2d" });
     db.countries.ensureIndex({ countryCode : 1 });

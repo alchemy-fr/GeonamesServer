@@ -1,9 +1,12 @@
 var vars = {};
 
+vars.app = {};
 vars.web = {};
 vars.es = {};
 vars.mongo = {};
 vars.geo = {};
+
+vars.app.verbose = false;
 
 vars.web.port = process.env.PORT || 3000;
 
