@@ -110,7 +110,7 @@ Configuration
 The file **vars.js** contains some useful configuration variables. First, if 
 your instance of ElasticSearch is different from default, you should change 
 **vars.es.host** to your hostname. You can also change the port used by
-GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables.
+GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables. The **vars.js** file also contains a verbose option, which, when activated, displays the requests processed by the server.
 
 Usage
 -----
