@@ -7,7 +7,7 @@ module.exports = function(app, express, vars){
 	    app.set('view engine', 'ejs');
 	    app.use(express.favicon());
 	    if (vars.app.verbose == true)
-		app.use(express.logger('dev'));
+                app.use(express.logger('dev'));
 	    app.use(express.bodyParser());
 	    app.use(express.methodOverride());
 	    app.use(app.router);
@@ -21,8 +21,8 @@ module.exports = function(app, express, vars){
 		    res.render('404', { error: 'Page not found' });
 		});
 	});
-
-
+    
+    
     function logErrors(err, req, res, next) {
 	console.error(err.stack);
 	next(err);
