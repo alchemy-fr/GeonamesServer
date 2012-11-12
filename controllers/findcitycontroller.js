@@ -28,13 +28,13 @@ function getQuery(name, codes, lon, lat, sort, size)
         + '"unit" : "km" } } ]';
     }
     my_query += ',"fields": ["geonameid", "name", "countryCode", '
-    + '"longitude", "latitude", "admin1Code", "names"], "query":'
-    + ' {"bool": { "must" : { "terms" : { "featureCode" : '
-    + '["ppl", "ppla", "ppla2", "ppla3", "ppla4", "pplc", '
-    + '"pplf", "pplg", "ppll", "pplq", "pplr", "ppls", '
-    + '"pplw", "pplx", "stlmt"], "minimum_match" : 1 } }, '
-    + '"should" : [ { "prefix": {"names" : "' + name
-    +  '"} } ';
+	+ '"longitude", "latitude", "admin1Code", "names"], "query":'
+	+ ' {"bool": { "must" : { "terms" : { "featureCode" : '
+	+ '["ppl", "ppla", "ppla2", "ppla3", "ppla4", "pplc", '
+	+ '"pplf", "pplg", "ppll", "pplq", "pplr", "ppls", '
+	+ '"pplw", "pplx", "stlmt"], "minimum_match" : 1 } }, '
+	+ '"should" : [ { "prefix": {"names" : "' + name
+	+  '"} } ';
     if (codes.length > 0) {
         my_query += ', { "terms" : { "countryCode" : [';
         var flag = false;
@@ -338,4 +338,3 @@ module.exports = function(app, express, vars) {
             });
     })
     };
-
