@@ -76,7 +76,7 @@ Once again, for **homebrew** users, a simple **brew install node** is enough.
 Otherwise, you can download it from the `Node.js official website <http://nodejs.org/>`_.
 
 Finally, if you want the geolocation to work, you will need the **libgeoip C
-library**, version **1.4.8** or superior. You can either install it through a
+library**, version **1.4.8** or higher. You can either install it through a
 package manager (such as **homebrew** or **aptitude**), or build it using 
 the following commands (`source <http://github.com/kuno/GeoIP>`_): 
 
