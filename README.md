@@ -4,7 +4,7 @@ A node.js server used to get the biggest or the closest cities based on a given 
 
 ##Documentation
 
-Read The Documentation at [Read The Docs !](http://readthedocs.org/docs/GeonamesServer/)
+Read The Documentation at [Read The Docs !](https://geonames-server.readthedocs.org/)
 
 
 ##Usage Example
