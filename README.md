@@ -1,5 +1,7 @@
 #GeonamesServer
 
+[![Build Status](https://secure.travis-ci.org/alchemy-fr/GeonamesServer.png?branch=master)](https://travis-ci.org/alchemy-fr/GeonamesServer)
+
 A node.js server used to get the biggest or the closest cities based on a given HTTP request.
 
 ##Documentation
@@ -15,7 +17,7 @@ curl -XGET "§SERVER_URL/find_city?city=paris,f"
 curl -XGET "§SERVER_URL/find_city?city=paris,f&sort=population"
 curl -XGET "$SERVER_URL/getname?geonameid=123456"
 curl -XGET "$SERVER_URL/getname?geonameid=123456"
- 
+
 ```
 
 ##License
