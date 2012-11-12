@@ -28,12 +28,12 @@ function getQuery(name, codes, lon, lat, sort, size)
 	    + '"unit" : "km" } } ]';
     }
     my_query += ',"fields": ["geonameid", "name", "countryCode", '
-	+ '"longitude", "latitude", "admin1Code", "names"], "query":' 
+	+ '"longitude", "latitude", "admin1Code", "names"], "query":'
 	+ ' {"bool": { "must" : { "terms" : { "featureCode" : '
 	+ '["ppl", "ppla", "ppla2", "ppla3", "ppla4", "pplc", '
 	+ '"pplf", "pplg", "ppll", "pplq", "pplr", "ppls", '
 	+ '"pplw", "pplx", "stlmt"], "minimum_match" : 1 } }, '
-	+ '"should" : [ { "prefix": {"names" : "' + name 
+	+ '"should" : [ { "prefix": {"names" : "' + name
 	+  '"} } ';
     if (codes.length > 0) {
 	my_query += ', { "terms" : { "countryCode" : [';
@@ -138,26 +138,26 @@ function convertToTabs(body)
     ret.data = new Array();
     var results_req = JSON.parse(body);
     var results = results_req['hits']['hits'];
-    
+
     ret.admincodes = new Array();
-    
+
     for (var i in results) {
-	var rowData = [];
-	ret.data.push(results[i]['fields']);
-	if (ret.data[i].admin1Code) {
-	    ret.data[i].adminCode = ret.data[i].countryCode + "."
-		+ formatInt(ret.data[i].admin1Code);
-	    ret.admincodes.push(ret.data[i].adminCode);
-	}
-	else
-	    ret.data[i].adminCode = 0;
+        var rowData = [];
+        ret.data.push(results[i]['fields']);
+        if (ret.data[i].admin1Code) {
+            ret.data[i].adminCode = ret.data[i].countryCode + "."
+            + formatInt(ret.data[i].admin1Code);
+            ret.admincodes.push(ret.data[i].adminCode);
+        } else {
+            ret.data[i].adminCode = 0;
+        }
     }
     return (ret);
 }
 
 
 /*
-** Sends back an empty XML tree. 
+** Sends back an empty XML tree.
 */
 
 function sendEmptyResult(res)
@@ -182,7 +182,7 @@ function sendFullResult(res, result, data, cityname, countryname)
     var xml = builder.create('geonames',
 			     {'version':'1.0', 'encoding':'UTF-8'});
     var xmlS = "";
-    
+
     xml.e('totalResultsCount', data.length.toString());
     for (var i in data) {
 	var geo = xml.e('geoname');
@@ -210,7 +210,7 @@ function sendFullResult(res, result, data, cityname, countryname)
 */
 
 function getResult(body, vars, res, cityname, db, countryname, countries)
-{ 
+{
     var adminnames = db.collection(vars.mongo.admincodes);
 
     var tabs = convertToTabs(body);
@@ -239,10 +239,10 @@ function getResult(body, vars, res, cityname, db, countryname, countries)
 function getGeoLoc(req, path, vars)
 {
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-       
+
     var geoip = require('geoip');
     var city = new geoip.City(path);
-    
+
     var geo = city.lookupSync(ip);
     var res = {};
     if (!geo) {
@@ -277,15 +277,15 @@ module.exports = function(app, express, vars) {
 	    var my_url = getUrl(vars.es.host,
 				vars.es.name,
 				vars.es.collection);
-	    
+
 	    var request = require('request');
-	    
+
 	    var mongojs = require('mongojs');
 	    var db = mongojs(vars.mongo.url);
 
 	    var geoloc = getGeoLoc(req, vars.geo.geolitepath, vars);
 	    var codes = new Array();
-	    
+
 	    var countrynames = db.collection(vars.mongo.countrynames);
 	    countrynames.find({},
 			      function(err, docs) {
@@ -311,4 +311,4 @@ module.exports = function(app, express, vars) {
 					  });
 			      });
 	})};
-	
+

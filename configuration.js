@@ -6,8 +6,9 @@ module.exports = function(app, express, vars){
             app.set('views', __dirname + '/views');
             app.set('view engine', 'ejs');
             app.use(express.favicon());
-            if (vars.app.verbose == true)
+            if (vars.app.verbose == true) {
                 app.use(express.logger('dev'));
+            }
             app.use(express.bodyParser());
             app.use(express.methodOverride());
             app.use(app.router);
@@ -17,17 +18,17 @@ module.exports = function(app, express, vars){
             app.use(clientErrorHandler);
             app.use(express.errorHandler({ dumpExceptions:true, showStack:true }));
             app.use(function(req, res, next){
-                    res.status(404);
-                    res.render('404', { error: 'Page not found' });
-                });
+                res.status(404);
+                res.render('404', { error: 'Page not found' });
+            });
         });
-    
-    
+
+
     function logErrors(err, req, res, next) {
         console.error(err.stack);
         next(err);
     }
-    
+
     function clientErrorHandler(err, req, res, next) {
         if (req.xhr) {
             res.send(500, { error: 'Something blew up!' });
@@ -40,11 +41,11 @@ module.exports = function(app, express, vars){
         res.status(500);
         res.render('error', { error: err });
     }
-    
+
     app.configure('development', function(){
-            app.use(express.errorHandler());
-        });
+        app.use(express.errorHandler());
+    });
 }
 
-    
+
 
