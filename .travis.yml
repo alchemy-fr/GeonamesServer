@@ -1,4 +1,11 @@
 before_script:
+  - wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.8.tar.gz
+  - tar -xvzf GeoIP-1.4.8.tar.gz
+  - cd GeoIP-1.4.8
+  - ./configure --prefix=/usr
+  - make
+  - sudo make install
+  - cd ..
   - sudo make install
 
 language: node_js
