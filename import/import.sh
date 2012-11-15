@@ -1,6 +1,21 @@
 #!/bin/bash
 MONGO_VERSION=`mongo --version | sed -e "s|.*: \.*||" | cut -d "." -f -1`
 
+if [ -z `which mongo` ]; then
+echo "MongoDB not found. Please install it and run this script again."
+exit 1
+fi
+
+if [ -z `which elasticsearch` ]; then
+echo "ElasticSearch not found. Please install it and run this script again."
+exit 1
+fi 
+
+if [ -z `php -m | grep mongo` ]; then
+echo "PHP-mongo extension not found. Please install it and run this script again."
+exit 1
+fi 
+
 rm -f allCountries.zip allCountries.txt
 wget http://download.geonames.org/export/dump/allCountries.zip
 unzip allCountries.zip
