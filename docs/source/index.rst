@@ -328,6 +328,23 @@ All you have to do is to run the following command in the root folder:
 
    make test
 
+Upgrading
+---------
+
+In order to upgrade this server, you should run the following command within
+the **import** folder:
+
+.. code-block:: bash
+   
+   sh import.sh $ELASTICSEARCH_URL
+
+If you installed ElasticSearch on *localhost:9200* (default value), you can 
+use this command instead:
+
+.. code-block:: bash
+   
+   make import 
+
 Contribute
 ----------
 
