@@ -6,8 +6,7 @@ before_install:
   - sudo apt-get install php5 libgeoip-dev
  
 before_script:
-  - sudo make install
-  - cd import
+  - sudo apt-get install libgeoip-dev
   - sudo make install
   - sudo make testimport
   - cd ..
