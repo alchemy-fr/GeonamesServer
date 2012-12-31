@@ -1,4 +1,5 @@
 before_script:
+  - sudo apt-get install libgeoip-dev
   - sudo make install
 
 language: node_js
