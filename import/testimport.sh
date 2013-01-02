@@ -6,16 +6,6 @@ echo "MongoDB not found. Please install it and run this script again."
 exit 1
 fi
 
-if [ -z `which elasticsearch` ]; then
-echo "ElasticSearch not found. Please install it and run this script again."
-exit 1
-fi 
-
-if [ -z `php -m | grep mongo` ]; then
-echo "PHP-mongo extension not found. Please install it and run this script again."
-exit 1
-fi 
-
 mongo geonames dropDB.js
 
 if [ $MONGO_VERSION -gt 1 ]; then

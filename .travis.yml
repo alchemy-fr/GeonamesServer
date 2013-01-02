@@ -7,9 +7,7 @@ before_install:
  
 before_script:
   - sudo apt-get install libgeoip-dev
-  - sudo apt-get install mongodb
-  - sudo apt-get install elasticsearch
-  
+ 
 before_script:
   - sudo make install
   - cd import
