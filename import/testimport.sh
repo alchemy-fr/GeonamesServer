@@ -6,16 +6,6 @@ echo "MongoDB not found. Please install it and run this script again."
 exit 1
 fi
 
-if [ -z `which elasticsearch` ]; then
-echo "ElasticSearch not found. Please install it and run this script again."
-exit 1
-fi 
-
-if [ -z `php -m | grep mongo` ]; then
-echo "PHP-mongo extension not found. Please install it and run this script again."
-exit 1
-fi 
-
 mongo geonames dropDB.js
 
 if [ $MONGO_VERSION -gt 1 ]; then
@@ -44,4 +34,25 @@ mongoimport -d geonames -c countrynames --type tsv --fields code,name --stopOnEr
 
 rm countrynames.txt admincodes.txt
 
-php ./index.php $1 geonames countries
+echo "1"
+
+curl -X DELETE "http://127.0.0.1:9200/"
+curl -X GET "http://127.0.0.1:9200/"
+
+echo "2"
+
+curl -X POST "http://127.0.0.1:9200/geonames/"
+curl -X GET "http://127.0.0.1:9200"
+
+echo "3"
+
+sh ./scripts/setGeolocation.sh "http://127.0.0.1:9200/geonames/countries/_mapping" "countries"
+curl -X GET "http://127.0.0.1:9200/geonames/"
+
+echo "4"
+
+curl -XPOST "http://127.0.0.1:9200/geonames/countries/" -d '{"geonameid" : "2968815","name" : "Paris","asciiname" : "Paris","alternatenames": "Paris, Paris","latitude" : "48.8534","longitude" : "2.3486","featureClass" : "A","featureCode" : "ADM2","countryCode" : "FR","admin1Code" : "A8","admin2Code" : "75","admin3Code" : "","admin4Code" : "2257981","elevation" : "","DEM" : "30","timezone" : "Europe/Paris","modificationDate" : "2012-09-13","names" : "Paris"}'
+
+curl -X GET "http://127.0.0.1:9200/_count"
+
+echo "test2"

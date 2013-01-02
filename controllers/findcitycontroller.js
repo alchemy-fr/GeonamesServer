@@ -304,8 +304,11 @@ module.exports = function(app, express, vars) {
 				  request({uri:my_url, body:my_body},
 					  function (error, response, body) {
 					      if (!error && response.statusCode == 200)
-						  getResult(body, vars, res, cityname,
-							    db, countryname, docs);
+                                                  {
+                                                      console.log(body);
+                                                      getResult(body, vars, res, cityname,
+                                                                db, countryname, docs);
+                                                  }
 					      else
 						  sendEmptyResult(res);
 					  });
