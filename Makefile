@@ -4,6 +4,9 @@ test:
 install:
 	sh install.sh
 
+testinstall:
+	sh testinstall.sh
+
 clean:
 	rm *~
 

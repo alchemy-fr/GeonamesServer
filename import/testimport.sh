@@ -34,9 +34,9 @@ mongoimport -d geonames -c countrynames --type tsv --fields code,name --stopOnEr
 
 rm countrynames.txt admincodes.txt
 
-curl -X DELETE "http://127.0.0.1:9200/"
+curl -s -X DELETE "http://127.0.0.1:9200/"
 
-curl -X POST "http://127.0.0.1:9200/geonames/"
+curl -s -X POST "http://127.0.0.1:9200/geonames/"
 
 sh ./scripts/setGeolocation.sh "http://127.0.0.1:9200/geonames/countries/_mapping" "countries"
 

@@ -241,9 +241,17 @@ function getGeoLoc(req, path, vars)
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     var geoip = require('geoip');
-    var city = new geoip.City(path);
-
-    var geo = city.lookupSync(ip);
+    try {
+        var city = new geoip.City(path);
+        var geo = city.lookupSync(ip);
+    }
+    catch (Exception)
+        {
+            var res = {};
+            res.lon = vars.geo.default_lon;
+            res.lat = vars.geo.default_lat;
+            return (res);
+        }
     var res = {};
     if (!geo) {
 	res.lon = vars.geo.default_lon;
@@ -258,7 +266,6 @@ function getGeoLoc(req, path, vars)
 module.exports = function(app, express, vars) {
     app.get('/find_city', function(req, res){
 	    var city_lower, countryname, cityname, my_body, sort  = "";
-
 	    if (req.query.city) {
 		var tab = req.query.city.split(",");
 		if (tab)
@@ -277,6 +284,7 @@ module.exports = function(app, express, vars) {
 	    var my_url = getUrl(vars.es.host,
 				vars.es.name,
 				vars.es.collection);
+
 
 	    var request = require('request');
 
