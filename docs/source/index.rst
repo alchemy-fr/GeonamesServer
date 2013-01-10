@@ -343,8 +343,8 @@ In order to upgrade this server, you should run the following command within
 the **import** folder:
 
 .. code-block:: bash
-   
-   sh import.sh $ELASTICSEARCH_URL
+
+   sh import.sh [-h hostname] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]   
 
 If you installed ElasticSearch on *localhost:9200* (default value), you can 
 use this command instead:
