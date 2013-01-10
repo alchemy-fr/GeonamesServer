@@ -55,10 +55,10 @@ echo "PHP-mongo extension not found. Please install it and run this script again
 exit 1
 fi 
 
-#rm -f allCountries.zip allCountries.txt
-#wget http://download.geonames.org/export/dump/allCountries.zip
-#unzip allCountries.zip
-#rm allCountries.zip
+rm -f allCountries.zip allCountries.txt
+wget http://download.geonames.org/export/dump/allCountries.zip
+unzip allCountries.zip
+rm allCountries.zip
 
 mongo $host $user $password $database dropDB.js
 
@@ -72,7 +72,7 @@ else
 	 --stopOnError allCountries.txt
 fi
 
-rm all$Database.txt
+rm allCountries.txt
 mongo $host $user $password $database setupDB.js
 
 rm countryInfo.txt admin1CodesASCII.txt admincodes.txt countrynames.txt
