@@ -38,21 +38,29 @@ You can do all of it in just a few steps with the import script located in the
 If your ElasticSearch instance isn't installed on *localhost:9200*, 
 you migh want to change this value in **import/scripts/vars.php.** 
 
-Make sure that mongodb is running, then just run the following commands within
-the **import** folder:
-
-.. code-block:: bash
-   
-   make install
-   sh import.sh $ELASTICSEARCH_URL
-
-If you installed ElasticSearch on *localhost:9200* (default value), you can 
-use these commands instead:
+Make sure that mongodb is running, then, if you installed ElasticSearch on *localhost:9200* (default value), run the 
+following commands within the **import** folder:
 
 .. code-block:: bash
    
    make install
    make import
+
+Otherwise, you can use the following commands:
+
+.. code-block:: bash
+   
+   make install
+   sh import.sh [-h hostname] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]
+
+The default values are:
+   - hostname: http://127.0.0.1/
+   - user: none
+   - password: none
+   - database: **geonames**
+   - collection: **countries**
+   - elasticsearchhost: http://127.0.0.1:9200/
+
 
 It will download the necessary files from the geonames servers, format them
 to make them work with MongoDB, import them to MongoDB, and index the new 
@@ -327,6 +335,23 @@ All you have to do is to run the following command in the root folder:
 .. code-block:: bash
 
    make test
+
+Upgrading
+---------
+
+In order to upgrade this server, you should run the following command within
+the **import** folder:
+
+.. code-block:: bash
+   
+   sh import.sh $ELASTICSEARCH_URL
+
+If you installed ElasticSearch on *localhost:9200* (default value), you can 
+use this command instead:
+
+.. code-block:: bash
+   
+   make import 
 
 Contribute
 ----------

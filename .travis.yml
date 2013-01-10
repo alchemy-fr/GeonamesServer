@@ -1,8 +1,16 @@
+services:
+  - elasticsearch
+  - mongodb
+
 before_install:
-  - sudo apt-get install libgeoip-dev
-  
+  - sudo apt-get install php5 libgeoip-dev
+ 
 before_script:
   - sudo make install
+  - cd import
+  - sudo make install
+  - sudo make testimport
+  - cd ..
 
 language: node_js
 node_js:
