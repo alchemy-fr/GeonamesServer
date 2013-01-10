@@ -26,8 +26,9 @@ while getopts ":h:u:p:d:c:e:" opt; do
       ;;
     e)
       elastichost="$OPTARG"
+      ;;
     \?)
-      echo "Invalid option: -$OPTARG" >&2
+      echo "Invalid option: -$OPTARG \n\nUsage: sh import.sh\n\t[-h hostname]\n\t[-u user]\n\t[-p password]\n\t[-d database]\n\t[-c collection]\n\t[-e elasticsearchhostname]\n" >&2
       exit 1
       ;;
     :)
