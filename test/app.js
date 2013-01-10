@@ -113,20 +113,6 @@ describe('App', function() {
 		    });
 
 
-
-	describe('GET /geoip', function() {
-		it('fails to identify a New-York IP', function(done) {
-			request(app)
-			    .get('/geoip?ip=4.23.171.0')
-			    .set('Accept', 'application/XML')
-			    .expect('Content-Type', "text/xml")
-			    .end(function(err, res) {
-				    assert(res.text.indexOf("New York") != -1);
-				    done();
-				});
-		    })
-		    });
-
 	describe('GET /geoip', function() {
 		it('responds with an non-XML file', function(done) {
 			request(app)
