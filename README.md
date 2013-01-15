@@ -16,10 +16,10 @@ The following is a list of usable routes for the Geonames server:
 *  **/** : Returns a quick documentation listing available routes.
 *  **/city** : Returns the list of all the cities in the database, limited to 30 results by default. The limit can be changed within the **vars.js** file.
 *  **/city?sort=population** : Same as the precedent route, but ordered by population.
-*  **/city/search?query={city_name} : Returns all the cities whose name begins with given city_name, limited to 30 results. The limit can be changed within the **vars.js** file.
-*  **/city/search?query={city_name}&sort=population : Same as the precedent route, but ordered by population.
-*  **/city/search?query={city_name}&country={country_name} : Returns all the cities whose name begins with given city_name and country_name values, limited to 30 results. The limit can be changed within the **vars.js** file.
-*  **/city/search?query={city_name}&country={country_name}&sort=population : Same as the precedent route, but ordered by population.
+*  **/city/search?query={city_name}** : Returns all the cities whose name begins with given city_name, limited to 30 results. The limit can be changed within the **vars.js** file.
+*  **/city/search?query={city_name}&sort=population** : Same as the precedent route, but ordered by population.
+*  **/city/search?query={city_name}&country={country_name}** : Returns all the cities whose name begins with given city_name and country_name values, limited to 30 results. The limit can be changed within the **vars.js** file.
+*  **/city/search?query={city_name}&country={country_name}&sort=population** : Same as the precedent route, but ordered by population.
 *  **/city/{id}** : Returns the city which *geonameid* value is equal to the given id.
 *  **/ip/{address}** : Returns the city in which the given ip address is located.
 
