@@ -28,7 +28,7 @@ In the second version of **GeonamesServer**, the following routes were added to 
 *  **/** : Returns a quick documentation listing available routes.
 *  **/city** : Returns the list of all the cities in the database, limited to 30 results by default. The limit can be changed within the **vars.js** file. A *sort* paramater, with its only possible value being "population" can be added to the request.
 *  **/city/id** : Returns the city which *geonameid* value is equal to the given id.
-*  **/ip/adress** : Returns the city in which the given ip address is located.
+*  **/ip/address** : Returns the city in which the given ip address is located.
 
 All these routes can only be accessed through GET requests. Any other methods will result in a *405 Method not allowed* error. The results will be sent as text/XML or text/JSON files, according to the accept field within the request header. 
 
