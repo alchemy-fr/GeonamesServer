@@ -9,26 +9,19 @@ A node.js server used to get the biggest or the closest cities based on a given 
 Read The Documentation at [Read The Docs !](https://geonames-server.readthedocs.org/)
 
 
-##Usage Example
+##Usage
 
-```bash
-curl -XGET "§SERVER_URL/find_city?city=paris"
-curl -XGET "§SERVER_URL/find_city?city=paris,f"
-curl -XGET "§SERVER_URL/find_city?city=paris,f&sort=population"
-curl -XGET "$SERVER_URL/getname?geonameid=123456"
-curl -XGET "$SERVER_URL/getname?geonameid=123456"
-curl -XGET "$SERVER_URL/getname?geoip=4.23.171.0"
-
-```
-
-##v2
-
-In the second version of **GeonamesServer**, the following routes were added to existing ones:
+The following is a list of usable routes for the Geonames server:
 
 *  **/** : Returns a quick documentation listing available routes.
-*  **/city** : Returns the list of all the cities in the database, limited to 30 results by default. The limit can be changed within the **vars.js** file. A *sort* paramater, with its only possible value being "population" can be added to the request.
-*  **/city/id** : Returns the city which *geonameid* value is equal to the given id.
-*  **/ip/address** : Returns the city in which the given ip address is located.
+*  **/city** : Returns the list of all the cities in the database, limited to 30 results by default. The limit can be changed within the **vars.js** file.
+*  **/city?sort=population** : Same as the precedent route, but ordered by population.
+*  **/city/search?query={city_name} : Returns all the cities whose name begins with given city_name, limited to 30 results. The limit can be changed within the **vars.js** file.
+*  **/city/search?query={city_name}&sort=population : Same as the precedent route, but ordered by population.
+*  **/city/search?query={city_name}&country={country_name} : Returns all the cities whose name begins with given city_name and country_name values, limited to 30 results. The limit can be changed within the **vars.js** file.
+*  **/city/search?query={city_name}&country={country_name}&sort=population : Same as the precedent route, but ordered by population.
+*  **/city/{id}** : Returns the city which *geonameid* value is equal to the given id.
+*  **/ip/{address}** : Returns the city in which the given ip address is located.
 
 All these routes can only be accessed through GET requests. Any other methods will result in a *405 Method not allowed* error. The results will be sent as text/XML or text/JSON files, according to the accept field within the request header. 
 
