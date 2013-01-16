@@ -15,12 +15,12 @@ The following is a list of usable routes for the Geonames server:
 
 *  **/** : Returns a quick documentation listing available routes.
 *  **/city** : Returns the list of all the cities in the database, limited to 30 results by default. The limit can be changed within the **vars.js** file. The results are sorted by population, in descending order.
-  *  **?sort=population&order=asc** : Same as the precedent route, but sorted in ascending order.
-  *  **?sort=closeness** : The results will be ordered by closeness to the place the request was sent from.
+  *  **?sort=population&order=asc** : Same as the precedent route, but sorted in ascending order. Optional parameter.
+  *  **?sort=closeness** : The results will be ordered by closeness to the place the request was sent from. Optional parameter.
 *  **/city/search?query={city_name}** : Returns all the cities whose name begins with given *city_name*, limited to 30 results. The limit can be changed within the **vars.js** file. The results are sorted by population, in descending order.
-  *  **&country={country_name}** : Adding this parameter will only display cities located in countries whose name starts with *country_name*.
-  *  **&sort=population&order=asc** : Adding a *population* parameter and setting it to *asc* will order the results in an ascending order.
-  *  **&sort=closeness** : Setting the *sort* parameter to *closeness* will order the results by closeness to the place the request was sent from.
+  *  **&country={country_name}** : Adding this optional parameter will only display cities located in countries whose name starts with *country_name*.
+  *  **&sort=population&order=asc** : Adding an optional *population* parameter and setting it to *asc* will order the results in an ascending order.
+  *  **&sort=closeness** : Setting the optional *sort* parameter to *closeness* will order the results by closeness to the place the request was sent from.
 *  **/city/{id}** : Returns the city which *geonameid* value is equal to the given id.
 *  **/ip/{address}** : Returns the city in which the given ip address is located.
 
