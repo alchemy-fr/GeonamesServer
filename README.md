@@ -25,11 +25,11 @@ The limit can be changed within the **vars.js** file.
 #### Parameters 
 
   - sort (mandatory, default value : population)
-    Available values :
+    available values :
     - population : The results will be sorted by population.
     - closeness : The results will be sorted by closeness to the place the request was sent from.
   - ord (mandatory, default value : desc)
-    Available values :
+    available values :
     - desc : The results will be displayed in descending order.
     - asc : The results will be displayed in ascending order.
 
@@ -40,16 +40,16 @@ The limit can be changed within the **vars.js** file.
 
 #### Parameters
 
-  - query (mandatory)
+  - query (mandatory) :
     Only cities whose name begins with this parameter will be returned.
-  - country (optional)
+  - country (optional) :
     Only cities located in countries whose name begins with this parameter will be returned.
-    - sort (mandatory, default value : population)
-    Available values :
+  - sort (mandatory, default value : population)
+    available values :
     - population : The results will be sorted by population.
     - closeness : The results will be sorted by closeness to the place the request was sent from.
   - ord (mandatory, default value : desc)
-    Available values :
+    available values :
     - desc : The results will be displayed in descending order.
     - asc : The results will be displayed in ascending order.
 
