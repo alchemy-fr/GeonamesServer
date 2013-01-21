@@ -1,2 +1,5 @@
 import:
-	sh import.sh http://127.0.0.1:9200/
+	sh import.sh
+
+testimport:
+	sh testimport.sh http://127.0.0.1:9200/
