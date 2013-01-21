@@ -8,4 +8,4 @@ gunzip GeoLiteCity.dat
 
 cd ..
 
-npm install
+/usr/bin/env npm install
