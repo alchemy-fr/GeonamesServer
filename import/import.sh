@@ -64,12 +64,12 @@ mongo $host $user $password $database dropDB.js
 
 if [ $MONGO_VERSION -gt 1 ]; then
     mongoimport $host $user $password -d $database -c $collection --type tsv \
-	--fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
-	--stopOnError allCountries.txt
+        --fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
+        --stopOnError allCountries.txt
 else
     mongoimport $host $user $password -d $database -c $collection --type tsv \
-	--fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
-	 --stopOnError allCountries.txt
+        --fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
+         --stopOnError allCountries.txt
 fi
 
 rm allCountries.txt
@@ -88,4 +88,4 @@ mongoimport $host $user $password -d $database -c countrynames --type tsv --fiel
 
 rm countrynames.txt admincodes.txt
 
-php ./index.php $elastichost $database $collection
+php ./index.php $elastichost $database $collection $host $user $password

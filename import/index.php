@@ -1,12 +1,28 @@
 <?php
 
-use ElasticSearch\Client;
-
-require_once __DIR__ . '/vendor/autoload.php';
 include __DIR__ . "/vars.php";
+
+$varMongoUsername = "";
+$varMongoPassword = "";
+$varMongoHost = "localhost";
 
 if (isset($argv[1]) && !empty($argv[1])) {
     $varElasticSearchUrl = $argv[1];
+}
+if (isset($argv[2]) && !empty($argv[2])) {
+    $varMongoDBName = $argv[2];
+}
+if (isset($argv[3]) && !empty($argv[3])) {
+    $varMongoCollectionName = $argv[3];
+}
+if (isset($argv[4]) && !empty($argv[4])) {
+    $varMongoHost = $argv[4];
+}
+if (isset($argv[5]) && !empty($argv[5])) {
+    $varMongoUserName = $argv[5];
+}
+if (isset($argv[6]) && !empty($argv[6])) {
+    $varMongoPassword = $argv[6];
 }
 if (isset($argv[2]) && !empty($argv[2])) {
     $varMongoDBName = $argv[2];
@@ -95,61 +111,54 @@ $URL = getElasticSearchUrl($varElasticSearchUrl, $varElasticSearchDB, $varElasti
 
 $rootUrl = getUrl($varElasticSearchUrl, $varElasticSearchDB, $varMongoDbName);
 
-$es = Client::connection($URL);
-if (isset($es)) {
+echo "Dropping current ElasticSearch index.\n";
+exec("sh ./scripts/deleteIndex.sh $rootUrl");
+echo "Creating new index.\n";
+exec("sh ./scripts/createIndex.sh $rootUrl");
+echo "Setting geolocation parameters.\n";
+exec("sh ./scripts/setGeolocation.sh $URL" . "_mapping $varMongoCollectionName");
 
-    echo "Dropping current ElasticSearch index.\n";
-    exec("sh ./scripts/deleteIndex.sh $rootUrl");
-    echo "Creating new index.\n";
-    exec("sh ./scripts/createIndex.sh $rootUrl");
-    echo "Setting geolocation parameters.\n";
-    exec("sh ./scripts/setGeolocation.sh $URL" . "_mapping $varMongoCollectionName");
+echo "\nIndexing...\n";
 
-    echo "\nIndexing...\n";
+$conn = curl_init();
+$flag = 0;
 
-    $conn = curl_init();
-    $flag = 0;
-
-    while ($flag == 0) {
-        try {
-            foreach ($cursor as $obj) {
-                $i++;
-                $mongoid = $obj['_id'];
-                unset($obj['_id']);
-                curl_setopt($conn, CURLOPT_URL, $URL . $i);
-                curl_setopt($conn, CURLOPT_POSTFIELDS, json_encode($obj));
-                curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($conn, CURLOPT_CUSTOMREQUEST, strtoupper("PUT"));
-                curl_setopt($conn, CURLOPT_FORBID_REUSE, 0);
-                curl_setopt($conn, CURLOPT_CONNECTTIMEOUT, 0);
-                curl_setopt($conn, CURLOPT_TIMEOUT, 60);
-                try {
-                    $res = curl_exec($conn);
-                    if (!$res || !$res['ok'] || $res['ok'] == false) {
-                        echo "Error at entry $i:\n $res \n";
-                    }
-                } catch (Exception $e) {
-                    echo "An error ocurred: $e\nRetrying...\n";
-                    sleep(5);
-                    $res = curl_exec($conn);
-                    if (!$res || !$res['ok'] || $res['ok'] == false) {
-                        echo "Error at entry $i:\n $res \n";
-                    }
-                }
-                if ($i % 100000 === 0) {
-                    $es->refresh();
-                    echo "Refreshed at $i entries\n";
-                }
-            }
-            $flag = 1;
-            $es->refresh();
-        } catch (Exception $ex) {
-            "Something went wrong within MongoDB: $ex\nRetrying...\n";
-            $flag = 0;
-            $cursor = getCursor($collection);
+while ($flag == 0) {
+  try {
+    foreach ($cursor as $obj) {
+      $i++;
+      $mongoid = $obj['_id'];
+      unset($obj['_id']);
+      curl_setopt($conn, CURLOPT_URL, $URL . $i);
+      curl_setopt($conn, CURLOPT_POSTFIELDS, json_encode($obj));
+      curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($conn, CURLOPT_CUSTOMREQUEST, strtoupper("PUT"));
+      curl_setopt($conn, CURLOPT_FORBID_REUSE, 0);
+      curl_setopt($conn, CURLOPT_CONNECTTIMEOUT, 0);
+      curl_setopt($conn, CURLOPT_TIMEOUT, 60);
+      try {
+        $res = curl_exec($conn);
+        if (!$res || !$res['ok'] || $res['ok'] == false) {
+          echo "Error at entry $i:\n $res \n";
         }
+      } catch (Exception $e) {
+        echo "An error ocurred: $e\nRetrying...\n";
+        sleep(5);
+        $res = curl_exec($conn);
+        if (!$res || !$res['ok'] || $res['ok'] == false) {
+          echo "Error at entry $i:\n $res \n";
+        }
+      }
+      if ($i % 100000 === 0) {
+        echo "Processed $i entries\n";
+      }
     }
-    echo "$i entries proccessed.\n";
-    exit();
+    $flag = 1;
+  } catch (Exception $ex) {
+    "Something went wrong within MongoDB: $ex\nRetrying...\n";
+    $flag = 0;
+    $cursor = getCursor($collection);
+  }
 }
-echo "Couldn\'t connect to the ElasticSearch database.\n";
+echo "$i entries proccessed.\n";
+exit();
