@@ -155,7 +155,6 @@ function convertToTabs(body)
     return (ret);
 }
 
-
 /*
 ** Sends back an empty XML tree.
 */
@@ -179,7 +178,6 @@ function sendEmptyResult(res)
 /*
 ** Fills up and sends back an XML file containing all the data
 */
-
 function sendFullResult(res, result, data, cityname, countryname)
 {
     var builder = require('xmlbuilder');
@@ -244,7 +242,6 @@ function getResult(body, vars, res, cityname, db, countryname, countries)
         sendFullResult(res, result, data, cityname, countryname);
     });
 }
-
 
 /*
 ** Returns latitude(lat) and longitude (lon) from the requester's ip adress

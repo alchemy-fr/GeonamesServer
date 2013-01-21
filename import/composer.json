@@ -1,5 +1,0 @@
-{
-    "require" : {
-        "nervetattoo/elasticsearch" : ">=2.0"
-    }
-}

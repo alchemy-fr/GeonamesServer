@@ -35,26 +35,16 @@ database with geonames data, and then index this data with ElasticSearch.
 You can do all of it in just a few steps with the import script located in the 
 **import** folder.
 
-If your ElasticSearch instance isn't installed on *localhost:9200*, 
-you migh want to change this value in **import/scripts/vars.php.** 
+To ensure the proper functioning of these operations, `curl <http://fr2.php.net/manual/en/book.curl.php>`_ and `mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are required.
 
-Make sure that mongodb is running, then, if you installed ElasticSearch on *localhost:9200* (default value), run the 
-following commands within the **import** folder:
+Make sure that mongodb is running, then run the following command within the **import** folder:
 
 .. code-block:: bash
-   
-   make install
-   make import
 
-Otherwise, you can use the following commands:
-
-.. code-block:: bash
-   
-   make install
-   sh import.sh [-h hostname] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]
+   sh import.sh [-h mongohost] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]
 
 The default values are:
-   - hostname: http://127.0.0.1/
+   - mongohost: http://127.0.0.1:27017/
    - user: none
    - password: none
    - database: **geonames**
@@ -64,7 +54,7 @@ The default values are:
 
 It will download the necessary files from the geonames servers, format them
 to make them work with MongoDB, import them to MongoDB, and index the new 
-entries in ElasticSearch. The script uses `Composer <http://getcomposer.org/>`_.
+entries in ElasticSearch.
 
 From now on, you should be able to access to your ElasticSearch index through 
 your web browser or through any request-forming tool (such as **curl**), 
