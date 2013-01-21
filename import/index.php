@@ -95,7 +95,7 @@ try {
   $db = $m->$varMongoDbName;
     
 } catch (MongoConnectionException $e) {
-    echo "Couldn't connect to mongodb, is the 'mongo' process running?";
+    echo "Couldn't connect to mongodb, is the 'mongo' process running?\n";
     exit();
 }
 
@@ -105,9 +105,18 @@ $collection = $db->$varMongoCollectionName;
 $cursor = getCursor($collection);
 $i = 0;
 
-$URL = getElasticSearchUrl($varElasticSearchUrl, $varElasticSearchDB, $varElasticSearchCollection, $varMongoDbName, $varMongoCollectionName);
+$URL = getElasticSearchUrl($varElasticSearchUrl,
+			   $varElasticSearchDB,
+			   $varElasticSearchCollection,
+			   $varMongoDbName,
+			   $varMongoCollectionName);
 
-$rootUrl = getUrl($varElasticSearchUrl, $varElasticSearchDB, $varMongoDbName);
+
+$rootUrl = getUrl($varElasticSearchUrl,
+		  $varElasticSearchDB,
+		  $varMongoDbName);
+
+
 
 echo "Dropping current ElasticSearch index.\n";
 exec("sh ./scripts/deleteIndex.sh $rootUrl");
