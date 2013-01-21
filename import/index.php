@@ -33,21 +33,30 @@ if (isset($argv[3]) && !empty($argv[3])) {
 
 function getElasticSearchUrl($url, $db, $collection, $mongoDb, $mongoCollection)
 {
-    if (substr($url, -1) != "/") {
-        $url .= "/";
-    }
-    if (isset($db) && !empty($db)) {
-        $url .= $db . "/";
-    } else {
-        $url .= $mongoDb . "/";
-    }
-    if (isset($collection) && !empty($collection)) {
-        $url .= $collection . "/";
-    } else {
-        $url .= $mongoCollection . "/";
-    }
+  if (substr($url, -1) != "/") {
+    $url .= "/";
+  }
+  if (isset($db) && !empty($db)) {
+    $url .= $db . "/";
+  } else {
+    $url .= $mongoDb . "/";
+  }
+  if (isset($collection) && !empty($collection)) {
+    $url .= $collection . "/";
+  } else {
+    $url .= $mongoCollection . "/";
+  }
+  return ($url);
+}
 
-    return ($url);
+function getUrl($url, $db, $mongoDb) {
+  if (substr($url, -1) != "/")
+    $url .= "/";
+  if (isset($db) && !empty($db))
+    $url .= $db . "/";
+  else
+    $url .= $mongoDb . "/";
+  return ($url);
 }
 
 function getUrl($url, $db, $mongoDb)
