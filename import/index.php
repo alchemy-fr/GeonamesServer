@@ -103,8 +103,17 @@ function getCursor($collection)
 }
 
 try {
-    $m = new Mongo();
-    $db = $m->$varMongoDbName;
+  if (!empty($varMongoUsername) && !empty($varMongoPassword))
+    $m = new MongoClient("mongodb://$varMongoHost",
+                         array("username" => $varMongoUsername,
+                               "password" => $varMongoPassword));
+  else if (!empty($varMongoUsername))
+    $m = new MongoClient("mongodb://$varMongoHost",
+                         array("username" => $varMongoUsername));
+  else
+    $m = new MongoClient("mongodb://$varMongoHost");
+  $db = $m->$varMongoDbName;
+    
 } catch (MongoConnectionException $e) {
     echo 'Couldn\'t connect to mongodb, is the "mongo" process running?';
     exit();
