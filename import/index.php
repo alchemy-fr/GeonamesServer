@@ -25,6 +25,24 @@ if (isset($argv[6]) && !empty($argv[6])) {
     $varMongoPassword = $argv[6];
 }
 
+function getElasticSearchUrl($url, $db, $collection, $mongoDb, $mongoCollection)
+{
+  if (substr($url, -1) != "/") {
+    $url .= "/";
+  }
+  if (isset($db) && !empty($db)) {
+    $url .= $db . "/";
+  } else {
+    $url .= $mongoDb . "/";
+  }
+  if (isset($collection) && !empty($collection)) {
+    $url .= $collection . "/";
+  } else {
+    $url .= $mongoCollection . "/";
+  }
+  return ($url);
+}
+
 function getUrl($url, $db, $mongoDb) {
   if (substr($url, -1) != "/")
     $url .= "/";
@@ -59,12 +77,6 @@ function getCursor($collection)
 				  ));
   $cursor->immortal(true);
   return ($cursor);
-}
-
-try
-{
-  $m = new Mongo();
-  $db = $m->$varMongoDbName;
 }
 
 try {
