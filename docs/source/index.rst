@@ -35,28 +35,26 @@ database with geonames data, and then index this data with ElasticSearch.
 You can do all of it in just a few steps with the import script located in the 
 **import** folder.
 
-If your ElasticSearch instance isn't installed on *localhost:9200*, 
-you migh want to change this value in **import/scripts/vars.php.** 
+To ensure the proper functioning of these operations, `curl <http://fr2.php.net/manual/en/book.curl.php>`_ and `mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are required.
 
-Make sure that mongodb is running, then just run the following commands within
-the **import** folder:
+Make sure that mongodb is running, then run the following command within the **import** folder:
 
 .. code-block:: bash
-   
-   make install
-   sh import.sh $ELASTICSEARCH_URL
 
-If you installed ElasticSearch on *localhost:9200* (default value), you can 
-use these commands instead:
+   sh import.sh [-h mongohost] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]
 
-.. code-block:: bash
-   
-   make install
-   make import
+The default values are:
+   - mongohost: http://127.0.0.1:27017/
+   - user: none
+   - password: none
+   - database: **geonames**
+   - collection: **countries**
+   - elasticsearchhost: http://127.0.0.1:9200/
+
 
 It will download the necessary files from the geonames servers, format them
 to make them work with MongoDB, import them to MongoDB, and index the new 
-entries in ElasticSearch. The script uses `Composer <http://getcomposer.org/>`_.
+entries in ElasticSearch.
 
 From now on, you should be able to access to your ElasticSearch index through 
 your web browser or through any request-forming tool (such as **curl**), 
@@ -76,7 +74,7 @@ Once again, for **homebrew** users, a simple **brew install node** is enough.
 Otherwise, you can download it from the `Node.js official website <http://nodejs.org/>`_.
 
 Finally, if you want the geolocation to work, you will need the **libgeoip C
-library**, version **1.4.8** or superior. You can either install it through a
+library**, version **1.4.8** or higher. You can either install it through a
 package manager (such as **homebrew** or **aptitude**), or build it using 
 the following commands (`source <http://github.com/kuno/GeoIP>`_): 
 
@@ -335,8 +333,8 @@ In order to upgrade this server, you should run the following command within
 the **import** folder:
 
 .. code-block:: bash
-   
-   sh import.sh $ELASTICSEARCH_URL
+
+   sh import.sh [-h hostname] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]   
 
 If you installed ElasticSearch on *localhost:9200* (default value), you can 
 use this command instead:

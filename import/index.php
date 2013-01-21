@@ -80,9 +80,6 @@ function getCursor($collection)
 }
 
 try {
-  var_dump($varMongoHost);
-  var_dump($varMongoUsername);
-  var_dump($varMongoPassword);
   if (!empty($varMongoUsername) && !empty($varMongoPassword))
     $m = new MongoClient("mongodb://$varMongoHost",
                          array("username" => $varMongoUsername,
