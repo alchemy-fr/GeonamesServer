@@ -10,7 +10,7 @@ if (isset($argv[1]) && !empty($argv[1])) {
     $varElasticSearchUrl = $argv[1];
 }
 if (isset($argv[2]) && !empty($argv[2])) {
-    $varMongoDBName = $argv[2];
+    $varMongoDbName = $argv[2];
 }
 if (isset($argv[3]) && !empty($argv[3])) {
     $varMongoCollectionName = $argv[3];
@@ -23,12 +23,6 @@ if (isset($argv[5]) && !empty($argv[5])) {
 }
 if (isset($argv[6]) && !empty($argv[6])) {
     $varMongoPassword = $argv[6];
-}
-if (isset($argv[2]) && !empty($argv[2])) {
-    $varMongoDBName = $argv[2];
-}
-if (isset($argv[3]) && !empty($argv[3])) {
-    $varMongoCollectionName = $argv[3];
 }
 
 function getElasticSearchUrl($url, $db, $collection, $mongoDb, $mongoCollection)
@@ -57,20 +51,6 @@ function getUrl($url, $db, $mongoDb) {
   else
     $url .= $mongoDb . "/";
   return ($url);
-}
-
-function getUrl($url, $db, $mongoDb)
-{
-    if (substr($url, -1) != "/") {
-        $url .= "/";
-    }
-    if (isset($db) && !empty($db)) {
-        $url .= $db . "/";
-    } else {
-        $url .= $mongoDb . "/";
-    }
-
-    return ($url);
 }
 
 function getCursor($collection)
@@ -115,7 +95,7 @@ try {
   $db = $m->$varMongoDbName;
     
 } catch (MongoConnectionException $e) {
-    echo 'Couldn\'t connect to mongodb, is the "mongo" process running?';
+    echo "Couldn't connect to mongodb, is the 'mongo' process running?";
     exit();
 }
 
