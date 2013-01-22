@@ -112,11 +112,10 @@ $URL = getElasticSearchUrl($varElasticSearchUrl,
 			   $varMongoCollectionName);
 
 
+
 $rootUrl = getUrl($varElasticSearchUrl,
 		  $varElasticSearchDB,
 		  $varMongoDbName);
-
-
 
 echo "Dropping current ElasticSearch index.\n";
 exec("sh ./scripts/deleteIndex.sh $rootUrl");
@@ -145,16 +144,10 @@ while ($flag == 0) {
       curl_setopt($conn, CURLOPT_TIMEOUT, 60);
       try {
         $res = curl_exec($conn);
-        if (!$res || !$res['ok'] || $res['ok'] == false) {
-          echo "Error at entry $i:\n $res \n";
-        }
       } catch (Exception $e) {
         echo "An error ocurred: $e\nRetrying...\n";
         sleep(5);
         $res = curl_exec($conn);
-        if (!$res || !$res['ok'] || $res['ok'] == false) {
-          echo "Error at entry $i:\n $res \n";
-        }
       }
       if ($i % 100000 === 0) {
         echo "Processed $i entries\n";
@@ -167,5 +160,6 @@ while ($flag == 0) {
     $cursor = getCursor($collection);
   }
 }
+
 echo "$i entries proccessed.\n";
 exit();
