@@ -42,22 +42,22 @@ j = 0;
 		place.pin.location['lat'] = place.latitude;
 		place.pin.location['lon'] = place.longitude;
             }
-
             db.countries.save(place);
     }
-
 
     var cur = db.countries.find();
     cur.immortal = true;
 
     cur.forEach(function(obj) {
 	    addNamesIndex(obj);
+            if (j % 100000 == 0)
+                print(j + " entries processed");
+            j++;
 	});
 	    
 
     db.countries.ensureIndex({ names : 1 });
     db.countries.ensureIndex({ loc : "2d" });
     db.countries.ensureIndex({ countryCode : 1 });
-    print(j);
-    
+    print(j + " entries processed");
 })();
