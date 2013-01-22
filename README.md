@@ -70,6 +70,86 @@ such as *sort* is used with a value not included in the list of available values
 in a *400 Bad request* error.
 
 
+## Accepted content types
+
+GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
+within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
+qvalue ratings, choosing the return type by its rating. If ***** is specified, data will be returned as a 
+**json** document. If neither **xml**, **json** nor ***** are specified, the server will answer with a 
+*406 Not acceptable* error.
+
+### Examples of response
+
+Following are the results returned for the request "/search/query=york&country=aus
+
+##### xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+        <geonames>
+            <totalResultsCount>2</totalResultsCount>
+            <geoname>
+                <geonameid>2206601</geonameid>
+                <title>Yorkeys Knob</title>
+                <title_match>York</title_match>
+                <country>Australia</country>
+                <country_match>Aus</country_match>
+                <region>Queensland</region>
+            </geoname>
+            <geoname>
+                <geonameid>2057277</geonameid>
+                <title>York</title>
+                <title_match>York</title_match>
+                <country>Australia</country>
+                <country_match>Aus</country_match>
+                <region>Western Australia</region>
+            </geoname> 
+        </geonames>
+
+#### json
+
+    {
+     "geonames": {
+        "totalResultsCount":2,
+        "geoname":[
+            {
+                "geonameid": "2206601",
+                "title": "Yorkeys Knob",
+                "title_match": "York",
+                "title_alt": "yorkeys knob",
+                "country": "Australia",
+                "country_match": "Aus"
+                "region": "Queensland",
+                "population": 2645,
+                "latitude": -16.81667,
+                "longitude": 145.71667,
+                "names": [
+                    "yorkeys knob",
+                    "yorkeys knob",
+                    "yorkeys knob beach"
+                ]
+            },
+            {
+                "geonameid": "2057277",
+                "title": "York",
+                "title_match": "York",
+                "title_alt": "york",
+                "country": "Australia",
+                "region": "Western Australia",
+                "population": 2090,
+                "latitude": -31.88467,
+                "longitude": 116.76874,
+                "names": [
+                    "york",
+                    "jork",
+                    "york",
+                    "йорк"
+                ]
+            }
+        ]
+     }
+    }
+
+
 ## License
 
 This project is licensed under the [MIT license](http://opensource.org/licenses/MIT).
