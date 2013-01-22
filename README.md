@@ -69,7 +69,6 @@ or geoip module not being installed), default values of 0,0 will be used instead
 such as *sort* is used with a value not included in the list of available values, the request will result
 in a *400 Bad request* error.
 
-
 ## Accepted content types
 
 GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
