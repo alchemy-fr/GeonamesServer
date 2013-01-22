@@ -113,10 +113,12 @@ Following are the results returned for the request */search/query=york&country=a
             {
                 "geonameid": "2206601",
                 "title": "Yorkeys Knob",
-                "title_match": "York",
-                "title_alt": "yorkeys knob",
                 "country": "Australia",
-                "country_match": "Aus"
+                "match": {
+                  "title": "York",
+                  "country": "Aus"
+                },
+                "title_alt": "yorkeys knob",
                 "region": "Queensland",
                 "population": 2645,
                 "latitude": -16.81667,
@@ -130,9 +132,12 @@ Following are the results returned for the request */search/query=york&country=a
             {
                 "geonameid": "2057277",
                 "title": "York",
-                "title_match": "York",
-                "title_alt": "york",
                 "country": "Australia",
+                "match": {
+                  "title": "York",
+                  "country": "Aus"
+                },
+                "title_alt": "york",
                 "region": "Western Australia",
                 "population": 2090,
                 "latitude": -31.88467,
