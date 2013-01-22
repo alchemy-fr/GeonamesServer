@@ -73,13 +73,13 @@ in a *400 Bad request* error.
 
 GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
 within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
-qvalue ratings, choosing the return type by its rating. If ***** is specified, data will be returned as a 
-**json** document. If neither **xml**, **json** nor ***** are specified, the server will answer with a 
+qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a 
+**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a 
 *406 Not acceptable* error.
 
 ### Examples of response
 
-Following are the results returned for the request "/search/query=york&country=aus
+Following are the results returned for the request */search/query=york&country=aus*
 
 ##### xml
 
