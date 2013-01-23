@@ -33,7 +33,13 @@ The limit can be changed within the **vars.js** file.
     - desc : The results will be displayed in descending order.
     - asc : The results will be displayed in ascending order.
 
-### /city/search
+
+### /city/{id}
+
+Returns the city which *geonameid* value is equal to the given id.
+
+
+### /search
 
 Returns all the cities whose name begins with a given *query*, limited to 30 results by default.
 The limit can be changed within the **vars.js** file.
@@ -52,10 +58,6 @@ The limit can be changed within the **vars.js** file.
     available values :
     - desc : The results will be displayed in descending order.
     - asc : The results will be displayed in ascending order.
-
-### /city/{id}
-
-Returns the city which *geonameid* value is equal to the given id.
 
 ### /ip/{address}
 Returns the city in which the given ip address is located.

@@ -44,27 +44,6 @@ describe('App', function() {
                     })
                     });
 
-
-        describe('GET /ip/0.0.0.0', function() {
-                it('responds with an non-XML file', function(done) {
-                        request(app)
-                            .get('/ip/0.0.0.0')
-                            .set('Accept', 'text/xml')
-                            .expect('Content-Type', "text/xml")
-                            .expect(200, done);
-                    })
-                    });
-
-        describe('GET /ip/0.0.0.0', function() {
-                it('responds with an non-JSON file', function(done) {
-                        request(app)
-                            .get('/ip/0.0.0.0')
-                            .set('Accept', 'application/json')
-                            .expect('Content-Type', "application/json")
-                            .expect(200, done);
-                    })
-                    });
-
         describe('GET /search?query=paris', function() {
                 it('responds with a non-XML file', function(done) {
                         request(app)
