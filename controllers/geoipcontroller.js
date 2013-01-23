@@ -82,8 +82,9 @@ function sendFullResult(res, result, geoloc, ip, type)
 function        getType(tab)
 {
     for (var i in tab) {
-        if (tab[i].subtype.toLowerCase() == 'xml'
-            || tab[i].subtype.toLowerCase() == "json")
+        if (tab[i].subtype
+            && (tab[i].subtype.toLowerCase() == 'xml'
+                || tab[i].subtype.toLowerCase() == "json"))
             return (tab[i].subtype.toLowerCase());
         else if (tab[i].subtype == "*")
             return ("json");

@@ -28,7 +28,7 @@ function getCityQuery(name, lon, lat, sort, ord, size)
         + '", "unit" : "km" } } ]';
     }
     my_query += ',"fields": ["geonameid", "name", "countryCode", '
-    + '"longitude", "latitude", "admin1Code", "names"], "query":'
+    + '"longitude", "latitude", "admin1Code", "names", "population"], "query":'
     + ' {"bool": { "must" : { "terms" : { "featureCode" : '
     + '["ppl", "ppla", "ppla2", "ppla3", "ppla4", "pplc", '
     + '"pplf", "pplg", "ppll", "pplq", "pplr", "ppls", '
@@ -41,7 +41,7 @@ function getCityQuery(name, lon, lat, sort, ord, size)
 
 function getSingleCityQuery(id){
     var my_query = '{"fields": ["geonameid", "name", "countryCode",'
-    + '"longitude", "latitude", "admin1Code", "names"], "query":'
+    + '"longitude", "latitude", "admin1Code", "names", "population"], "query":'
     + '{"bool": { "must" : { "terms" : { "featureCode" : ["'
     + 'ppl", "ppla", "ppla2", "ppla3", "ppla4", "pplc", "pplf", "pplg",'
     + '"ppll", "pplq", "pplr", "ppls", "pplw", "pplx"'
@@ -127,8 +127,9 @@ function getAltTitle(names, match)
 function        getType(tab)
 {
     for (var i in tab) {
-        if (tab[i].subtype.toLowerCase() == 'xml'
-            || tab[i].subtype.toLowerCase() == "json")
+        if (tab[i].subtype
+            && (tab[i].subtype.toLowerCase() == 'xml'
+                || tab[i].subtype.toLowerCase() == "json"))
             return (tab[i].subtype.toLowerCase());
         else if (tab[i].subtype == "*")
             return ("json");
