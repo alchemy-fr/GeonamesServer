@@ -125,6 +125,7 @@ function sendEmptyResult(res, type)
         res.send(xmlS);
     }
     else {
+        res.set('Content-Type', 'application/json');
         res.json({
             geonames: {
                 "totalResultsCount": 0
@@ -276,9 +277,9 @@ function getGeoLoc(req, path, vars)
 function        getType(tab)
 {
     for (var i in tab) {
-        if (tab[i].subtype == 'xml'
-            || tab[i].subtype == "json")
-            return (tab[i].subtype);
+        if (tab[i].subtype.toLowerCase() == 'xml'
+            || tab[i].subtype.toLowerCase() == "json")
+            return (tab[i].subtype.toLowerCase());
         else if (tab[i].subtype == "*")
             return ("json");
     }
