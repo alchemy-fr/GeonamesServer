@@ -61,7 +61,7 @@ j = 0;
         names : 1
     });
     db.countries.ensureIndex({
-        loc : "2d"
+        pin.location : "2d"
     });
     db.countries.ensureIndex({
         countryCode : 1
