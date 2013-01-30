@@ -3,6 +3,7 @@ services:
   - mongodb
 
 before_install:
+  - sudo apt-get update
   - sudo apt-get install php5 libgeoip-dev
  
 before_script:
