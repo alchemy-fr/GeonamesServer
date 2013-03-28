@@ -1,5 +1,5 @@
 test:
-	./node_modules/.bin/mocha --reporter nyan
+	./node_modules/.bin/mocha --reporter nyan --timeout 5000
 
 install:
 	sh install.sh

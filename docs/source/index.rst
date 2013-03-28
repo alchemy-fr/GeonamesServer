@@ -10,7 +10,7 @@ http://www.geonames.org/. You can use this server to retrieve the approximative
 location of an IP address, to get more details about a city identified by its
 geonameid, or to find the closest (or biggest) cities matching a given criteria.
 
-The server accepts HTTP GET requests, and returns appropriatly filled XML
+The server accepts HTTP GET requests, and returns appropriatly filled XML or JSON
 trees.
 
 This server was created using `Express <http://expressjs.com/>`_.
@@ -37,7 +37,8 @@ You can do all of it in just a few steps with the import script located in the
 
 To ensure the proper functioning of these operations, `curl <http://fr2.php.net/manual/en/book.curl.php>`_ and `mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are required.
 
-Make sure that mongodb is running, then run the following command within the **import** folder:
+Make sure that your mongo php extension is up-to-date and that 
+mongodb is running, then run the following command within the **import** folder:
 
 .. code-block:: bash
 
@@ -107,7 +108,8 @@ Configuration
 The file **vars.js** contains some useful configuration variables. First, if 
 your instance of ElasticSearch is different from default, you should change 
 **vars.es.host** to your hostname. You can also change the port used by
-GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables. The **vars.js** file also contains a verbose option, which, when activated, displays the requests processed by the server.
+GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables.
+The **vars.js** file also contains a verbose option, which, when activated, displays the requests processed by the server.
 
 Usage
 -----
@@ -121,23 +123,323 @@ To start the server, make sure you have **node** installed, and run:
 Then, you can send GET requests to it (through a web broser or any request
 tool such as **curl**).
 
-Available commands
+Accepted content types
+++++++++++++++++++++++
+
+GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
+within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
+qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a 
+**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a 
+*406 Not acceptable* error. It's important to notice that json-formated responses usually include more fields
+than xml-formated ones. 
+
+Available routes
 ++++++++++++++++++
 
-The following is a list of available commands (defined by controllers in 
-the **controllers** folder). Others commands, or commands used with wrong
-or empty parameters will return empty XML trees.
+The following is a list of available routes (defined by controllers in 
+the **controllers** folder). All these routes can only be accessed through GET requests. Any other methods will result in a 
+*405 Method not allowed* error. The results will be sent as text/xml or application/json files, according 
+to the accept field within the request header. If the *sort* parameter is specified and set to *closeness* 
+but the location of the request could not be detetermined (due to a lack of data within the geoip database 
+or geoip module not being installed), default values of 0,0 will be used instead. If a mandatory parameter,
+such as *sort* is used with a value not included in the list of available values, the request will result
+in a *400 Bad request* error. 
 
-geoip
+/
+^
+
+Returns a quick documentation listing available routes.
+
+/city
 ^^^^^
 
-Useful to get the city where is located the given IP adress. For example,
+Returns the list of all the cities in the database, limited to 30 results by default. 
+The limit can be changed within the **vars.js** file.
+
+Parameters
+##########
+
+- sort (mandatory, default value : population) available values :
+    
+  - population : The results will be sorted by population.
+  - closeness : The results will be sorted by closeness to the place the request was sent from.
+
+- ord (mandatory, default value : desc) available values :
+
+  - desc : The results will be displayed in descending order.
+  - asc : The results will be displayed in ascending order.
+
+Examples
+########
 
 .. code-block:: bash
 
-   curl -XGET "$SERVER_URL/geoip?ip=4.23.171.0"
+   curl -XGET "$SERVER_URL/city"
 
-Returns this:
+will return one of these results, according to the expected content-type:
+
+.. code-block:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <geonames>
+        <totalResultsCount>2</totalResultsCount>
+        <geoname>
+            <geonameid>3435910</geonameid>
+            <title>Buenos Aires</title>
+            <country>Argentina</country>
+            <region>Buenos Aires F.D.</region>
+        </geoname>
+        <geoname>
+            <geonameid>1185241</geonameid>
+            <title>Dhaka</title>
+            <country>Bangladesh</country>
+            <region>Dhaka</region>
+        </geoname>
+    </geonames>
+
+.. code-block:: javascript
+
+    {
+        "geonames": {
+            "totalResultsCount": "2",
+            "geoname": [
+            {
+               "geonameid": "3435910",
+               "title": "Buenos Aires",
+               "country": "Argentina",
+               "region": "Buenos Aires F.D.",
+                "population": 13076300,
+               "latitude": -34.61315,
+               "longitude": -58.37723,
+               "names": [
+                 "buenos aires",
+                 "buenos ayres",
+                 "buenos-aires",
+                 "buenos-ajres",
+                 "ciudad de la santisima trinidad y puerto de santa maria del buen ayre"
+               ]
+             },
+             {
+               "geonameid": "1185241",
+               "title": "Dhaka",
+               "country": "Bangladesh",
+               "region": "Dhaka",
+               "population": 10356500,
+               "latitude": 23.7104,
+               "longitude": 90.40744,
+               "names": [
+                 "dhaka",
+                 "dac",
+                 "daca",
+                 "dacca",
+               ]
+             }
+           ]
+        }
+    }
+
+
+/city/{id}
+^^^^^^^^^^
+
+Returns the city which *geonameid* value is equal to the given id.
+
+Examples
+########
+
+.. code-block:: bash
+
+   curl -XGET "$SERVER_URL/city/3435910"
+
+will return one of these results, according to the expected content-type:
+
+.. code-block:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <geonames>
+        <totalResultsCount>1</totalResultsCount>
+        <geoname>
+            <geonameid>3435910</geonameid>
+            <title>Buenos Aires</title>
+            <country>Argentina</country>
+            <region>Buenos Aires F.D.</region>
+        </geoname>
+    </geonames>
+
+.. code-block:: javascript
+
+    {
+        "geonames": {
+            "totalResultsCount": "1",
+            "geoname": [
+            {
+               "geonameid": "3435910",
+               "title": "Buenos Aires",
+               "country": "Argentina",
+               "region": "Buenos Aires F.D.",
+                "population": 13076300,
+               "latitude": -34.61315,
+               "longitude": -58.37723,
+               "names": [
+                 "buenos aires",
+                 "buenos ayres",
+                 "buenos-aires",
+                 "buenos-ajres",
+                 "ciudad de la santisima trinidad y puerto de santa maria del buen ayre"
+               ]
+             }
+           ]
+        }
+    }
+
+/search
+^^^^^^^
+
+Returns all the cities whose name begins with a given *query*, limited to 30 results by default.
+The limit can be changed within the **vars.js** file. This command works with non-latin characters,
+is case-insensitive, and matches to every word if the city name contains whitespaces.
+For instance, searching for *aires* will return *Buenos Aires*.
+
+Parameters
+##########
+
+- query (mandatory) : Only cities whose name begins with this parameter will be returned.
+- country (optional) : Only cities located in countries whose name begins with this parameter will be returned.
+- sort (mandatory, default value : population) available values :
+  
+  - population : The results will be sorted by population.
+  - closeness : The results will be sorted by closeness to the place the request was sent from.
+
+- ord (mandatory, default value : desc) available values :
+    
+  - desc : The results will be displayed in descending order.
+  - asc : The results will be displayed in ascending order.
+
+Examples
+########
+
+.. code-block:: bash
+
+   curl -XGET "$SERVER_URL/search?query=buenos&country=ar&ord=asc"
+
+will return one of these results, according to the expected content-type:
+
+.. code-block:: xml
+    
+    <?xml version="1.0" encoding="UTF-8"?>
+    <geonames>
+        <totalResultsCount>3</totalResultsCount>
+        <geoname>
+            <geonameid>3863774</geonameid>
+            <title>Buenos Aires Chico</title>
+            <title_match>Buenos</title_match>
+            <country>Argentina</country>
+            <country_match>Ar</country_match>
+            <region>Chubut</region>
+        </geoname>
+        <geoname>
+            <geonameid>3841475</geonameid>
+            <title>Perito Moreno</title>
+            <title_alt>lago buenos aires</title_alt>
+            <title_match>buenos</title_match>
+            <country>Argentina</country>
+            <country_match>Ar</country_match>
+            <region>Santa Cruz</region>
+        </geoname>
+        <geoname>
+            <geonameid>3435910</geonameid>
+            <title>Buenos Aires</title>
+            <title_match>Buenos</title_match>
+            <country>Argentina</country>
+            <country_match>Ar</country_match>
+            <region>Buenos Aires F.D.</region>
+        </geoname>
+    </geonames>
+
+.. code-block:: javascript
+
+    {
+        "geonames": {
+            "totalResultsCount": "15",
+            "geoname": [
+            {
+                "geonameid": "3863774",
+                "title": "Buenos Aires Chico",
+                "country": "Argentina",
+                "region": "Chubut",
+                "population": 0,
+                "latitude": -42.06802,
+                "longitude": -71.21729,
+                "names": [
+                  "buenos aires chico",
+                  "buenas aires chico",
+                  "buenos aires chico"
+                ]
+            },
+            {
+              "geonameid": "3841475",
+              "title": "Perito Moreno",
+              "country": "Argentina",
+              "region": "Santa Cruz",
+              "population": 0,
+              "latitude": -46.58994,
+              "longitude": -70.92975,
+              "names": [
+                "perito moreno",
+                "lago buenos aires",
+                "pmq",
+                "perito moreno",
+                "rio fenix",
+                "río fénix"
+              ]
+            },  
+            {
+                "geonameid": "3435910",
+                "title": "Buenos Aires",
+                "country": "Argentina",
+                "match": {
+                  "title": "Buenos"
+                },
+                "title_alt": "buenos aires",
+                "region": "Buenos Aires F.D.",
+                "population": 13076300,
+                "latitude": -34.61315,
+                "longitude": -58.37723,
+                "names": [
+                  "buenos aires",
+                  "buenos ayres",
+                  "buenos-aires",
+                  "buenos-ajres",
+                  "ciudad de la santisima trinidad y puerto de santa maria del buen ayre"
+                ]
+              }
+            ]
+        }
+    }
+
+The *title_match* and *country_match* fields show the parts of the initial
+request that match with the results. This might be used for highlighting the
+beginning of the world as the user types it in.
+
+In cases where the request doesn't match with the default name of the city
+but does match with an alternate name (different language or different
+spelling), a *title_alt* field is displayed, so the *title_match* can still
+be relevant.
+
+
+/ip/{address}
+^^^^^^^^^^^^^
+
+Returns the city in which the given ip address is located.
+
+Examples
+########
+
+.. code-block:: bash
+
+   curl -XGET "$SERVER_URL/ip/4.23.171.0"
+
+will return one of these results, according to the expected content-type:
 
 .. code-block:: xml
 
@@ -153,168 +455,23 @@ Returns this:
       </geoname>
    </result>
 
-get_name
-^^^^^^^^
+.. code-block:: javascript
 
-Useful to get the name of the city with a given geonameid, along with some
-data related to this city. For example,
+    {
+        "ip": "4.23.171.0",
+        "result": {
+            "geoname": {
+                "city": "New York",
+                "country_code": "US",
+                "country": "United States",
+                "fips": "New York",
+                "longitude": "-73.97650146484375",
+                "latitude": "40.754600524902344"
+            }
+        }
+    }
 
-.. code-block:: bash
 
-   curl -XGET "$SERVER_URL/get_name?geonameid=3435910"
-
-Returns this:
-
-.. code-block:: xml
-
-   <?xml version="1.0" encoding="UTF-8"?>
-   <result>
-      <geoname>
-       <city>Buenos Aires</city>
-       <country_code>AR</country_code>
-       <country>Argentina</country>
-       <fips>Buenos Aires F.D.</fips>
-       <latitude>-34.61315</latitude>
-       <longitude>-58.37723</longitude>
-      </geoname>
-   </result>
-
-find_city
-^^^^^^^^^
-
-Useful to find the nearest or the biggest cities matching the given request.
-Will parse city names to return everything that starts with the *city*
-parameter. You can also add a comma to this parameter, everything after which
-will be considered as a *country* parameter. This adds an extra filtering to
-the request, only searching through the cities located in countries starting 
-with the *country* parameter. Finally, you can add a *sort* parameter, 
-with its only possible value being *population*. If this parameter is
-specified, the search will be sorted by population, instead of proximity.
-
-The results are limited to 30 entries by default. This value can be changed
-in **vars.js**.
-
-In case the sender's IP adress cannot be localized, the values
-**vars.geo.default_lat** and **vars.geo.default_lon** from **vars.js**
-will be used.
-
-This command works with non-latin characters, is case-insensitive, and matches
-to every word if the city name contains whitespaces. For instance, searching
-for *aires* will return *Buenos Aires*.
-
-Examples:
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=p"
-
-Will search for all the cities starting with *p*, ordered by proximity.
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=pa,f"
-
-Will search for all the cities starting with *pa* in countries starting with 
-*f*, ordered by proximity.
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=pa,fr&sort=population"
-
-Will search for all the cities starting with *pa* in countries starting with
-*fr*, orderd by population.
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city="
-
-Will return an empty result.
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?randomword=pa"
-
-Same as above.
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=p,"
-
-Will ignore the comma and search for all the cities starting with *p*, 
-ordered by proximity.
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=p&sort=randomword"
-
-Will ignore the *sort* parameter and search for all the cities starting 
-with *p*, ordered by proximity.
-
-The results are returned as an XML tree containing the result count and the
-results. For instance:
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=york,aus"
-
-Will return:
-
-.. code-block:: xml
-   
-   <?xml version="1.0" encoding="UTF-8"?>
-   <geonames>
-      <totalResultsCount>2</totalResultsCount>
-      <geoname>
-	<geonameid>2057277</geonameid>
-       	<title>York</title>
-      	<title_match>York</title_match>
-      	<country>Australia</country>
-      	<country_match>Aus</country_match>
-      	<region>Western Australia</region>
-      </geoname>
-      <geoname>
-        <geonameid>2206601</geonameid>
-	<title>Yorkeys Knob</title>
-   	<title_match>York</title_match>
-   	<country>Australia</country>
-   	<country_match>Aus</country_match>
-   	<region>Queensland</region>
-      </geoname>
-   </geonames>
-
-The *title_match* and *country_match* fields show the parts of the initial
-request that match with the results. This might be used for highlighting the
-beginning of the world as the user types it in.
-
-In cases where the request doesn't match with the default name of the city
-but does match with an alternate name (different language or different
-spelling), a *title_alt* field is displayed, so the *title_match* can still
-be relevant.
-
-Example:
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/find_city?city=qahir"
-
-No cities matching *qahir* were found, but *al qahirah* being an alternate
-name to *Cairo*, this city could therefore be returned, with a *title_alt* field:
-
-.. code-block:: xml
-
-   <?xml version="1.0" encoding="UTF-8"?>
-   <geonames>
-      <totalResultsCount>1</totalResultsCount>
-      <geoname>
-       <geonameid>360630</geonameid>
-       <title>Cairo</title>
-       <title_alt>al qahirah</title_alt>
-       <title_match>qahir</title_match>
-       <country>Egypt</country>
-       <country_match/>
-       <region>Al Qāhirah</region>
-      </geoname>
-   </geonames>
 
 Testing
 -------
