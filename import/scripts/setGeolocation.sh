@@ -18,6 +18,10 @@ curl -s -X POST $1 -d '
           },
       "admin4Code" : {
               "type" : "string"
+          },
+      "population" : {
+              "type" : "long",
+              "null_value" : 0
           }
     }
   }
