@@ -1,3 +1,7 @@
+/**
+ * Sets application global configuration variables
+ */
+
 var vars = {};
 
 vars.app = {};
@@ -26,5 +30,4 @@ vars.geo.default_lat = 0;
 vars.allowedDomains = ['*'];
 
 // do not touch
-
 module.exports = vars;

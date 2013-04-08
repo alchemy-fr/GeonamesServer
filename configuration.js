@@ -1,5 +1,4 @@
 var path = require('path');
-var _ = require('underscore');
 
 module.exports = function(app, express, vars){
     app.configure(function(){
@@ -21,17 +20,6 @@ module.exports = function(app, express, vars){
             app.use(function(req, res, next){
                 res.status(404);
                 res.render('404', { error: 'Page not found' });
-                next();
-            });
-            //CORS middleware
-            app.use(function(req, res, next) {
-                _.each(vars.allowedDomains, function(domain) {
-                    res.header('Access-Control-Allow-Origin', domain);
-                });
-
-                res.header('Access-Control-Allow-Headers', 'X-Requested-With');
-
-                next();
             });
         });
 
@@ -57,7 +45,7 @@ module.exports = function(app, express, vars){
     app.configure('development', function(){
         app.use(express.errorHandler());
     });
-}
+};
 
 
 

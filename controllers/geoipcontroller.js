@@ -1,125 +1,96 @@
-function sendEmptyResult(res, type)
-{
-    if (type == "xml") {
-        var builder = require('xmlbuilder');
-        res.set('Content-Type', 'text/xml');
-        var xml = builder.create('result',
-        {
-            'version':'1.0', 
-            'encoding':'UTF-8'
-        });
-        var xmlS = xml.end({
-            pretty:true
-        });
-        res.send(xmlS);
-    }
-    else {
-        res.set('Content-Type', 'application/json');
-        res.json({
-            "result": {
-        }
-        });
-    }
-}
+var _ = require('underscore');
+var common = require( './../common' );
 
+/**
+ * Find a city according to an ip address
+ *
+ * @param {string} ip An ip
+ * @param {string} path The GeoLiteCity.dat filepath
+ * @returns {@exp;city@call;lookupSync}
+ */
 function getGeoLoc(ip, path)
 {
     var geoip = require('geoip');
     var city = new geoip.City(path);
-    
-    var geo = city.lookupSync(ip);
-    return (geo);
+
+    return city.lookupSync(ip);
 }
 
 function sendFullResult(res, result, geoloc, ip, type)
 {
-    if (type == "xml") {
+    if (type === 'xml') {
         var builder = require('xmlbuilder');
         res.set('Content-Type', 'text/xml');
         var xml = builder.create('result', {
-            'version':'1.0', 
+            'version':'1.0',
             'encoding':'UTF-8'
         });
-        var xmlS = "";
-    
+        var xmlS = '';
+
         xml.att('for', ip);
         var geo = xml.e('geoname');
         geo.e('city', geoloc.city);
         geo.e('country_code', geoloc.country_code);
         geo.e('country', geoloc.country_name);
-        if (result && result.name)
+        if (result && result.name) {
             geo.e('fips', result.name);
-        else
+        } else {
             geo.e('fips');
+        }
         geo.e('longitude', geoloc.longitude.toString());
         geo.e('latitude', geoloc.latitude.toString());
         xmlS = xml.end({
             pretty:true
         });
         res.send(xmlS);
+        return;
     }
-    else {
-        res.set('Content-Type', 'application/json');
-        var json = {
-            "ip":ip,
-            result: {
-                geoname: {
-                    'city':geoloc.city,
-                    'country_code':geoloc.country_code,
-                    "country":geoloc.country_name
 
-                }
+    res.set('Content-Type', 'application/json');
+    var json = {
+        ip: ip,
+        result: {
+            geoname: {
+                city: geoloc.city,
+                country_code: geoloc.country_code,
+                country: geoloc.country_name,
+                longitude: geoloc.longitude.toString(),
+                latitude: geoloc.latitude.toString()
             }
-        };
-        if (result && result.name)
-            json.result.geoname.fips = result.name;
-        json.result.geoname.longitude = geoloc.longitude.toString();
-        json.result.geoname.latitude = geoloc.latitude.toString();
-        res.json(json);
-    }
-}
+        }
+    };
 
-function        getType(tab)
-{
-    for (var i in tab) {
-        if (tab[i].subtype
-            && (tab[i].subtype.toLowerCase() == 'xml'
-                || tab[i].subtype.toLowerCase() == "json"))
-            return (tab[i].subtype.toLowerCase());
-        else if (tab[i].subtype == "*")
-            return ("json");
+    if (result && result.name) {
+        json.result.geoname.fips = result.name;
     }
-    return (null);
+
+    res.json(json);
+
+    return;
 }
 
 module.exports = function(app, express, vars) {
     app.get('/ip/:id', function(req, res){
-        var request = require('request');    
         var mongojs = require('mongojs');
         var db = mongojs(vars.mongo.url);
-        var ip, geoloc, type = "";
-         
-        type = getType(req.accepted);
-        if (type == null){
-            res.send(406);
-            return;
-        }
-         
+        var ip, geoloc;
+
+
         if (req.params.id) {
             ip = req.params.id;
             geoloc = getGeoLoc(ip, vars.geo.geolitepath);
-                
+
         }
-        if (!req.params.id || !geoloc)
-            return (sendEmptyResult(res, type));
+
+        if (!req.params.id || !geoloc) {
+            return (sendEmptyResult(res, app.get('req.type')));
+        }
+
         var adminnames = db.collection(vars.mongo.admincodes);
-        var code = geoloc.country_code + "." + geoloc.region;
-        adminnames.findOne({
-            'code':code
-        },
-        function(err, result) {
-            return(sendFullResult(res, result, geoloc, ip, type));
+        var code = geoloc.country_code + '.' + geoloc.region;
+
+        adminnames.findOne({code:code}, function(err, result) {
+            return(sendFullResult(res, result, geoloc, ip, app.get('req.type')));
         });
-        return (0);
-    })
+    });
 };

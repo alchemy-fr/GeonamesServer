@@ -6,93 +6,9 @@
   </head>
   <body>
     <h1>Geoloc Server</h1>
-<h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="mini-icon mini-icon-link"></span></a>Documentation</h2>
-
-<p>Read The Documentation at <a href="https://geonames-server.readthedocs.org/">Read The Docs !</a></p>
-
-
-<h2><a name="routes" class="anchor" href="#routes"><span class="mini-icon mini-icon-link"></span></a>Routes</h2>
-
-<p>The following is a list of usable routes for the Geonames server:</p>
-
-<h3>
-<a name="" class="anchor" href="#"><span class="mini-icon mini-icon-link"></span></a>/</h3>
-
-<p>Returns a quick documentation listing available routes.</p>
-
-<h3>
-<a name="city" class="anchor" href="#city"><span class="mini-icon mini-icon-link"></span></a>/city</h3>
-
-<p>Returns the list of all the cities in the database, limited to 30 results by default. 
-The limit can be changed within the <strong>vars.js</strong> file.</p>
-
-<h4>
-<a name="parameters" class="anchor" href="#parameters"><span class="mini-icon mini-icon-link"></span></a>Parameters</h4>
-
-<ul>
-<li>sort (mandatory, default value : population)
-available values :
-
-<ul>
-<li>population : The results will be sorted by population.</li>
-<li>closeness : The results will be sorted by closeness to the place the request was sent from.</li>
-</ul>
-</li>
-<li>ord (mandatory, default value : desc)
-available values :
-
-<ul>
-<li>desc : The results will be displayed in descending order.</li>
-<li>asc : The results will be displayed in ascending order.</li>
-</ul>
-</li>
-</ul><h3>
-<a name="citysearch" class="anchor" href="#citysearch"><span class="mini-icon mini-icon-link"></span></a>/search</h3>
-
-<p>Returns all the cities whose name begins with a given <em>query</em>, limited to 30 results by default.
-The limit can be changed within the <strong>vars.js</strong> file.</p>
-
-<h4>
-<a name="parameters-1" class="anchor" href="#parameters-1"><span class="mini-icon mini-icon-link"></span></a>Parameters</h4>
-
-<ul>
-<li>query (mandatory) :
-Only cities whose name begins with this parameter will be returned.</li>
-<li>country (optional) :
-Only cities located in countries whose name begins with this parameter will be returned.</li>
-<li>sort (mandatory, default value : population)
-available values :
-
-<ul>
-<li>population : The results will be sorted by population.</li>
-<li>closeness : The results will be sorted by closeness to the place the request was sent from.</li>
-</ul>
-</li>
-<li>ord (mandatory, default value : desc)
-available values :
-
-<ul>
-<li>desc : The results will be displayed in descending order.</li>
-<li>asc : The results will be displayed in ascending order.</li>
-</ul>
-</li>
-</ul><h3>
-<a name="cityid" class="anchor" href="#cityid"><span class="mini-icon mini-icon-link"></span></a>/city/{id}</h3>
-
-<p>Returns the city which <em>geonameid</em> value is equal to the given id.</p>
-
-<h3>
-<a name="ipaddress" class="anchor" href="#ipaddress"><span class="mini-icon mini-icon-link"></span></a>/ip/{address}</h3>
-
-<p>Returns the city in which the given ip address is located.</p>
-
-<p>All these routes can only be accessed through GET requests. Any other methods will result in a 
-<em>405 Method not allowed</em> error. The results will be sent as text/XML or text/JSON files, according 
-to the accept field within the request header. If the <em>sort</em> parameter is specified and set to <em>closeness</em> 
-but the location of the request could not be detetermined (due to a lack of data within the geoip database 
-or geoip module not being installed), default values of 0,0 will be used instead. If a mandatory parameter,
-such as <em>sort</em> is used with a value not included in the list of available values, the request will result
-in a <em>400 Bad request</em> error.</p>
+    <h2>
+        <a name="documentation" class="anchor" href="#documentation"><span class="mini-icon mini-icon-link"></span></a>
+        Documentation
+    </h2>
   </body>
 </html>
