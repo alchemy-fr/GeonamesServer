@@ -23,6 +23,8 @@ vars.geo.geolitepath = './data/GeoLiteCity.dat';
 vars.geo.default_lon = 0;
 vars.geo.default_lat = 0;
 
+vars.allowedDomains = ['*'];
+
 // do not touch
 
 module.exports = vars;
