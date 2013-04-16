@@ -30,7 +30,7 @@ module.exports = function(app) {
             var city = geoloc.getCityFromIp(ip);
 
             if (!city) {
-                return common.sendEmptyResult(res, app.get('req.type'));
+                return common.sendEmptyResponse(res, app.get('req.type'));
             }
 
             var adminCodeCollection = db.collection(vars.mongo.admincodes);
@@ -112,7 +112,7 @@ module.exports = function(app) {
                         }
                     });
                 } else {
-                    common.sendEmptyResult(res, app.get('req.type'));
+                    common.sendEmptyResponse(res, app.get('req.type'));
                 }
             });
         });
@@ -151,7 +151,7 @@ module.exports = function(app) {
                         }
                     });
                 } else {
-                    common.sendEmptyResult(res, app.get('req.type'));
+                    common.sendEmptyResponse(res, app.get('req.type'));
                 }
             });
         });
