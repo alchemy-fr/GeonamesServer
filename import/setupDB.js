@@ -3,7 +3,7 @@ j = 0;
 (function(){
 
     var addNamesIndex = function(place) {
-		    
+
         if( ! place.alternatenames)
         {
             place.alternatenames = '';
@@ -55,13 +55,13 @@ j = 0;
         }
         j++;
     });
-	    
+
 
     db.countries.ensureIndex({
         names : 1
     });
     db.countries.ensureIndex({
-        pin.location : "2d"
+        'pin.location' : "2d"
     });
     db.countries.ensureIndex({
         countryCode : 1
