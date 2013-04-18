@@ -1,20 +1,14 @@
 test:
+	bash ./resources/scripts/test.sh
 	./node_modules/.bin/mocha --reporter nyan --timeout 5000
 
 install:
-	sh install.sh
-
-testinstall:
-	sh testinstall.sh
+	bash ./resources/scripts/install.sh
 
 clean:
-	rm *~
-
-fclean: 
-	rm *~
-	rm -rf node_modules
-	rm -rf docs/build
-
+	rm ./resources/data
+	rm ./resources/sources
+	rm ./node_modules
 
 .PHONY: test
 
