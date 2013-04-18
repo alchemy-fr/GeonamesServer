@@ -1,1 +1,4 @@
-nbproject
+/nbproject
+/docs/_build
+/resources/data
+/resources/sources
