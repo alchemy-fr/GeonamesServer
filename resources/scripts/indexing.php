@@ -200,7 +200,7 @@ while ($flag == 0) {
                 $flagElapsedTime = $elapsedTime;
                 if ($elapsedTime !== 0 && ($entriesPerSeconds = (int) floor($i / $elapsedTime)) !== 0) {
                     echo date('D M d H:i:s') . "\tProgress: $i/$nbEntries\t($entriesPerSeconds/seconds)\t" . round($i / $nbEntries * 100) . "% \t";
-                    echo "~" . secsToString($nbEntries / $entriesPerSeconds) . " left\n";
+                    echo "~" . secsToString(($nbEntries - $i) / $entriesPerSeconds) . " left\n";
                 }
             }
         }
@@ -212,6 +212,5 @@ while ($flag == 0) {
     }
 }
 
-echo "$i entries proccessed. Tooks " . microtime(true);
-- $timeStart . " seconds\n";
+echo "$i entries proccessed. Tooks " . secsToString(floor(microtime(true)- $timeStart)) . " seconds\n";
 exit(0);
