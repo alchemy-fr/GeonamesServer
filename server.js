@@ -5,7 +5,9 @@ var middlewares = require('./lib/middleware');
 
 var app = module.exports = express();
 
-app.set('port', vars.web.port);
+app.set('app.config', vars);
+
+app.set('port', vars.app.port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 

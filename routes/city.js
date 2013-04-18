@@ -3,17 +3,18 @@ var _ = require('underscore');
 var request = require('request');
 var mongojs = require('mongojs');
 
-var vars = require('./../vars');
 var geoloc = require('./../lib/geoloc');
 var common = require('./../lib/common');
 var controller = require('./../lib/controller/city');
 
 module.exports = function(app) {
     app.get('/city', function(req, res) {
-        var elasticSearchEndpoint = common.getElasticSearchEndpoint(vars.es.host, vars.es.name, vars.es.collection);
-        var db = mongojs(vars.mongo.url);
+        var appConfig = app.get('app.config');
 
-        var countryNamesCollection = db.collection(vars.mongo.countrynames);
+        var elasticSearchEndpoint = common.getElasticSearchEndpoint(appConfig.es.host, appConfig.es.name, appConfig.es.collection);
+        var db = mongojs(appConfig.mongo.url);
+
+        var countryNamesCollection = db.collection(appConfig.mongo.countrynames);
 
         var cityName = S(req.query.name || '').trim().toString();
         var countryName = S(req.query.country || '').trim().toString();
@@ -27,13 +28,13 @@ module.exports = function(app) {
 
             var ip = req.query.ip;
 
-            var city = geoloc.getCityFromIp(ip);
+            var city = geoloc.getCityFromIp(ip, app.get('app.config').geo);
 
             if (!city) {
                 return common.sendEmptyResponse(res, app.get('req.type'));
             }
 
-            var adminCodeCollection = db.collection(vars.mongo.admincodes);
+            var adminCodeCollection = db.collection(appConfig.mongo.admincodes);
 
             var code = city.country_code + '.' + city.region;
 
@@ -78,7 +79,7 @@ module.exports = function(app) {
                 ip = sortParams['ip'];
             }
 
-            var point = geoloc.getPointfromIp(ip);
+            var point = geoloc.getPointfromIp(ip, app.get('app.config').geo);
 
             var requestBody = controller.esQuery.findCitiesByName(
                     cityName,
@@ -106,7 +107,7 @@ module.exports = function(app) {
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
-                    db.collection(vars.mongo.admincodes).find({code: {$in: adminCodes}}, function(err, adminCodes) {
+                    db.collection(appConfig.mongo.admincodes).find({code: {$in: adminCodes}}, function(err, adminCodes) {
                         if ('xml' === app.get('req.type')) {
                             res.send(controller.xmlFromQueryLookup(adminCodes, datas, cityName, countryName));
                         } else {
@@ -121,10 +122,12 @@ module.exports = function(app) {
         });
     }),
     app.get('/city/:id', function(req, res) {
-        var elasticSearchEndpoint = common.getElasticSearchEndpoint(vars.es.host, vars.es.name, vars.es.collection);
-        var db = mongojs(vars.mongo.url);
+        var appConfig = app.get('app.config');
+        
+        var elasticSearchEndpoint = common.getElasticSearchEndpoint(appConfig.es.host, appConfig.es.name, appConfig.es.collection);
+        var db = mongojs(appConfig.mongo.url);
 
-        var countryNamesCollection = db.collection(vars.mongo.countrynames);
+        var countryNamesCollection = db.collection(appConfig.mongo.countrynames);
 
         countryNamesCollection.find({}, function(err, countries) {
             var requestBody = controller.esQuery.findCityById(req.params.id);
@@ -147,7 +150,7 @@ module.exports = function(app) {
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
-                    db.collection(vars.mongo.admincodes).find({code: {$in: adminCodes}}, function(err, result) {
+                    db.collection(appConfig.mongo.admincodes).find({code: {$in: adminCodes}}, function(err, result) {
                         if ('xml' === app.get('req.type')) {
                             res.send(controller.xmlFromQueryLookup(result, datas));
                         } else {
