@@ -1,9 +1,33 @@
 var request = require('supertest');
 var assert = require('assert');
-
 var app = require('../server');
 
-describe('App', function() {
+// Sets tests config
+app.set('app.config', {
+    app: {
+        verbose: true,
+        port: process.env.PORT || 3000,
+        allowed_domains: ["*"]
+    },
+    es: {
+        host: "127.0.0.1:9200",
+        name: "tests",
+        collection: "cities",
+        size: 30
+    },
+    mongo: {
+        url: "tests",
+        countrynames: "countrynames",
+        admincodes: "admincodes"
+    },
+    geo: {
+        geolitepath: './resources/data/GeoLiteCity.dat',
+        default_lon: 0,
+        default_lat: 0
+    }
+});
+
+describe('Geoname servers', function() {
     describe('GET /city/', function() {
         it('responds with a XML file', function(done) {
             request(app)
@@ -64,14 +88,28 @@ describe('App', function() {
         });
     });
 
+    describe('GET /city?name=%20paris%20', function() {
+        it('responds with a non-JSON file', function(done) {
+            request(app)
+                    .get('/city?name=paris')
+                    .set('Accept', 'application/json')
+                    .expect('Content-Type', "application/json; charset=utf-8")
+                    .expect(200)
+                    .end(function(err, res) {
+                        console.log(err, res);
+                        done();
+                    });
+        });
+    });
+
     describe('GET /', function() {
         it('cannot access the root directory', function(done) {
             request(app)
                     .get('/')
                     .expect(200)
                     .end(function(err, res) {
-                done();
-            });
+                        done();
+                    });
         });
     });
 
@@ -81,8 +119,8 @@ describe('App', function() {
                     .get('/random_url')
                     .expect(404)
                     .end(function(err, res) {
-                done();
-            });
+                        done();
+                    });
         });
     });
 
@@ -94,9 +132,9 @@ describe('App', function() {
                     .expect('Content-Type', "text/xml; charset=utf-8")
                     .expect(200)
                     .end(function(err, res) {
-                assert(res.text.indexOf("Paris") !== -1);
-                done();
-            });
+                        assert(res.text.indexOf("Paris") !== -1);
+                        done();
+                    });
         });
     });
 
@@ -108,9 +146,9 @@ describe('App', function() {
                     .expect('Content-Type', "application/json; charset=utf-8")
                     .expect(200)
                     .end(function(err, res) {
-                assert(res.text.indexOf("Paris") !== -1);
-                done();
-            });
+                        assert(res.text.indexOf("Paris") !== -1);
+                        done();
+                    });
         });
     });
 
@@ -122,9 +160,9 @@ describe('App', function() {
                     .expect('Content-Type', "text/xml; charset=utf-8")
                     .expect(200)
                     .end(function(err, res) {
-                assert(res.text.indexOf("Paris") === -1);
-                done();
-            });
+                        assert(res.text.indexOf("Paris") === -1);
+                        done();
+                    });
         });
     });
 
@@ -136,9 +174,9 @@ describe('App', function() {
                     .expect('Content-Type', "text/xml; charset=utf-8")
                     .expect(200)
                     .end(function(err, res) {
-                assert(res.text.indexOf("Paris") !== -1);
-                done();
-            });
+                        assert(res.text.indexOf("Paris") !== -1);
+                        done();
+                    });
         });
     });
 
