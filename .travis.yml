@@ -8,11 +8,6 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install php5 libgeoip-dev
 
-before_script:
-  - cd import
-  - sudo make testimport
-  - cd ..
-
 node_js:
   - "0.10"
   - "0.8"
