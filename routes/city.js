@@ -60,6 +60,7 @@ module.exports = function(app) {
 
                 if (codes.length === 0) {
                     common.sendEmptyResponse(res, app.get('req.type'));
+                    return;
                 }
             }
 
@@ -98,8 +99,9 @@ module.exports = function(app) {
                     var datas = result.data;
                     var adminCodes = result.admincodes;
 
-                    if (datas === 0) {
+                    if (datas.length === 0) {
                         common.sendEmptyResponse(res, app.get('req.type'));
+                        return;
                     }
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
@@ -112,6 +114,7 @@ module.exports = function(app) {
                         }
                     });
                 } else {
+                    console.log('elastic search error, got error ', error, ' status code ', response.statusCode, ' and response ', response);
                     common.sendEmptyResponse(res, app.get('req.type'));
                 }
             });
@@ -139,6 +142,7 @@ module.exports = function(app) {
 
                     if (datas === 0) {
                         common.sendEmptyResponse(res, app.get('req.type'));
+                        return;
                     }
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
