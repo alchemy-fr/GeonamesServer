@@ -1,34 +1,26 @@
-j = 0;
-
 (function(){
 
     var addNamesIndex = function(place) {
 
-        if( ! place.alternatenames)
-        {
+        if(!place.alternatenames) {
             place.alternatenames = '';
         }
 
         var names = [];
 
-        if(typeof place.asciiname.toLowerCase == 'function') {
+        if(typeof place.asciiname.toLowerCase === 'function') {
             names.push(place.asciiname.toLowerCase());
         }
 
-        if(typeof place.alternatenames.split !== 'function')
-        {
-            if(typeof place.name.toLowerCase == 'function') {
+        if(typeof place.alternatenames.split !== 'function') {
+            if(typeof place.name.toLowerCase === 'function') {
                 names.push(place.name.toLowerCase());
             }
-        }
-        else
-        {
-            tmpalt = place.alternatenames.split(',');
+        } else {
+            var tmpalt = place.alternatenames.split(',');
 
-            for(i in tmpalt)
-            {
-                if(tmpalt[i] != '')
-                {
+            for(var i in tmpalt) {
+                if(tmpalt[i] !== '') {
                     names.push(tmpalt[i].toLowerCase());
                 }
             }
@@ -37,20 +29,24 @@ j = 0;
         place.names = names;
 
         if(place.longitude && place.latitude) {
-            place.pin = new Array();
-            place.pin.location = new Array();
-            place.pin.location['lat'] = place.latitude;
-            place.pin.location['lon'] = place.longitude;
+            place.pin = {};
+            place.pin.location = {};
+            place.pin.location.lat = place.latitude;
+            place.pin.location.lon = place.longitude;
         }
+
         db.countries.save(place);
-    }
+    };
 
     var cur = db.countries.find();
+
     cur.immortal = true;
+
+    var j = 0;
 
     cur.forEach(function(obj) {
         addNamesIndex(obj);
-        if (j % 100000 == 0) {
+        if (j % 100000 === 0) {
             print(j + " entries processed");
         }
         j++;
@@ -66,5 +62,6 @@ j = 0;
     db.countries.ensureIndex({
         countryCode : 1
     });
+    
     print(j + " entries processed");
 })();
