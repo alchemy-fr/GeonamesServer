@@ -15,8 +15,8 @@ module.exports = function(app) {
 
         var countryNamesCollection = db.collection(vars.mongo.countrynames);
 
-        var cityName = req.query.name || '';
-        var countryName = req.query.country || false;
+        var cityName = S(req.query.name || '').trim().toString();
+        var countryName = S(req.query.country || '').trim().toString();
 
         // Find city by provided ip
         if (req.query.ip) {
@@ -51,7 +51,7 @@ module.exports = function(app) {
         // find city
         var codes = [];
         countryNamesCollection.find({}, function(err, countries) {
-            if (countryName) {
+            if ('' !== countryName) {
                 _.each(countries, function(country) {
                     if (S(country.name.toLowerCase()).contains(countryName)) {
                         codes.push(country.code.toLowerCase());
