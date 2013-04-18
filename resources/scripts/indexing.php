@@ -82,7 +82,7 @@ function secsToString($d) {
         if ($div == 0) {
             continue;
         } else {
-            $parts[] = $div . " " . $name;
+            $parts[] = $div . $name;
         }
 
         $d %= $dur;
@@ -196,11 +196,11 @@ while ($flag == 0) {
                 $res = curl_exec($conn);
             }
 
-            if ($nbEntries !== 0 && ($elapsedTime = floor(microtime(true) - $timeStart)) % 5 === 0 && $elapsedTime !== $flagElapsedTime) {
+            if ($nbEntries !== 0 && ($elapsedTime = (int) floor(microtime(true) - $timeStart)) % 5 === 0 && $elapsedTime !== $flagElapsedTime) {
                 $flagElapsedTime = $elapsedTime;
-                if ($elapsedTime !== 0 && $entriesPerSeconds = floor($i / $elapsedTime) !== 0) {
-                    echo date('D M d H:i:s') . "\t\tProgress: $i/$nbEntries ($entriesPerSeconds/seconds)  " . round($i / $nbEntries * 100) . "%  ";
-                    echo "~ " . secsToString($nbEntries / $entriesPerSeconds) . " left\n";
+                if ($elapsedTime !== 0 && ($entriesPerSeconds = (int) floor($i / $elapsedTime)) !== 0) {
+                    echo date('D M d H:i:s') . "\tProgress: $i/$nbEntries\t($entriesPerSeconds/seconds)\t" . round($i / $nbEntries * 100) . "% \t";
+                    echo "~" . secsToString($nbEntries / $entriesPerSeconds) . " left\n";
                 }
             }
         }
