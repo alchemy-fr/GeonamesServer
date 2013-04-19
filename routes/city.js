@@ -42,9 +42,7 @@ module.exports = function(app) {
                 var sortParams = req.query.sortParams || [];
 
                 if ('ip' in sortParams) {
-                    console.log(sortParams['ip']);
                     ip = sortParams['ip'];
-                    console.log(common.isIp(ip));
                 }
             }
 
