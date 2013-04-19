@@ -53,6 +53,8 @@ module.exports = function(app) {
 
             var point = geoloc.getPointfromIp(ip, app.get('app.config').geo);
 
+            console.log(ip, point);
+            
             var requestBody = controller.esQuery.findCitiesByName(
                     cityName,
                     codes,

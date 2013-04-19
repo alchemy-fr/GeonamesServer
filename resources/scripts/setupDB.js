@@ -35,10 +35,10 @@
             place.pin.location.lon = place.longitude;
         }
 
-        db.countries.save(place);
+        db.cities.save(place);
     };
 
-    var cur = db.countries.find();
+    var cur = db.cities.find();
 
     cur.immortal = true;
 
@@ -53,15 +53,15 @@
     });
 
 
-    db.countries.ensureIndex({
+    db.cities.ensureIndex({
         names : 1
     });
-    db.countries.ensureIndex({
+    db.cities.ensureIndex({
         'pin.location' : "2d"
     });
-    db.countries.ensureIndex({
+    db.cities.ensureIndex({
         countryCode : 1
     });
-    
+
     print(j + " entries processed");
 })();
