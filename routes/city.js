@@ -19,36 +19,6 @@ module.exports = function(app) {
         var cityName = S(req.query.name || '').trim().toString();
         var countryName = S(req.query.country || '').trim().toString();
 
-        // Find city by provided ip
-        if (req.query.ip) {
-            if ('' !== cityName) {
-                res.send(400, 'You can not look up for a name and ip at the same time');
-                return;
-            }
-
-            var ip = req.query.ip;
-
-            var city = geoloc.getCityFromIp(ip, app.get('app.config').geo);
-
-            if (!city) {
-                return common.sendEmptyResponse(res, app.get('req.type'));
-            }
-
-            var adminCodeCollection = db.collection(appConfig.mongo.admincodes);
-
-            var code = city.country_code + '.' + city.region;
-
-            adminCodeCollection.findOne({code: code}, function(err, result) {
-                if ('xml' === app.get('req.type')) {
-                    res.send(controller.xmlFromIpLookup(result, city, ip));
-                } else {
-                    res.jsonp(controller.jsonFromIpLookup(result, city, ip));
-                }
-            });
-
-            return;
-        }
-
         // find city
         var codes = [];
         countryNamesCollection.find({}, function(err, countries) {
@@ -68,15 +38,19 @@ module.exports = function(app) {
             // Get client ip
             var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-            if ('ip' === app.get('req.sort')) {
-                var sortParams = req.params.sortParams || [];
+            if ('closeness' === app.get('req.sort')) {
+                var sortParams = req.query.sortParams || [];
 
-                if (false === 'ip' in sortParams) {
-                    res.send(400, 'You must provide an IP adress when sort is set to "ip". Here\'s an example "/city?sort=ip&sortParams[ip]=134.67.24.132" ');
-                    return;
+                if ('ip' in sortParams) {
+                    console.log(sortParams['ip']);
+                    ip = sortParams['ip'];
+                    console.log(common.isIp(ip));
                 }
+            }
 
-                ip = sortParams['ip'];
+            if (!common.isIp(ip)) {
+                res.send(400, 'Could not determine your remote IP or the provided one is not valid');
+                return;
             }
 
             var point = geoloc.getPointfromIp(ip, app.get('app.config').geo);
@@ -115,15 +89,16 @@ module.exports = function(app) {
                         }
                     });
                 } else {
-                    console.log('elastic search error, got error ', error, ' status code ', response.statusCode, ' and response ', response);
+//                    console.log('elastic search error, got error ', error, ' status code ', response.statusCode, ' and response ', response);
                     common.sendEmptyResponse(res, app.get('req.type'));
                 }
             });
         });
-    }),
+    });
+
     app.get('/city/:id', function(req, res) {
         var appConfig = app.get('app.config');
-        
+
         var elasticSearchEndpoint = common.getElasticSearchEndpoint(appConfig.es.host, appConfig.es.name, appConfig.es.collection);
         var db = mongojs(appConfig.mongo.url);
 
@@ -161,6 +136,35 @@ module.exports = function(app) {
                     common.sendEmptyResponse(res, app.get('req.type'));
                 }
             });
+        });
+    });
+
+    app.get('/ip', function(req, res) {
+        var appConfig = app.get('app.config');
+
+        var ip = req.query.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        if (!common.isIp(ip)) {
+            res.send(400, 'Could not determine your remote IP or the provided one is not valid');
+            return;
+        }
+
+        var city = geoloc.getCityFromIp(ip, appConfig.geo);
+
+        if (!city) {
+            return common.sendEmptyResponse(res, app.get('req.type'));
+        }
+
+        var adminCodeCollection = db.collection(appConfig.mongo.admincodes);
+
+        var code = city.country_code + '.' + city.region;
+
+        adminCodeCollection.findOne({code: code}, function(err, result) {
+            if ('xml' === app.get('req.type')) {
+                res.send(controller.xmlFromIpLookup(result, city, ip));
+            } else {
+                res.jsonp(controller.jsonFromIpLookup(result, city, ip));
+            }
         });
     });
 };
