@@ -191,7 +191,7 @@ else
     "$DATA_DIR/allCities.txt"
 fi
 
-echo "Setup the mongodb database ..."
+echo "Setup the mongodb database (adding pin location & all different name for one city) ..."
 mongo $mongohost $mongoport $mongouser $mongopass $database "$SCRIPT_DIR/setupDB.js"
 
 echo "Start importing 'admincodes.txt' in admincodes collection ..."
