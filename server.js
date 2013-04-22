@@ -45,6 +45,9 @@ app.get('/', function(req, res) {
 // Add city route
 require('./routes/city')(app);
 
+// Set X-Geoname-* Response headers
+app.use(middlewares.setGeonamesResponseHeaders(app));
+
 // Log errors
 app.use(function(err, req, res, next) {
     console.error(err.stack);
