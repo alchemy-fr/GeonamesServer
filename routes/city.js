@@ -36,22 +36,37 @@ module.exports = function(app) {
             }
 
             // Get client ip
-            var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || null;
+            var point;
 
             if ('closeness' === app.get('req.sort')) {
                 var sortParams = req.query.sortParams || [];
 
                 if ('ip' in sortParams) {
                     ip = sortParams['ip'];
+
+                    if (!common.isIpV4(ip)) {
+                        res.send(400, 'The provided IP is not valid');
+                        return;
+                    }
+                }
+
+                // if ip or city could not be found fallback to sort by population
+                if (ip) {
+                    try {
+                        var point = geoloc.getPointfromIp(ip, app.get('app.config').geo);
+
+                        if (null === point) {
+                            app.set('req.sort', 'population');
+                        }
+                    } catch (Exception) {
+                        res.send(500, 'An error occured while geolocalizing IP adress');
+                        return;
+                    }
+                } else {
+                    app.set('req.sort', 'population');
                 }
             }
-
-            if (!common.isIp(ip)) {
-                res.send(400, 'Could not determine your remote IP or the provided one is not valid');
-                return;
-            }
-
-            var point = geoloc.getPointfromIp(ip, app.get('app.config').geo);
 
             var requestBody = controller.esQuery.findCitiesByName(
                     cityName,
@@ -142,7 +157,7 @@ module.exports = function(app) {
 
         var ip = req.query.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        if (!common.isIp(ip)) {
+        if (!common.isIpV4(ip)) {
             res.send(400, 'Could not determine your remote IP or the provided one is not valid');
             return;
         }
