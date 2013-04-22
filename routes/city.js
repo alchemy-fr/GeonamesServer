@@ -58,6 +58,7 @@ module.exports = function(app) {
 
                         if (null === point) {
                             app.set('req.sort', 'population');
+                            res.header('X-Geonames-sortby', app.get('req.sort'));
                         }
                     } catch (Exception) {
                         res.send(500, 'An error occured while geolocalizing IP adress');
@@ -65,6 +66,7 @@ module.exports = function(app) {
                     }
                 } else {
                     app.set('req.sort', 'population');
+                    res.header('X-Geonames-sortby', app.get('req.sort'));
                 }
             }
 
@@ -154,6 +156,7 @@ module.exports = function(app) {
 
     app.get('/ip', function(req, res) {
         var appConfig = app.get('app.config');
+        var db = mongojs(appConfig.mongo.url);
 
         var ip = req.query.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 

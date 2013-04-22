@@ -32,6 +32,9 @@ app.use(middlewares.formalizeLimitParameter(app));
 // Enable CORS request
 app.use(middlewares.enableCORS(app));
 
+// Set X-Geoname-* Response headers
+app.use(middlewares.setGeonamesResponseHeaders(app));
+
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
@@ -44,9 +47,6 @@ app.get('/', function(req, res) {
 
 // Add city route
 require('./routes/city')(app);
-
-// Set X-Geoname-* Response headers
-app.use(middlewares.setGeonamesResponseHeaders(app));
 
 // Log errors
 app.use(function(err, req, res, next) {
