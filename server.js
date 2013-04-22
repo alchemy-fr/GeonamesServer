@@ -32,6 +32,9 @@ app.use(middlewares.formalizeLimitParameter(app));
 // Enable CORS request
 app.use(middlewares.enableCORS(app));
 
+// Set X-Geoname-* Response headers
+app.use(middlewares.setGeonamesResponseHeaders(app));
+
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
