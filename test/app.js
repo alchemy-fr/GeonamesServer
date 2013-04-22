@@ -16,7 +16,7 @@ app.set('app.config', {
         size: 30
     },
     mongo: {
-        url: "geonames",
+        url: "tests",
         countrynames: "countrynames",
         admincodes: "admincodes"
     },
