@@ -1,6 +1,6 @@
 test:
 	bash ./resources/scripts/test.sh
-	./node_modules/.bin/mocha --reporter nyan --timeout 5000
+	./node_modules/.bin/mocha --timeout 5000
 
 install:
 	bash ./resources/scripts/install.sh
