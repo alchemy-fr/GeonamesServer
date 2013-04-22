@@ -1,98 +1,151 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>GeoLoc Server</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Geoloc Server</h1>
-<h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="mini-icon mini-icon-link"></span></a>Documentation</h2>
+<!DOCTYPE html><html><head><title></title><link type="text/css" rel="stylesheet" href="http://jasonm23.github.com/markdown-css-themes/swiss.css"></head><body><div>Loading...</div><textarea id="mdstr" style=display:none># GeonamesServer
 
-<p>Read The Documentation at <a href="https://geonames-server.readthedocs.org/">Read The Docs !</a></p>
+A node.js server used to get the biggest or the closest cities based on a given HTTP request.
+
+## Documentation
+
+Read The Documentation at [Read The Docs !](https://geonames-server.readthedocs.org/)
 
 
-<h2><a name="routes" class="anchor" href="#routes"><span class="mini-icon mini-icon-link"></span></a>Routes</h2>
+## Routes
 
-<p>The following is a list of usable routes for the Geonames server:</p>
+The following is a list of usable routes for the Geonames server:
 
-<h3>
-<a name="" class="anchor" href="#"><span class="mini-icon mini-icon-link"></span></a>/</h3>
+### /
 
-<p>Returns a quick documentation listing available routes.</p>
+Returns a quick documentation listing available routes.
 
-<h3>
-<a name="city" class="anchor" href="#city"><span class="mini-icon mini-icon-link"></span></a>/city</h3>
+### /city
 
-<p>Returns the list of all the cities in the database, limited to 30 results by default. 
-The limit can be changed within the <strong>vars.js</strong> file.</p>
+Returns the list of all the cities in the database, limited to 30 results by
+default.
+The default limit can be changed within the **vars.js** file.
 
-<h4>
-<a name="parameters" class="anchor" href="#parameters"><span class="mini-icon mini-icon-link"></span></a>Parameters</h4>
+#### Parameters
 
-<ul>
-<li>sort (mandatory, default value : population)
-available values :
+  - sort (mandatory, default value : population)
+    available values :
+    - population : The results will be sorted by population.
+    - closeness : The results will be sorted by closeness to the place the
+request was sent from.
+    - ip : The results will be sorted by closeness to the provided ip.
+The provided ip must be given in sortParams query parameter which is an
+associative array. Example : /city?name=paris&amp;sort=ip&amp;sortParams[ip]=1.1.1.1
+  - ord (mandatory, default value : desc)
+    available values :
+    - desc : The results will be displayed in descending order.
+    - asc : The results will be displayed in ascending order.
+  - name (optional) : Filters city by a given name.
+  - ip (optional) : Find the city in which the given ip address is located.
+'ip' parameter can not be set within a 'name' parameter.
+  - country (optional) :
+    Only cities located in countries whose name begins with this parameter will be returned.
+  - limit (optional) : The number of results.
 
-<ul>
-<li>population : The results will be sorted by population.</li>
-<li>closeness : The results will be sorted by closeness to the place the request was sent from.</li>
-</ul>
-</li>
-<li>ord (mandatory, default value : desc)
-available values :
 
-<ul>
-<li>desc : The results will be displayed in descending order.</li>
-<li>asc : The results will be displayed in ascending order.</li>
-</ul>
-</li>
-</ul><h3>
-<a name="citysearch" class="anchor" href="#citysearch"><span class="mini-icon mini-icon-link"></span></a>/search</h3>
+### /city/{id}
 
-<p>Returns all the cities whose name begins with a given <em>query</em>, limited to 30 results by default.
-The limit can be changed within the <strong>vars.js</strong> file.</p>
+Returns the city which *geonameid* value is equal to the given id.
 
-<h4>
-<a name="parameters-1" class="anchor" href="#parameters-1"><span class="mini-icon mini-icon-link"></span></a>Parameters</h4>
 
-<ul>
-<li>query (mandatory) :
-Only cities whose name begins with this parameter will be returned.</li>
-<li>country (optional) :
-Only cities located in countries whose name begins with this parameter will be returned.</li>
-<li>sort (mandatory, default value : population)
-available values :
-
-<ul>
-<li>population : The results will be sorted by population.</li>
-<li>closeness : The results will be sorted by closeness to the place the request was sent from.</li>
-</ul>
-</li>
-<li>ord (mandatory, default value : desc)
-available values :
-
-<ul>
-<li>desc : The results will be displayed in descending order.</li>
-<li>asc : The results will be displayed in ascending order.</li>
-</ul>
-</li>
-</ul><h3>
-<a name="cityid" class="anchor" href="#cityid"><span class="mini-icon mini-icon-link"></span></a>/city/{id}</h3>
-
-<p>Returns the city which <em>geonameid</em> value is equal to the given id.</p>
-
-<h3>
-<a name="ipaddress" class="anchor" href="#ipaddress"><span class="mini-icon mini-icon-link"></span></a>/ip/{address}</h3>
-
-<p>Returns the city in which the given ip address is located.</p>
-
-<p>All these routes can only be accessed through GET requests. Any other methods will result in a 
-<em>405 Method not allowed</em> error. The results will be sent as text/XML or text/JSON files, according 
-to the accept field within the request header. If the <em>sort</em> parameter is specified and set to <em>closeness</em> 
-but the location of the request could not be detetermined (due to a lack of data within the geoip database 
+All these routes can only be accessed through GET requests. Any other methods will result in a
+*405 Method not allowed* error. The results will be sent as text/XML or text/JSON files, according
+to the accept field within the request header. If the *sort* parameter is specified and set to *closeness*
+but the location of the request could not be detetermined (due to a lack of data within the geoip database
 or geoip module not being installed), default values of 0,0 will be used instead. If a mandatory parameter,
-such as <em>sort</em> is used with a value not included in the list of available values, the request will result
-in a <em>400 Bad request</em> error.</p>
-  </body>
-</html>
+such as *sort* is used with a value not included in the list of available values, the request will result
+in a *400 Bad request* error.
+
+## Accepted content types
+
+GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
+within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
+qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a
+**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a
+*406 Not acceptable* error.
+
+### Examples of response
+
+Following are the results returned for the request */search/query=york&amp;country=aus*
+
+##### xml
+
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        &lt;geonames&gt;
+            &lt;totalResultsCount&gt;2&lt;/totalResultsCount&gt;
+            &lt;geoname&gt;
+                &lt;geonameid&gt;2206601&lt;/geonameid&gt;
+                &lt;title&gt;Yorkeys Knob&lt;/title&gt;
+                &lt;title_match&gt;York&lt;/title_match&gt;
+                &lt;country&gt;Australia&lt;/country&gt;
+                &lt;country_match&gt;Aus&lt;/country_match&gt;
+                &lt;region&gt;Queensland&lt;/region&gt;
+            &lt;/geoname&gt;
+            &lt;geoname&gt;
+                &lt;geonameid&gt;2057277&lt;/geonameid&gt;
+                &lt;title&gt;York&lt;/title&gt;
+                &lt;title_match&gt;York&lt;/title_match&gt;
+                &lt;country&gt;Australia&lt;/country&gt;
+                &lt;country_match&gt;Aus&lt;/country_match&gt;
+                &lt;region&gt;Western Australia&lt;/region&gt;
+            &lt;/geoname&gt;
+        &lt;/geonames&gt;
+
+#### json
+
+    {
+     &quot;geonames&quot;: {
+        &quot;totalResultsCount&quot;:2,
+        &quot;geoname&quot;:[
+            {
+                &quot;geonameid&quot;: &quot;2206601&quot;,
+                &quot;title&quot;: &quot;Yorkeys Knob&quot;,
+                &quot;country&quot;: &quot;Australia&quot;,
+                &quot;match&quot;: {
+                  &quot;title&quot;: &quot;York&quot;,
+                  &quot;country&quot;: &quot;Aus&quot;
+                },
+                &quot;title_alt&quot;: &quot;yorkeys knob&quot;,
+                &quot;region&quot;: &quot;Queensland&quot;,
+                &quot;population&quot;: 2645,
+                &quot;latitude&quot;: -16.81667,
+                &quot;longitude&quot;: 145.71667,
+                &quot;names&quot;: [
+                    &quot;yorkeys knob&quot;,
+                    &quot;yorkeys knob&quot;,
+                    &quot;yorkeys knob beach&quot;
+                ]
+            },
+            {
+                &quot;geonameid&quot;: &quot;2057277&quot;,
+                &quot;title&quot;: &quot;York&quot;,
+                &quot;country&quot;: &quot;Australia&quot;,
+                &quot;match&quot;: {
+                  &quot;title&quot;: &quot;York&quot;,
+                  &quot;country&quot;: &quot;Aus&quot;
+                },
+                &quot;title_alt&quot;: &quot;york&quot;,
+                &quot;region&quot;: &quot;Western Australia&quot;,
+                &quot;population&quot;: 2090,
+                &quot;latitude&quot;: -31.88467,
+                &quot;longitude&quot;: 116.76874,
+                &quot;names&quot;: [
+                    &quot;york&quot;,
+                    &quot;jork&quot;,
+                    &quot;york&quot;,
+                    &quot;йорк&quot;
+                ]
+            }
+        ]
+     }
+    }
+
+
+## License
+
+This project is licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+
+</textarea><script src="https://raw.github.com/evilstreak/markdown-js/master/lib/markdown.js"></script><script>var mdstr = document.getElementById('mdstr').value;
+var html = markdown.toHTML(mdstr);
+document.body.innerHTML = html;</script></body></html>

@@ -4,8 +4,8 @@ Documentation
 Introduction
 ------------
 
-This server's purpose is to interrogate an ElasticSearch index and a MongoDB 
-database, and to return geolocation-related data. It relies on data found on 
+This server's purpose is to interrogate an ElasticSearch index and a MongoDB
+database, and to return geolocation-related data. It relies on data found on
 http://www.geonames.org/. You can use this server to retrieve the approximative
 location of an IP address, to get more details about a city identified by its
 geonameid, or to find the closest (or biggest) cities matching a given criteria.
@@ -23,7 +23,7 @@ Prerequisites
 +++++++++++++
 
 In order to make the Geonames Server run, you need to have installed MongoDB
-and ElasticSearch. 
+and ElasticSearch.
 
 To install MongoDB, you should follow `the official MongoDB guides <http://www.mongodb.org/display/DOCS/Quickstart>`_.
 
@@ -32,12 +32,12 @@ ElasticSearch. Otherwise, follow `the official guide <http://www.elasticsearch.o
 
 Once both MongoDB and Elasticsearch installed, you need to fill the MongoDB
 database with geonames data, and then index this data with ElasticSearch.
-You can do all of it in just a few steps with the import script located in the 
+You can do all of it in just a few steps with the import script located in the
 **import** folder.
 
 To ensure the proper functioning of these operations, `curl <http://fr2.php.net/manual/en/book.curl.php>`_ and `mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are required.
 
-Make sure that your mongo php extension is up-to-date and that 
+Make sure that your mongo php extension is up-to-date and that
 mongodb is running, then run the following command within the **import** folder:
 
 .. code-block:: bash
@@ -54,11 +54,11 @@ The default values are:
 
 
 It will download the necessary files from the geonames servers, format them
-to make them work with MongoDB, import them to MongoDB, and index the new 
+to make them work with MongoDB, import them to MongoDB, and index the new
 entries in ElasticSearch.
 
-From now on, you should be able to access to your ElasticSearch index through 
-your web browser or through any request-forming tool (such as **curl**), 
+From now on, you should be able to access to your ElasticSearch index through
+your web browser or through any request-forming tool (such as **curl**),
 as described `here <http://www.elasticsearch.org/guide/reference/query-dsl/>`_.
 
 For instance, you can try:
@@ -68,7 +68,7 @@ For instance, you can try:
    curl -X GET "$ES_PATH/geonames/_count"
 
 This should return you a JSON object containing, under the "count" field,
-the number of entries indexed under *geonames*.  
+the number of entries indexed under *geonames*.
 
 This server being written using node.js, you will need it to run the server.
 Once again, for **homebrew** users, a simple **brew install node** is enough.
@@ -76,8 +76,8 @@ Otherwise, you can download it from the `Node.js official website <http://nodejs
 
 Finally, if you want the geolocation to work, you will need the **libgeoip C
 library**, version **1.4.8** or higher. You can either install it through a
-package manager (such as **homebrew** or **aptitude**), or build it using 
-the following commands (`source <http://github.com/kuno/GeoIP>`_): 
+package manager (such as **homebrew** or **aptitude**), or build it using
+the following commands (`source <http://github.com/kuno/GeoIP>`_):
 
 .. code-block:: bash
 
@@ -92,21 +92,21 @@ the following commands (`source <http://github.com/kuno/GeoIP>`_):
 Geonames Server
 +++++++++++++++
 
-Once the prerequisites installed, assuming you have **npm** installed, go to 
+Once the prerequisites installed, assuming you have **npm** installed, go to
 the root folder and execute
 
 .. code-block:: bash
 
    make install
 
-This will download the latest GeoIP data as well as all the packages this 
+This will download the latest GeoIP data as well as all the packages this
 server will need.
 
 Configuration
 -------------
 
-The file **vars.js** contains some useful configuration variables. First, if 
-your instance of ElasticSearch is different from default, you should change 
+The file **vars.js** contains some useful configuration variables. First, if
+your instance of ElasticSearch is different from default, you should change
 **vars.es.host** to your hostname. You can also change the port used by
 GeoNames Server (3000 by default), as well as various Mongodb and ElasticSeach-related variables.
 The **vars.js** file also contains a verbose option, which, when activated, displays the requests processed by the server.
@@ -128,22 +128,22 @@ Accepted content types
 
 GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
 within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
-qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a 
-**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a 
+qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a
+**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a
 *406 Not acceptable* error. It's important to notice that json-formated responses usually include more fields
-than xml-formated ones. 
+than xml-formated ones.
 
 Available routes
 ++++++++++++++++++
 
-The following is a list of available routes (defined by controllers in 
-the **controllers** folder). All these routes can only be accessed through GET requests. Any other methods will result in a 
-*405 Method not allowed* error. The results will be sent as text/xml or application/json files, according 
-to the accept field within the request header. If the *sort* parameter is specified and set to *closeness* 
-but the location of the request could not be detetermined (due to a lack of data within the geoip database 
+The following is a list of available routes (defined by controllers in
+the **controllers** folder). All these routes can only be accessed through GET requests. Any other methods will result in a
+*405 Method not allowed* error. The results will be sent as text/xml or application/json files, according
+to the accept field within the request header. If the *sort* parameter is specified and set to *closeness*
+but the location of the request could not be detetermined (due to a lack of data within the geoip database
 or geoip module not being installed), default values of 0,0 will be used instead. If a mandatory parameter,
 such as *sort* is used with a value not included in the list of available values, the request will result
-in a *400 Bad request* error. 
+in a *400 Bad request* error.
 
 /
 ^
@@ -153,24 +153,35 @@ Returns a quick documentation listing available routes.
 /city
 ^^^^^
 
-Returns the list of all the cities in the database, limited to 30 results by default. 
-The limit can be changed within the **vars.js** file.
+Gets the list of all the cities in the database, limited to 30 results by default.
+``````````````````````````````````````````````````````````````````````````````````
+
+The limit can be changed within the **vars.js** file or overriden with limit parameter up to 100.
 
 Parameters
 ##########
 
 - sort (mandatory, default value : population) available values :
-    
+
   - population : The results will be sorted by population.
   - closeness : The results will be sorted by closeness to the place the request was sent from.
-
+  - ip : The results will be sorted by closeness to the provided ip.
 - ord (mandatory, default value : desc) available values :
 
   - desc : The results will be displayed in descending order.
   - asc : The results will be displayed in ascending order.
+- name (optional) : Filters city whose begins with a given name.
+- ip (optional) : Find the city in which the given ip address is located. 'ip' parameter can not be set within a 'name' parameter.
+- country (optional) :
+
+    Only cities located in countries whose name begins with this parameter will be returned.
+
+- limit (optional) : The number of results.
 
 Examples
 ########
+
+**Returns the list of all the cities in the database, limited to 30 results by default.**
 
 .. code-block:: bash
 
@@ -238,94 +249,17 @@ will return one of these results, according to the expected content-type:
         }
     }
 
+**Gets the city whose name begins with the provided query.**
 
-/city/{id}
-^^^^^^^^^^
-
-Returns the city which *geonameid* value is equal to the given id.
-
-Examples
-########
 
 .. code-block:: bash
 
-   curl -XGET "$SERVER_URL/city/3435910"
+   curl -XGET "$SERVER_URL/city?name=buenos&country=ar&ord=asc"
 
 will return one of these results, according to the expected content-type:
 
 .. code-block:: xml
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <geonames>
-        <totalResultsCount>1</totalResultsCount>
-        <geoname>
-            <geonameid>3435910</geonameid>
-            <title>Buenos Aires</title>
-            <country>Argentina</country>
-            <region>Buenos Aires F.D.</region>
-        </geoname>
-    </geonames>
-
-.. code-block:: javascript
-
-    {
-        "geonames": {
-            "totalResultsCount": "1",
-            "geoname": [
-            {
-               "geonameid": "3435910",
-               "title": "Buenos Aires",
-               "country": "Argentina",
-               "region": "Buenos Aires F.D.",
-                "population": 13076300,
-               "latitude": -34.61315,
-               "longitude": -58.37723,
-               "names": [
-                 "buenos aires",
-                 "buenos ayres",
-                 "buenos-aires",
-                 "buenos-ajres",
-                 "ciudad de la santisima trinidad y puerto de santa maria del buen ayre"
-               ]
-             }
-           ]
-        }
-    }
-
-/search
-^^^^^^^
-
-Returns all the cities whose name begins with a given *query*, limited to 30 results by default.
-The limit can be changed within the **vars.js** file. This command works with non-latin characters,
-is case-insensitive, and matches to every word if the city name contains whitespaces.
-For instance, searching for *aires* will return *Buenos Aires*.
-
-Parameters
-##########
-
-- query (mandatory) : Only cities whose name begins with this parameter will be returned.
-- country (optional) : Only cities located in countries whose name begins with this parameter will be returned.
-- sort (mandatory, default value : population) available values :
-  
-  - population : The results will be sorted by population.
-  - closeness : The results will be sorted by closeness to the place the request was sent from.
-
-- ord (mandatory, default value : desc) available values :
-    
-  - desc : The results will be displayed in descending order.
-  - asc : The results will be displayed in ascending order.
-
-Examples
-########
-
-.. code-block:: bash
-
-   curl -XGET "$SERVER_URL/search?query=buenos&country=ar&ord=asc"
-
-will return one of these results, according to the expected content-type:
-
-.. code-block:: xml
-    
     <?xml version="1.0" encoding="UTF-8"?>
     <geonames>
         <totalResultsCount>3</totalResultsCount>
@@ -392,7 +326,7 @@ will return one of these results, according to the expected content-type:
                 "rio fenix",
                 "río fénix"
               ]
-            },  
+            },
             {
                 "geonameid": "3435910",
                 "title": "Buenos Aires",
@@ -426,18 +360,11 @@ but does match with an alternate name (different language or different
 spelling), a *title_alt* field is displayed, so the *title_match* can still
 be relevant.
 
-
-/ip/{address}
-^^^^^^^^^^^^^
-
-Returns the city in which the given ip address is located.
-
-Examples
-########
+**Returns the city in which the given ip address is located.**
 
 .. code-block:: bash
 
-   curl -XGET "$SERVER_URL/ip/4.23.171.0"
+   curl -XGET "$SERVER_URL/city/ip=4.23.171.0"
 
 will return one of these results, according to the expected content-type:
 
@@ -471,7 +398,58 @@ will return one of these results, according to the expected content-type:
         }
     }
 
+/city/{id}
+^^^^^^^^^^
 
+Returns the city which *geonameid* value is equal to the given id.
+
+Examples
+########
+
+.. code-block:: bash
+
+   curl -XGET "$SERVER_URL/city/3435910"
+
+will return one of these results, according to the expected content-type:
+
+.. code-block:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <geonames>
+        <totalResultsCount>1</totalResultsCount>
+        <geoname>
+            <geonameid>3435910</geonameid>
+            <title>Buenos Aires</title>
+            <country>Argentina</country>
+            <region>Buenos Aires F.D.</region>
+        </geoname>
+    </geonames>
+
+.. code-block:: javascript
+
+    {
+        "geonames": {
+            "totalResultsCount": "1",
+            "geoname": [
+            {
+               "geonameid": "3435910",
+               "title": "Buenos Aires",
+               "country": "Argentina",
+               "region": "Buenos Aires F.D.",
+                "population": 13076300,
+               "latitude": -34.61315,
+               "longitude": -58.37723,
+               "names": [
+                 "buenos aires",
+                 "buenos ayres",
+                 "buenos-aires",
+                 "buenos-ajres",
+                 "ciudad de la santisima trinidad y puerto de santa maria del buen ayre"
+               ]
+             }
+           ]
+        }
+    }
 
 Testing
 -------
@@ -491,19 +469,19 @@ the **import** folder:
 
 .. code-block:: bash
 
-   sh import.sh [-h hostname] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]   
+   sh import.sh [-h hostname] [-u user] [-p password] [-d database] [-c collection] [-e elasticsearchhost]
 
-If you installed ElasticSearch on *localhost:9200* (default value), you can 
+If you installed ElasticSearch on *localhost:9200* (default value), you can
 use this command instead:
 
 .. code-block:: bash
-   
-   make import 
+
+   make import
 
 Contribute
 ----------
 
 You found a bug and resolved it ? You added a feature you want to share ?
 You optimized the code or made it more aesthetically pleasing ? You found
-a typo in this doc and fixed it ? Feel free to send a `Pull Request <http://help.github.com/send-pull-requests/>`_ 
+a typo in this doc and fixed it ? Feel free to send a `Pull Request <http://help.github.com/send-pull-requests/>`_
 on GitHub, we will be glad to merge your code.

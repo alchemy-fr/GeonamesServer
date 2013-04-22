@@ -19,19 +19,30 @@ Returns a quick documentation listing available routes.
 
 ### /city
 
-Returns the list of all the cities in the database, limited to 30 results by default. 
-The limit can be changed within the **vars.js** file.
+Returns the list of all the cities in the database, limited to 30 results by
+default.
+The default limit can be changed within the **vars.js** file.
 
-#### Parameters 
+#### Parameters
 
   - sort (mandatory, default value : population)
     available values :
     - population : The results will be sorted by population.
-    - closeness : The results will be sorted by closeness to the place the request was sent from.
+    - closeness : The results will be sorted by closeness to the place the
+request was sent from.
+    - ip : The results will be sorted by closeness to the provided ip.
+The provided ip must be given in sortParams query parameter which is an
+associative array. Example : /city?name=paris&sort=ip&sortParams[ip]=1.1.1.1
   - ord (mandatory, default value : desc)
     available values :
     - desc : The results will be displayed in descending order.
     - asc : The results will be displayed in ascending order.
+  - name (optional) : Filters city by a given name.
+  - ip (optional) : Find the city in which the given ip address is located.
+'ip' parameter can not be set within a 'name' parameter.
+  - country (optional) :
+    Only cities located in countries whose name begins with this parameter will be returned.
+  - limit (optional) : The number of results.
 
 
 ### /city/{id}
@@ -39,34 +50,10 @@ The limit can be changed within the **vars.js** file.
 Returns the city which *geonameid* value is equal to the given id.
 
 
-### /search
-
-Returns all the cities whose name begins with a given *query*, limited to 30 results by default.
-The limit can be changed within the **vars.js** file.
-
-#### Parameters
-
-  - query (mandatory) :
-    Only cities whose name begins with this parameter will be returned.
-  - country (optional) :
-    Only cities located in countries whose name begins with this parameter will be returned.
-  - sort (mandatory, default value : population)
-    available values :
-    - population : The results will be sorted by population.
-    - closeness : The results will be sorted by closeness to the place the request was sent from.
-  - ord (mandatory, default value : desc)
-    available values :
-    - desc : The results will be displayed in descending order.
-    - asc : The results will be displayed in ascending order.
-
-### /ip/{address}
-Returns the city in which the given ip address is located.
-
-
-All these routes can only be accessed through GET requests. Any other methods will result in a 
-*405 Method not allowed* error. The results will be sent as text/XML or text/JSON files, according 
-to the accept field within the request header. If the *sort* parameter is specified and set to *closeness* 
-but the location of the request could not be detetermined (due to a lack of data within the geoip database 
+All these routes can only be accessed through GET requests. Any other methods will result in a
+*405 Method not allowed* error. The results will be sent as text/XML or text/JSON files, according
+to the accept field within the request header. If the *sort* parameter is specified and set to *closeness*
+but the location of the request could not be detetermined (due to a lack of data within the geoip database
 or geoip module not being installed), default values of 0,0 will be used instead. If a mandatory parameter,
 such as *sort* is used with a value not included in the list of available values, the request will result
 in a *400 Bad request* error.
@@ -75,8 +62,8 @@ in a *400 Bad request* error.
 
 GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
 within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
-qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a 
-**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a 
+qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a
+**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a
 *406 Not acceptable* error.
 
 ### Examples of response
@@ -103,7 +90,7 @@ Following are the results returned for the request */search/query=york&country=a
                 <country>Australia</country>
                 <country_match>Aus</country_match>
                 <region>Western Australia</region>
-            </geoname> 
+            </geoname>
         </geonames>
 
 #### json
