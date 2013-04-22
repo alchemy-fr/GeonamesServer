@@ -53,8 +53,6 @@ module.exports = function(app) {
 
             var point = geoloc.getPointfromIp(ip, app.get('app.config').geo);
 
-            console.log(ip, point);
-            
             var requestBody = controller.esQuery.findCitiesByName(
                     cityName,
                     codes,
@@ -89,7 +87,7 @@ module.exports = function(app) {
                         }
                     });
                 } else {
-//                    console.log('elastic search error, got error ', error, ' status code ', response.statusCode, ' and response ', response);
+                    console.log('elastic search error, got error ', error, ' status code ', response.statusCode, ' and response ', response);
                     common.sendEmptyResponse(res, app.get('req.type'));
                 }
             });

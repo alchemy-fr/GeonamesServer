@@ -169,9 +169,25 @@ describe('Tests /city route', function() {
         it('Returns a collection when providing a full name', function(done) {
             request(app)
                     .get('/city?name=paris')
-                    .expect(200, done)
+                    .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount,30, "Expecting 30 got " + result.geonames.totalResultsCount);
+                        done();
+                    });
+        });
+    });
+
+    describe('GET /city?name=paris&limit=1', function() {
+        it('Returns a collection with one result', function(done) {
+            request(app)
+                    .get('/city?name=paris&limit=1')
+                    .expect(200)
+                    .end(function(err, res) {
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount,1, "Expecting 1 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -181,9 +197,11 @@ describe('Tests /city route', function() {
         it('Returns a collection when providing an incomplete name', function(done) {
             request(app)
                     .get('/city?name=pa')
-                    .expect(200, done)
+                    .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -193,9 +211,11 @@ describe('Tests /city route', function() {
         it('Returns a collection', function(done) {
             request(app)
                     .get('/city')
-                    .expect(200, done)
+                    .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -207,7 +227,9 @@ describe('Tests /city route', function() {
                     .get('/city?name=%20paris%20')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -219,7 +241,14 @@ describe('Tests /city route', function() {
                     .get('/city?name=paris&sort=population')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
+                        var first = result.geonames.geoname.shift();
+                        var second = result.geonames.geoname.shift();
+                        var third = result.geonames.geoname.shift();
+                        assert(first.population > second.population);
+                        assert(second.population > third.population);
                         done();
                     });
         });
@@ -231,19 +260,25 @@ describe('Tests /city route', function() {
                     .get('/city?name=paris')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
     });
 
-    describe('GET /city?name=paris&sort=closeness&sortParams[ip]=144.35.6.78', function() {
+    describe('GET /city?name=paris&sort=closeness&sortParams[ip]=173.194.40.162&limit=1', function() {
         it('Returns a collection when sorting by closeness and providing an ip', function(done) {
             request(app)
-                    .get('/city?name=paris&sort=closeness&sortParams[ip]=144.35.6.78')
+                    .get('/city?name=paris&sort=closeness&sortParams[ip]=173.194.40.162&limit=1')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 1, "Expecting 1 got " + result.geonames.totalResultsCount);
+                        var result = result.geonames.geoname.pop();
+                        assert(result.country.indexOf("United") !== -1, "Expecting to find 'United' in " + result.country);
                         done();
                     });
         });
@@ -271,7 +306,9 @@ describe('Tests /city route', function() {
                     .get('/city/2988507')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 1, "Expecting 1 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -283,7 +320,9 @@ describe('Tests /city route', function() {
                     .get('/city/0000000')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") === -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 0, "Expecting 0 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -295,7 +334,9 @@ describe('Tests /city route', function() {
                     .get('/city?name=paris&country=aaaaaaaaaa')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") === -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 0, "Expecting 0 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -307,7 +348,9 @@ describe('Tests /city route', function() {
                     .get('/city?name=paris&country=fr')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") !== -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 2, "Expecting 2 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
@@ -321,25 +364,29 @@ describe('Tests /city route', function() {
         });
     });
 
-    describe('GET /city?name=paris&sort=asc', function() {
+    describe('GET /city?name=paris&order=asc', function() {
         it('Returns collection when sorting', function(done) {
             request(app)
-                    .get('/city?name=paris&sort=asc')
+                    .get('/city?name=paris&order=asc')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") === -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
     });
 
-    describe('GET /city?name=paris&sort=desc', function() {
+    describe('GET /city?name=paris&sort=population&order=desc', function() {
         it('Returns collection when sorting', function(done) {
             request(app)
-                    .get('/city?name=paris&sort=desc')
+                    .get('/city?name=paris&order=desc')
                     .expect(200)
                     .end(function(err, res) {
-                        assert(res.text.indexOf("Paris") === -1);
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 30, "Expecting 30 got " + result.geonames.totalResultsCount);
                         done();
                     });
         });
