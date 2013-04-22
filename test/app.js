@@ -292,6 +292,19 @@ describe('Tests /city route', function() {
         });
     });
 
+    describe('GET /city?name=paris&sort=closeness&sortParams[ip]=127.0.0.1', function() {
+        it('Test fallback to sort by population if geo ip failed', function(done) {
+            request(app)
+                    .get('/city?name=paris&sort=closeness&sortParams[ip]=127.0.0.1')
+                    .expect(200).
+                    end(function(err, res) {
+                        if (err) return done(err);
+                        assert.equal(res.header['x-geonames-sortby'], 'population');
+                        done();
+                    });
+        });
+    });
+
     describe('GET /city?name=paris&sort=unknown', function() {
         it('Returns 400 when sort is not valid', function(done) {
             request(app)
