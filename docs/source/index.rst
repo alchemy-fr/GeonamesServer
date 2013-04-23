@@ -46,8 +46,8 @@ enough. Otherwise, you can download it from the
 
 
 To ensure the proper functioning of these operations,
- `curl <http://fr2.php.net/manual/en/book.curl.php>`_ and
- `mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are
+`curl <http://fr2.php.net/manual/en/book.curl.php>`_ and
+`mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are
 required.
 
 See `mongo extension install details here <http://php.net/manual/fr/mongo.installation.php>`_
@@ -196,17 +196,18 @@ The callback parameter is `callback`.
 *Response*
 
 .. code-block:: javascript
-    myFunction({
-        "ip": "4.23.171.0",
-        "result": {
-            "geoname": {
-                "city": "New York",
-                "country_code": "US",
-                "country": "United States",
-                "fips": "New York",
-                "longitude": "-73.97650146484375",
-                "latitude": "40.754600524902344"
-            }
+
+    myFunction(    {
+        "geonames": {
+              "ip": "4.23.171.0",
+              "geoname": {
+                    "city": "New York",
+                    "country_code": "US",
+                    "country": "United States",
+                    "longitude": "-73.98",
+                    "latitude": "40.75",
+                    "fips": "New York"
+              }
         }
     })
 
@@ -618,9 +619,6 @@ will return one of these results, according to the expected content-type:
 ^^^^^^^^^^
 
 Returns the city which *geonameid* value is equal to the given id.
-
-Examples
-########
 
 .. code-block:: bash
 
