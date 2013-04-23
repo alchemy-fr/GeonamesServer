@@ -7,6 +7,9 @@ services:
 before_install:
   - sudo apt-get update
   - sudo apt-get install php5 libgeoip-dev
+  - cp config/elasticsearch.cfg.sample config/elasticsearch.cfg
+  - cp config/mongo.cfg.sample config/mongo.cfg
+  - cp config/server.json.sample config/server.json
 
 node_js:
   - "0.10"
