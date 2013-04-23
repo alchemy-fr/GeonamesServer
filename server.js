@@ -1,13 +1,21 @@
 var express = require('express');
-
-var vars = require('./vars');
+var path = require('path');
+var confParser = require('./lib/configParser');
 var middlewares = require('./lib/middleware');
 
 var app = module.exports = express();
 
-app.set('app.config', vars);
+try {
+    var config = require(path.resolve(__dirname, './config/server.json'));
+    config.es = confParser.parseSync(path.resolve(__dirname, './config/elasticsearch.cfg'));
+    config.mongo = confParser.parseSync(path.resolve(__dirname, './config/mongo.cfg'));
+} catch (Exception) {
+    process.stdout.write('Missing configuration file\n' + Exception + '\n');
+    process.exit(1);
+}
 
-app.set('port', vars.app.port);
+app.set('app.config', config);
+app.set('port', config.app.port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
@@ -28,6 +36,9 @@ app.use(middlewares.formalizeOrderParameter(app));
 
 // Formalize limit query parameter
 app.use(middlewares.formalizeLimitParameter(app));
+
+// Set service connection strings
+app.use(middlewares.setConnectionStrings(app));
 
 // Enable CORS request
 app.use(middlewares.enableCORS(app));

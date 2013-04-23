@@ -1,72 +1,50 @@
 <?php
-
-$varMongoDbName = "geonames";
-$varMongoCollectionName = "cities";
-$varElasticSearchUrl = "http://127.0.0.1:9200/";
-
-// If the following two variables are empty, varMongoDbName
-// and varMongoCollectionName will be used
-$varElasticSearchDB = "";
-$varElasticSearchCollection = "";
-
-$varMongoUsername = "";
-$varMongoPassword = "";
-$varMongoHost = "127.0.0.1";
+$usage = "Usage:\n"
+    . "\t php ./indexing.php <elastic_host> <elastic_port> <elastic_scheme> <elastic_cluster> <elastic_node>"
+    . "<mongo_db> <mongo_collection> <mongo_host> <mongo_port> [mongo_user] [mongo_pass]\n";
 
 if (isset($argv[1]) && !empty($argv[1])) {
-    $varElasticSearchUrl = $argv[1];
+    $varElasticSearchHost = trim($argv[1], '/ ');
 }
 if (isset($argv[2]) && !empty($argv[2])) {
-    $varMongoDbName = $argv[2];
+    $varElasticSearchPort = (int) $argv[2];
 }
 if (isset($argv[3]) && !empty($argv[3])) {
-    $varMongoCollectionName = $argv[3];
+    $varElasticSearchScheme = trim($argv[3], ' ');
+    if (!in_array($varElasticSearchScheme, array('http', 'https'))) {
+        echo "Elastic search scheme must be http or https;\n";
+        exit(1);
+    }
 }
 if (isset($argv[4]) && !empty($argv[4])) {
-    $varMongoHost = $argv[4];
+    $varElasticSearchCluster = trim($argv[4], ' ');
 }
 if (isset($argv[5]) && !empty($argv[5])) {
-    $varMongoPort = $argv[5];
+    $varElasticSearchNode = trim($argv[5], ' ');
 }
 if (isset($argv[6]) && !empty($argv[6])) {
-    $varMongoUserName = $argv[6];
+    $varMongoDbName = trim($argv[6], ' ');
 }
 if (isset($argv[7]) && !empty($argv[7])) {
-    $varMongoPassword = $argv[7];
+    $varMongoCollectionName = trim($argv[7], ' ');
+}
+if (isset($argv[8]) && !empty($argv[8])) {
+    $varMongoHost = trim($argv[8], '/ ');
+}
+if (isset($argv[9]) && !empty($argv[9])) {
+    $varMongoPort = (int) $argv[9];
+}
+if (isset($argv[10]) && !empty($argv[10])) {
+    $varMongoUserName = $argv[10];
+}
+if (isset($argv[11]) && !empty($argv[11])) {
+    $varMongoPassword = $argv[11];
 }
 
-function getElasticSearchUrl($url, $db, $collection, $mongoDb, $mongoCollection) {
-    if (substr($url, -1) != "/") {
-        $url .= "/";
-    }
-
-    if (isset($db) && !empty($db)) {
-        $url .= $db . "/";
-    } else {
-        $url .= $mongoDb . "/";
-    }
-
-    if (isset($collection) && !empty($collection)) {
-        $url .= $collection . "/";
-    } else {
-        $url .= $mongoCollection . "/";
-    }
-
-    return ($url);
-}
-
-function getUrl($url, $db, $mongoDb) {
-    if (substr($url, -1) != "/") {
-        $url .= "/";
-    }
-
-    if (isset($db) && !empty($db)) {
-        $url .= $db . "/";
-    } else {
-        $url .= $mongoDb . "/";
-    }
-
-    return ($url);
+if (count($argv) < 9){
+    echo 'Missing arguments\n';
+    echo $usage;
+    exit(1);
 }
 
 function secsToString($d) {
@@ -128,14 +106,13 @@ function getCursor($collection) {
 
 $options = array();
 
-if (!empty($varMongoUsername)) {
+if (!empty($varMongoUserName)) {
     $option['username'] = $varMongoUserName;
 }
 
 if (!empty($varMongoPassword)) {
     $option['password'] = $varMongoPassword;
 }
-
 
 try {
     $m = new MongoClient("mongodb://$varMongoHost:$varMongoPort", $options);
@@ -150,22 +127,22 @@ echo "Connected to the database $varMongoDbName\n";
 $collection = $db->$varMongoCollectionName;
 
 $cursor = getCursor($collection);
+$cursor->timeout(5000);
+
 $i = 0;
 
-$URL = getElasticSearchUrl(
-        $varElasticSearchUrl, $varElasticSearchDB, $varElasticSearchCollection, $varMongoDbName, $varMongoCollectionName
-);
+$clusterUrl = sprintf('%s://%s:%s/%s/', $varElasticSearchScheme, $varElasticSearchHost, $varElasticSearchPort, $varElasticSearchCluster);
 
-$rootUrl = getUrl($varElasticSearchUrl, $varElasticSearchDB, $varMongoDbName);
+$nodeUrl = sprintf('%s/%s/',$clusterUrl, $varElasticSearchNode);
 
 echo "Dropping current ElasticSearch index ...\n";
-exec("sh " . __DIR__ . "/indexing/deleteIndex.sh $rootUrl");
+exec("sh " . __DIR__ . "/indexing/deleteIndex.sh $clusterUrl");
 
 echo "Creating new index ...\n";
-exec("sh " . __DIR__ . "/indexing/createIndex.sh $rootUrl");
+exec("sh " . __DIR__ . "/indexing/createIndex.sh $clusterUrl");
 
 echo "Setting geolocation parameters ...\n";
-exec("sh " . __DIR__ . "/indexing/setGeolocation.sh $URL" . "_mapping $varMongoCollectionName");
+exec("sh " . __DIR__ . "/indexing/setGeolocation.sh $nodeUrl" . "_mapping $varElasticSearchNode");
 
 echo "\nIndexing...\n";
 
@@ -180,7 +157,7 @@ while ($flag == 0) {
         foreach ($cursor as $obj) {
             $i++;
             unset($obj['_id']);
-            curl_setopt($conn, CURLOPT_URL, $URL . $i);
+            curl_setopt($conn, CURLOPT_URL, $nodeUrl . $i);
             curl_setopt($conn, CURLOPT_POSTFIELDS, json_encode($obj));
             curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($conn, CURLOPT_CUSTOMREQUEST, strtoupper("PUT"));

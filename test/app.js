@@ -2,30 +2,14 @@ var request = require('supertest');
 var assert = require('assert');
 var app = require('../server');
 
+var config = app.get('app.config');
+
+config.app.verbose = true;
+config.es.elastic_cluster = config.es.elastic_cluster_test || 'tests';
+config.mongo.mongo_database = config.mongo.mongo_databas_test || 'tests';
+
 // Sets tests config
-app.set('app.config', {
-    app: {
-        verbose: true,
-        port: process.env.PORT || 3000,
-        allowed_domains: ["*"]
-    },
-    es: {
-        host: "127.0.0.1:9200",
-        name: "tests",
-        collection: "cities",
-        size: 30
-    },
-    mongo: {
-        url: "tests",
-        countrynames: "countrynames",
-        admincodes: "admincodes"
-    },
-    geo: {
-        geolitepath: './resources/data/GeoLiteCity.dat',
-        default_lon: 0,
-        default_lat: 0
-    }
-});
+app.set('app.config', config);
 
 describe('Tests accepted content types', function() {
     describe('GET /city', function() {

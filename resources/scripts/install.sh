@@ -28,66 +28,52 @@ if [ -z `which php` ]; then
     exit 1
 fi
 
-# Get mongo connection
+# Define paths
+if [ -z "$ROOT_PATH" ]; then
+ ROOT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
 
+RESOURCE_DIR="$ROOT_PATH/.."
+CONFIG_DIR="$ROOT_PATH/../../config"
+DATA_DIR="$RESOURCE_DIR/data"
+SOURCE_DIR="$RESOURCE_DIR/sources"
+SCRIPT_DIR="$RESOURCE_DIR/scripts"
+
+if [ ! -f "$CONFIG_DIR/mongo.cfg" ];then
+    echo "Missing $CONFIG_DIR/mongo.cfg configuration file"
+    exit
+fi
+
+if [ ! -f "$CONFIG_DIR/elasticsearch.cfg" ];then
+    echo "Missing $CONFIG_DIR/elasticsearch.cfg configuration file"
+    exit
+fi
+
+echo "Reading configuration files ...." >&2
+
+# Get $mongo_host, $mongo_port, $mongo_user, $mongo_pass, $mongo_database variables
+source "$CONFIG_DIR/mongo.cfg"
+
+# Get $elastic_host, $elastic_port, $elastic_scheme, $elastic_cluster variables
+source "$CONFIG_DIR/elasticsearch.cfg"
+
+# Testing mongo connection
 echo "Testing mongo connection ..."
 
-host="127.0.0.1"
-port=27017
-user=""
-password=""
-database="geonames"
-collection="cities"
-elastichost="127.0.0.1:9200"
+cmd_mongo_host="--host $mongo_host"
+cmd_mongo_port="--port $mongo_port"
+cmd_mongo_user=""
+cmd_mongo_pass=""
 
-while getopts ":h:u:p:d:c:e:" opt; do
-  case $opt in
-    h)
-      host="$OPTARG"
-      ;;
-    hp)
-      port="$OPTARG"
-      ;;
-    u)
-      user="$OPTARG"
-      ;;
-    p)
-      password="$OPTARG"
-      ;;
-    d)
-      database="$OPTARG"
-      ;;
-    c)
-      collection="$OPTARG"
-      ;;
-    e)
-      elastichost="$OPTARG"
-      ;;
-    \?)
-      echo "Invalid option: -$OPTARG \n\nUsage: sh import.sh\n\t[-h hostname]\n\t[-u user]\n\t[-p password]\n\t[-d database]\n\t[-c collection]\n\t[-e elasticsearchhostname]\n" >&2
-      exit 1
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument." >&2
-      exit 1
-      ;;
-  esac
-done
-
-mongohost="--host $host"
-mongoport="--port $port"
-mongouser=""
-mongopass=""
-
-if [ -n "$user" ]; then
-    mongouser="--username $user"
+if [ -n "$mongo_user" ]; then
+    cmd_mongo_user="--username $mongo_user"
 fi
 
-if [ -n "$password" ]; then
-    mongopass="--password $password"
+if [ -n "$mongo_pass" ]; then
+    cmd_mongo_pass="--password $mongo_pass"
 fi
 
-mongo $mongohost $mongoport $mongouser $mongopass --eval "printjson(db.adminCommand('listDatabases'))" > /dev/null
+echo mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass --eval "printjson(db.adminCommand('listDatabases'))" > /dev/null
 
 if [ $? -eq 1 ]; then
     echo "Cannot connect to mongo ..."
@@ -97,16 +83,6 @@ fi
 # Installing npm modules
 echo "Installing npm modules ..."
 /usr/bin/env npm install
-
-# Define paths
-if [ -z "$ROOT_PATH" ]; then
- ROOT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-fi
-
-RESOURCE_DIR="$ROOT_PATH/.."
-DATA_DIR="$RESOURCE_DIR/data"
-SOURCE_DIR="$RESOURCE_DIR/sources"
-SCRIPT_DIR="$RESOURCE_DIR/scripts"
 
 # Create directories
 if [ ! -d $DATA_DIR ];then
@@ -168,40 +144,39 @@ if [ ! -f "$DATA_DIR/countrynames.txt" ];then
 fi
 
 # Droping mongo database
-echo "Droping '$database' database ..."
-mongo $mongohost $mongoport  $mongouser $mongopass $database --eval "db.dropDatabase()" > /dev/null
+echo "Droping '$mongo_database' database ..."
+mongo $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass $mongo_database --eval "db.dropDatabase()" > /dev/null
 
 if [ $? -eq 1 ]; then
-    echo "Cannot drop '$database' database..."
+    echo "Cannot drop '$mongo_database' database..."
     exit 1;
 fi
 
 # Importing collections collection
-echo "Start importing 'allCities.txt' into '$collection' collection ..."
+echo "Start importing 'allCities.txt' into cities collection ..."
 
 MONGO_VERSION=`mongo --version | sed -e "s|.*: \.*||" | cut -d "." -f -1`
 
 if [ $MONGO_VERSION -gt 1 ]; then
-    mongoimport $mongohost $mongoport  $mongouser $mongopass -d $database -c $collection \
+    mongoimport $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c cities \
     --type tsv --fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
     --stopOnError "$DATA_DIR/allCities.txt"
 else
-    mongoimport $mongohost $mongoport  $mongouser $mongopass -d $database -c $collection \
+    mongoimport $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c cities \
     --type tsv --fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
     "$DATA_DIR/allCities.txt"
 fi
 
 echo "Setup the mongodb database (adding pin location & all different name for one city) ..."
-mongo $mongohost $mongoport $mongouser $mongopass $database "$SCRIPT_DIR/setupDB.js"
+mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $mongo_database "$SCRIPT_DIR/setupDB.js"
 
 echo "Start importing 'admincodes.txt' in admincodes collection ..."
-mongoimport $mongohost $mongoport  $mongouser $mongopass -d $database -c admincodes \
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c admincodes \
     --type tsv --fields code,name --stopOnError "$DATA_DIR/admincodes.txt"
 
 echo "Start importing 'countrynames.txt' in countrynames collection"
-mongoimport $mongohost $mongoport  $mongouser $mongopass -d $database -c countrynames \
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c countrynames \
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
 echo "Start indexing ..."
-php "$SCRIPT_DIR/indexing.php" $elastichost $database $collection $host $port $user $password
-
+php "$SCRIPT_DIR/indexing.php" $elastic_host $elastic_port $elastic_scheme $elastic_cluster cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass

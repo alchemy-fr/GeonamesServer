@@ -5,10 +5,52 @@ if [ -z "$ROOT_PATH" ]; then
 fi
 
 RESOURCE_DIR="$ROOT_PATH/.."
+CONFIG_DIR="$ROOT_PATH/../../config"
 FIXTURE_DIR="$RESOURCE_DIR/fixtures"
 DATA_DIR="$RESOURCE_DIR/data"
 SOURCE_DIR="$RESOURCE_DIR/sources"
 SCRIPT_DIR="$RESOURCE_DIR/scripts"
+
+
+if [ ! -f "$CONFIG_DIR/mongo.cfg" ];then
+    echo "Missing $CONFIG_DIR/mongo.cfg configuration file"
+    exit
+fi
+
+if [ ! -f "$CONFIG_DIR/elasticsearch.cfg" ];then
+    echo "Missing $CONFIG_DIR/elasticsearch.cfg configuration file"
+    exit
+fi
+
+echo "Reading configuration files ...." >&2
+
+# Get $mongo_host, $mongo_port, $mongo_user, $mongo_pass, $mongo_database_test variables
+source "$CONFIG_DIR/mongo.cfg"
+
+# Get $elastic_host, $elastic_port, $elastic_cluster_test variables
+source "$CONFIG_DIR/elasticsearch.cfg"
+
+echo "Testing mongo connection ..."
+
+cmd_mongo_host="--host $mongo_host"
+cmd_mongo_port="--port $mongo_port"
+cmd_mongo_user=""
+cmd_mongo_pass=""
+
+if [ -n "$mongo_user" ]; then
+    cmd_mongo_user="--username $mongo_user"
+fi
+
+if [ -n "$mongo_pass" ]; then
+    cmd_mongo_pass="--password $mongo_pass"
+fi
+
+mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass --eval "printjson(db.adminCommand('listDatabases'))" > /dev/null
+
+if [ $? -eq 1 ]; then
+    echo "Cannot connect to mongo ..."
+    exit 1;
+fi
 
 # Create directories
 if [ ! -d $DATA_DIR ];then
@@ -52,51 +94,37 @@ if [ ! -f "$DATA_DIR/countrynames.txt" ];then
     cat "$SOURCE_DIR/countryInfo.txt" | grep -v '^#' | cut -f1,5 > "$DATA_DIR/countrynames.txt"
 fi
 
-echo "Testing mongo connection ..."
-
-host="127.0.0.1"
-port=27017
-user=""
-password=""
-database="tests"
-elastichost="127.0.0.1:9200"
-
-mongohost="--host $host"
-mongoport="--port $port"
-mongouser=""
-mongopass=""
-
 # Droping mongo database
-echo "Droping '$database' database ..."
-mongo $mongohost $mongoport  $mongouser $mongopass $database --eval "db.dropDatabase()" > /dev/null
+echo "Droping '$mongo_database_test' database ..."
+mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $mongo_database_test --eval "db.dropDatabase()" > /dev/null
 
 if [ $? -eq 1 ]; then
-    echo "Cannot drop '$database' database..."
+    echo "Cannot drop '$mongo_database_test' database..."
     exit 1;
 fi
 
 echo "Start importing 'admincodes.txt' in admincodes collection ..."
-mongoimport $mongohost $mongoport  $mongouser $mongopass -d $database -c admincodes \
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database_test -c admincodes \
     --type tsv --fields code,name --stopOnError "$DATA_DIR/admincodes.txt"
 
 echo "Start importing 'countrynames.txt' in countrynames collection"
-mongoimport $mongohost $mongoport  $mongouser $mongopass -d $database -c countrynames \
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database_test -c countrynames \
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
-curl -s -X DELETE "http://$elastichost/$database/" > /dev/null
+curl -s -X DELETE "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/" > /dev/null
 
 if [ $? -eq 1 ]; then
-    echo "Cannot drop '$database' indexes..."
+    echo "Cannot drop '$elastic_cluster_test' cluster ..."
     exit 1;
 fi
 
-curl -s -X POST "http://$elastichost/$database/" > /dev/null
+curl -s -X POST "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/" > /dev/null
 
 if [ $? -eq 1 ]; then
-    echo "Cannot create '$database' database..."
+    echo "Cannot create '$elastic_cluster_test' cluster..."
     exit 1;
 fi
 
-bash "$SCRIPT_DIR/indexing/setGeolocation.sh" "http://$elastichost/$database/cities/_mapping" "cities" > /dev/null
+bash "$SCRIPT_DIR/indexing/setGeolocation.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/cities/_mapping" "cities" > /dev/null
 
-while read line; do curl --silent -XPOST "http://$elastichost/$database/cities/" -d "$line" > /dev/null; done < "$FIXTURE_DIR/indexes"
+while read line; do curl --silent -XPOST "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/cities/" -d "$line" > /dev/null; done < "$FIXTURE_DIR/indexes"

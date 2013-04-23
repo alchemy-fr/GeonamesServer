@@ -1,0 +1,11 @@
+{
+    "app": {
+        "verbose": false,
+        "port": 3000,
+        "allowed_domains": ["*"],
+        "max_result_per_page" : 30
+    },
+    "geo": {
+        "geolitepath": "./resources/data/GeoLiteCity.dat"
+    }
+}
