@@ -231,8 +231,8 @@ describe('Tests /city route', function() {
                         var first = result.geonames.geoname.shift();
                         var second = result.geonames.geoname.shift();
                         var third = result.geonames.geoname.shift();
-                        assert(first.population > second.population);
-                        assert(second.population > third.population);
+                        assert(parseInt(first.population) > parseInt(second.population));
+                        assert(parseInt(second.population) > parseInt(third.population));
                         done();
                     });
         });
