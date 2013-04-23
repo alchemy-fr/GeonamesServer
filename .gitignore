@@ -2,3 +2,5 @@
 /node_modules
 /resources/data
 /resources/sources
+/config/*
+!/config/*.sample
