@@ -1,5 +1,7 @@
 <!DOCTYPE html><html><head><title></title><link type="text/css" rel="stylesheet" href="http://jasonm23.github.com/markdown-css-themes/swiss.css"></head><body><div>Loading...</div><textarea id="mdstr" style=display:none># GeonamesServer
 
+[![Build Status](https://secure.travis-ci.org/alchemy-fr/GeonamesServer.png?branch=master)](https://travis-ci.org/alchemy-fr/GeonamesServer)
+
 A node.js server used to get the biggest or the closest cities based on a given HTTP request.
 
 ## Documentation
@@ -9,52 +11,61 @@ Read The Documentation at [Read The Docs !](https://geonames-server.readthedocs.
 
 ## Routes
 
-The following is a list of usable routes for the Geonames server:
+The following is a list of available routes.
+All these routes can only be accessed through GET requests.
+
+Any other methods will result in a *405 Method not allowed* error.
+
+The results will be sent as text/xml or application/json files, according
+to the accept field within the request header.
+
+If the *sort* parameter is specified and set to *closeness*
+but the location of the request could not be determined
+(due to a lack of data within the GEOIP database or GEOIP module not
+being installed), the current sort will be replaced by the *population* sort.
+
+If a mandatory parameter or unknown parameter value is detected the server will
+respond with a *400 Bad Request* error.
 
 ### /
 
-Returns a quick documentation listing available routes.
+Returns a quick documentation in HTML format.
 
 ### /city
 
-Returns the list of all the cities in the database, limited to 30 results by
-default.
-The default limit can be changed within the **vars.js** file.
+Gets the list of all the cities in the database, limited to *max_result_per_page* results by default.
+
+*max_result_per_page* is setted from configuration files or overridden with limit
+query parameter parameter up to 100.
 
 #### Parameters
 
-  - sort (mandatory, default value : population)
-    available values :
-    - population : The results will be sorted by population.
-    - closeness : The results will be sorted by closeness to the place the
-request was sent from.
-    - ip : The results will be sorted by closeness to the provided ip.
-The provided ip must be given in sortParams query parameter which is an
-associative array. Example : /city?name=paris&amp;sort=ip&amp;sortParams[ip]=1.1.1.1
-  - ord (mandatory, default value : desc)
-    available values :
-    - desc : The results will be displayed in descending order.
-    - asc : The results will be displayed in ascending order.
-  - name (optional) : Filters city by a given name.
-  - ip (optional) : Find the city in which the given ip address is located.
-'ip' parameter can not be set within a 'name' parameter.
-  - country (optional) :
-    Only cities located in countries whose name begins with this parameter will be returned.
-  - limit (optional) : The number of results.
+- **sort** (optional, string, default value : population) available values :
+
+  - population : The results will be sorted by population.
+  - closeness : The results will be sorted by closeness to the place the request was sent from.
+
+- **ord** (optional, string, default value : desc) available values :
+
+  - desc : The results will be displayed in descending order.
+  - asc : The results will be displayed in ascending order.
+
+- **name** (optional, string) : Filters city whose begins with a given name.
+
+- **country** (optional, string) : Only cities located in countries whose name begins with this parameter will be returned.
+
+- **limit** (optional, string) : The number of results.
+
+- **sortParams** (optional, array) : This parameter is used within the *closeness* sort parameter to provide a custom IP. `/city?sort=closeness&amp;sortParams[ip]=XXXX.XX.XX.XXXX`
 
 
 ### /city/{id}
 
 Returns the city which *geonameid* value is equal to the given id.
 
+### /ip?ip={ip}
 
-All these routes can only be accessed through GET requests. Any other methods will result in a
-*405 Method not allowed* error. The results will be sent as text/XML or text/JSON files, according
-to the accept field within the request header. If the *sort* parameter is specified and set to *closeness*
-but the location of the request could not be detetermined (due to a lack of data within the geoip database
-or geoip module not being installed), default values of 0,0 will be used instead. If a mandatory parameter,
-such as *sort* is used with a value not included in the list of available values, the request will result
-in a *400 Bad request* error.
+Returns the city in which the given IP address is located
 
 ## Accepted content types
 
@@ -66,78 +77,143 @@ qvalue ratings, choosing the return type by its rating. If * is specified, data 
 
 ### Examples of response
 
-Following are the results returned for the request */search/query=york&amp;country=aus*
+Following are the results returned for the request */city/name=paris
 
 ##### xml
 
     &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         &lt;geonames&gt;
-            &lt;totalResultsCount&gt;2&lt;/totalResultsCount&gt;
+            &lt;totalResultsCount&gt;30&lt;/totalResultsCount&gt;
             &lt;geoname&gt;
-                &lt;geonameid&gt;2206601&lt;/geonameid&gt;
-                &lt;title&gt;Yorkeys Knob&lt;/title&gt;
-                &lt;title_match&gt;York&lt;/title_match&gt;
-                &lt;country&gt;Australia&lt;/country&gt;
-                &lt;country_match&gt;Aus&lt;/country_match&gt;
-                &lt;region&gt;Queensland&lt;/region&gt;
+              &lt;geonameid&gt;2988507&lt;/geonameid&gt;
+              &lt;title&gt;Paris&lt;/title&gt;
+              &lt;title_alt&gt;paris&lt;/title_alt&gt;
+              &lt;title_match&gt;Paris&lt;/title_match&gt;
+              &lt;country&gt;France&lt;/country&gt;
+              &lt;country_match&gt;France&lt;/country_match&gt;
+              &lt;population&gt;2138551&lt;/population&gt;
+              &lt;latitude&gt;48.85&lt;/latitude&gt;
+              &lt;longitude&gt;2.35&lt;/longitude&gt;
+              &lt;region&gt;Île-de-France&lt;/region&gt;
             &lt;/geoname&gt;
             &lt;geoname&gt;
-                &lt;geonameid&gt;2057277&lt;/geonameid&gt;
-                &lt;title&gt;York&lt;/title&gt;
-                &lt;title_match&gt;York&lt;/title_match&gt;
-                &lt;country&gt;Australia&lt;/country&gt;
-                &lt;country_match&gt;Aus&lt;/country_match&gt;
-                &lt;region&gt;Western Australia&lt;/region&gt;
+              &lt;geonameid&gt;4717560&lt;/geonameid&gt;
+              &lt;title&gt;Paris&lt;/title&gt;
+              &lt;title_alt&gt;paris&lt;/title_alt&gt;
+              &lt;title_match&gt;Paris&lt;/title_match&gt;
+              &lt;country&gt;United States&lt;/country&gt;
+              &lt;country_match&gt;United States&lt;/country_match&gt;
+              &lt;population&gt;25171&lt;/population&gt;
+              &lt;latitude&gt;33.66&lt;/latitude&gt;
+              &lt;longitude&gt;-95.56&lt;/longitude&gt;
+              &lt;region&gt;Texas&lt;/region&gt;
             &lt;/geoname&gt;
+            &lt;geoname&gt;
+              &lt;geonameid&gt;3023645&lt;/geonameid&gt;
+              &lt;title&gt;Cormeilles-en-Parisis&lt;/title&gt;
+              &lt;title_alt&gt;cormeilles-en-parisis&lt;/title_alt&gt;
+              &lt;title_match&gt;Cormeilles-en-Parisis&lt;/title_match&gt;
+              &lt;country&gt;France&lt;/country&gt;
+              &lt;country_match&gt;France&lt;/country_match&gt;
+              &lt;population&gt;21973&lt;/population&gt;
+              &lt;latitude&gt;48.97&lt;/latitude&gt;
+              &lt;longitude&gt;2.2&lt;/longitude&gt;
+              &lt;region&gt;Île-de-France&lt;/region&gt;
+            &lt;/geoname&gt;
+                ...
         &lt;/geonames&gt;
 
 #### json
 
     {
-     &quot;geonames&quot;: {
-        &quot;totalResultsCount&quot;:2,
-        &quot;geoname&quot;:[
+        &quot;geonames&quot;: {
+          &quot;totalResultsCount&quot;: &quot;30&quot;,
+          &quot;geoname&quot;: [
             {
-                &quot;geonameid&quot;: &quot;2206601&quot;,
-                &quot;title&quot;: &quot;Yorkeys Knob&quot;,
-                &quot;country&quot;: &quot;Australia&quot;,
-                &quot;match&quot;: {
-                  &quot;title&quot;: &quot;York&quot;,
-                  &quot;country&quot;: &quot;Aus&quot;
-                },
-                &quot;title_alt&quot;: &quot;yorkeys knob&quot;,
-                &quot;region&quot;: &quot;Queensland&quot;,
-                &quot;population&quot;: 2645,
-                &quot;latitude&quot;: -16.81667,
-                &quot;longitude&quot;: 145.71667,
-                &quot;names&quot;: [
-                    &quot;yorkeys knob&quot;,
-                    &quot;yorkeys knob&quot;,
-                    &quot;yorkeys knob beach&quot;
-                ]
+              &quot;geonameid&quot;: &quot;2988507&quot;,
+              &quot;title&quot;: &quot;Paris&quot;,
+              &quot;country&quot;: &quot;France&quot;,
+              &quot;match&quot;: {
+                &quot;title&quot;: &quot;Paris&quot;,
+                &quot;country&quot;: &quot;France&quot;
+              },
+              &quot;population&quot;: &quot;2138551&quot;,
+              &quot;latitude&quot;: &quot;48.85&quot;,
+              &quot;longitude&quot;: &quot;2.35&quot;,
+              &quot;names&quot;: [
+                &quot;paris&quot;,
+                &quot;baariis&quot;,
+                &quot;bahliz&quot;,
+                &quot;gorad paryzh&quot;,
+                &quot;lungsod ng paris&quot;,
+                &quot;lutece&quot;,
+                &quot;lutetia&quot;,
+                &quot;lutetia parisorum&quot;,
+                &quot;par&quot;,
+                &quot;pa-ri&quot;,
+                &quot;paarys&quot;,
+                &quot;palika&quot;,
+                &quot;paname&quot;,
+                &quot;pantruche&quot;,
+                &quot;paraeis&quot;,
+                &quot;paras&quot;,
+                &quot;pari&quot;,
+                &quot;paries&quot;,
+                &quot;parigge&quot;,
+                &quot;pariggi&quot;,
+                &quot;parighji&quot;,
+                &quot;parigi&quot;,
+                &quot;pariis&quot;,
+                &quot;pariisi&quot;,
+                &quot;parij&quot;,
+                &quot;parijs&quot;,
+                &quot;paris&quot;,
+                &quot;parisi&quot;,
+                &quot;parixe&quot;,
+                &quot;pariz&quot;,
+              ],
+              &quot;region&quot;: &quot;Île-de-France&quot;,
+              &quot;title_alt&quot;: &quot;paris&quot;
             },
             {
-                &quot;geonameid&quot;: &quot;2057277&quot;,
-                &quot;title&quot;: &quot;York&quot;,
-                &quot;country&quot;: &quot;Australia&quot;,
-                &quot;match&quot;: {
-                  &quot;title&quot;: &quot;York&quot;,
-                  &quot;country&quot;: &quot;Aus&quot;
-                },
-                &quot;title_alt&quot;: &quot;york&quot;,
-                &quot;region&quot;: &quot;Western Australia&quot;,
-                &quot;population&quot;: 2090,
-                &quot;latitude&quot;: -31.88467,
-                &quot;longitude&quot;: 116.76874,
-                &quot;names&quot;: [
-                    &quot;york&quot;,
-                    &quot;jork&quot;,
-                    &quot;york&quot;,
-                    &quot;йорк&quot;
-                ]
-            }
-        ]
-     }
+              &quot;geonameid&quot;: &quot;4717560&quot;,
+              &quot;title&quot;: &quot;Paris&quot;,
+              &quot;country&quot;: &quot;United States&quot;,
+              &quot;match&quot;: {
+                &quot;title&quot;: &quot;Paris&quot;,
+                &quot;country&quot;: &quot;United States&quot;
+              },
+              &quot;population&quot;: &quot;25171&quot;,
+              &quot;latitude&quot;: &quot;33.66&quot;,
+              &quot;longitude&quot;: &quot;-95.56&quot;,
+              &quot;names&quot;: [
+                &quot;paris&quot;,
+                &quot;prx&quot;,
+                &quot;parizh&quot;,
+                &quot;париж&quot;
+              ],
+              &quot;region&quot;: &quot;Texas&quot;,
+              &quot;title_alt&quot;: &quot;paris&quot;
+            },
+            {
+              &quot;geonameid&quot;: &quot;3023645&quot;,
+              &quot;title&quot;: &quot;Cormeilles-en-Parisis&quot;,
+              &quot;country&quot;: &quot;France&quot;,
+              &quot;match&quot;: {
+                &quot;title&quot;: &quot;Cormeilles-en-Parisis&quot;,
+                &quot;country&quot;: &quot;France&quot;
+              },
+              &quot;population&quot;: &quot;21973&quot;,
+              &quot;latitude&quot;: &quot;48.97&quot;,
+              &quot;longitude&quot;: &quot;2.2&quot;,
+              &quot;names&quot;: [
+                &quot;cormeilles-en-parisis&quot;,
+                &quot;cormeilles&quot;,
+                &quot;cormeilles-en-parisis&quot;
+              ],
+              &quot;region&quot;: &quot;Île-de-France&quot;,
+              &quot;title_alt&quot;: &quot;cormeilles-en-parisis&quot;
+        }
     }
 
 
