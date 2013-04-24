@@ -124,10 +124,11 @@ try {
 
 echo "Connected to the database $varMongoDbName\n";
 
+\MongoCursor::$timeout = -1;
+
 $collection = $db->$varMongoCollectionName;
 
 $cursor = getCursor($collection);
-$cursor->timeout(5000);
 
 $i = 0;
 
@@ -141,8 +142,8 @@ exec("sh " . __DIR__ . "/indexing/deleteIndex.sh $clusterUrl");
 echo "Creating new index ...\n";
 exec("sh " . __DIR__ . "/indexing/createIndex.sh $clusterUrl");
 
-echo "Setting geolocation parameters ...\n";
-exec("sh " . __DIR__ . "/indexing/setGeolocation.sh $nodeUrl" . "_mapping $varElasticSearchNode");
+echo "Setting index mapping ...\n";
+exec("sh " . __DIR__ . "/indexing/setupIndex.sh $nodeUrl" . "_mapping $varElasticSearchNode");
 
 echo "\nIndexing...\n";
 
