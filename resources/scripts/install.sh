@@ -54,7 +54,7 @@ echo "Reading configuration files ...." >&2
 # Get $mongo_host, $mongo_port, $mongo_user, $mongo_pass, $mongo_database variables
 source "$CONFIG_DIR/mongo.cfg"
 
-# Get $elastic_host, $elastic_port, $elastic_scheme, $elastic_cluster variables
+# Get $elastic_host, $elastic_port, $elastic_scheme, $elastic_index variables
 source "$CONFIG_DIR/elasticsearch.cfg"
 
 # Testing mongo connection
@@ -179,4 +179,4 @@ mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
 echo "Start indexing ..."
-php "$SCRIPT_DIR/indexing.php" $elastic_host $elastic_port $elastic_scheme $elastic_cluster cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass
+php "$SCRIPT_DIR/indexing.php" $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass

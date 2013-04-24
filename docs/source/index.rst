@@ -88,8 +88,8 @@ to your system setup.
     elastic_host="127.0.0.1"
     elastic_port="9200"
     elastic_scheme="http"
-    elastic_cluster="geonames"
-    elastic_cluster_test="tests"
+    elastic_index="geonames"
+    elastic_index_test="tests"
 
 ** MongoDB configuration**
 
