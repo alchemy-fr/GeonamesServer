@@ -7,7 +7,7 @@ curl -s -X POST $1 -d '{
                         "type": "custom",
                         "tokenizer": "whitespace",
                         "filter": [
-                            "lowercase", "standard"
+                            "lowercase", "standard", "asciifolding"
                         ]
                     }
                 }
