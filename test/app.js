@@ -388,4 +388,19 @@ describe('Tests /city route', function() {
                     });
         });
     });
+
+
+    describe("GET /city?name=paris-l&sort=population", function() {
+        it('Returns a response when search words with hyphens and diacritics', function(done) {
+            request(app)
+                    .get("/city?name=paris-l'ho&sort=population")
+                    .expect(200)
+                    .end(function(err, res) {
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 1, "Expecting 1 got " + result.geonames.totalResultsCount);
+                        done();
+                    });
+        });
+    });
 });

@@ -27,7 +27,7 @@ echo "Reading configuration files ...." >&2
 # Get $mongo_host, $mongo_port, $mongo_user, $mongo_pass, $mongo_database_test variables
 source "$CONFIG_DIR/mongo.cfg"
 
-# Get $elastic_host, $elastic_port, $elastic_cluster_test variables
+# Get $elastic_host, $elastic_port, $elastic_index_test variables
 source "$CONFIG_DIR/elasticsearch.cfg"
 
 echo "Testing mongo connection ..."
@@ -111,20 +111,10 @@ echo "Start importing 'countrynames.txt' in countrynames collection"
 mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database_test -c countrynames \
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
-curl -s -X DELETE "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/" > /dev/null
-
-if [ $? -eq 1 ]; then
-    echo "Cannot drop '$elastic_cluster_test' cluster ..."
-    exit 1;
-fi
-
-curl -s -X POST "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/" > /dev/null
-
-if [ $? -eq 1 ]; then
-    echo "Cannot create '$elastic_cluster_test' cluster..."
-    exit 1;
-fi
-
-bash "$SCRIPT_DIR/indexing/setGeolocation.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/cities/_mapping" "cities" > /dev/null
-
-while read line; do curl --silent -XPOST "$elastic_scheme://$elastic_host:$elastic_port/$elastic_cluster_test/cities/" -d "$line" > /dev/null; done < "$FIXTURE_DIR/indexes"
+bash "$SCRIPT_DIR/indexing/deleteIndex.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/"
+echo ""
+bash "$SCRIPT_DIR/indexing/createIndex.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/"
+echo ""
+bash "$SCRIPT_DIR/indexing/setupIndex.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/cities/_mapping" "cities"
+echo ""
+while read line; do curl --silent -XPOST "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/cities" -d "$line"; done < "$FIXTURE_DIR/indexes" > /dev/null
