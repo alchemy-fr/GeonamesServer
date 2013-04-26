@@ -403,4 +403,35 @@ describe('Tests /city route', function() {
                     });
         });
     });
+
+    describe("GET /city?name=paris&limit=1", function() {
+        it('Returns JSON response with geopoint location', function(done) {
+            request(app)
+                    .get("/city?name=paris&limit=1&sort=population")
+                    .expect(200)
+                    .end(function(err, res) {
+                        if (err) return done(err);
+                        var result = JSON.parse(res.text);
+                        assert.equal(result.geonames.totalResultsCount, 1, "Expecting 1 got " + result.geonames.totalResultsCount);
+                        var city = result.geonames.geoname[0];
+                        assert.equal(city.location.latitude, "48.81");
+                        assert.equal(city.location.longitude, "2.38");
+                        done();
+                    });
+        });
+    });
+
+    describe("GET /city?name=paris&limit=1", function() {
+        it('Returns XML response with geopoint location', function(done) {
+            request(app)
+                    .get("/city?name=paris&limit=1&sort=population")
+                    .set('Accept', 'text/xml')
+                    .expect(200)
+                    .end(function(err, res) {
+                        if (err) return done(err);
+                        assert(res.text.indexOf('<location latitude="48.81" longitude="2.38"/>') !== -1);
+                        done();
+                    });
+        });
+    });
 });
