@@ -17,7 +17,7 @@ if (isset($argv[3]) && !empty($argv[3])) {
     }
 }
 if (isset($argv[4]) && !empty($argv[4])) {
-    $$varElasticSearchIndex = trim($argv[4], ' ');
+    $varElasticSearchIndex = trim($argv[4], ' ');
 }
 if (isset($argv[5]) && !empty($argv[5])) {
     $varElasticSearchIndexType = trim($argv[5], ' ');
@@ -132,7 +132,7 @@ $cursor = getCursor($collection);
 
 $i = 0;
 
-$indexUrl = sprintf('%s://%s:%s/%s/', $varElasticSearchScheme, $varElasticSearchHost, $varElasticSearchPort, $$varElasticSearchIndex);
+$indexUrl = sprintf('%s://%s:%s/%s/', $varElasticSearchScheme, $varElasticSearchHost, $varElasticSearchPort, $varElasticSearchIndex);
 
 $indexTypeUrl = sprintf('%s/%s/',$indexUrl, $varElasticSearchIndexType);
 
