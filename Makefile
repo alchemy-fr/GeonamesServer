@@ -5,6 +5,9 @@ test:
 install:
 	bash ./resources/scripts/install.sh
 
+index:
+	bash ./resources/scripts/indexing/index.sh
+
 clean:
 	rm ./resources/data
 	rm ./resources/sources

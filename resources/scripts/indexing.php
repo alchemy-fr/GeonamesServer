@@ -1,6 +1,6 @@
 <?php
 $usage = "Usage:\n"
-    . "\t php ./indexing.php <elastic_host> <elastic_port> <elastic_scheme> <elastic_cluster> <elastic_node>"
+    . "\t php ./indexing.php <elastic_host> <elastic_port> <elastic_scheme> <elastic_index> <elastic_node>"
     . "<mongo_db> <mongo_collection> <mongo_host> <mongo_port> [mongo_user] [mongo_pass]\n";
 
 if (isset($argv[1]) && !empty($argv[1])) {
@@ -17,10 +17,10 @@ if (isset($argv[3]) && !empty($argv[3])) {
     }
 }
 if (isset($argv[4]) && !empty($argv[4])) {
-    $varElasticSearchCluster = trim($argv[4], ' ');
+    $varElasticSearchIndex = trim($argv[4], ' ');
 }
 if (isset($argv[5]) && !empty($argv[5])) {
-    $varElasticSearchNode = trim($argv[5], ' ');
+    $varElasticSearchIndexType = trim($argv[5], ' ');
 }
 if (isset($argv[6]) && !empty($argv[6])) {
     $varMongoDbName = trim($argv[6], ' ');
@@ -124,25 +124,26 @@ try {
 
 echo "Connected to the database $varMongoDbName\n";
 
+\MongoCursor::$timeout = -1;
+
 $collection = $db->$varMongoCollectionName;
 
 $cursor = getCursor($collection);
-$cursor->timeout(5000);
 
 $i = 0;
 
-$clusterUrl = sprintf('%s://%s:%s/%s/', $varElasticSearchScheme, $varElasticSearchHost, $varElasticSearchPort, $varElasticSearchCluster);
+$indexUrl = sprintf('%s://%s:%s/%s/', $varElasticSearchScheme, $varElasticSearchHost, $varElasticSearchPort, $varElasticSearchIndex);
 
-$nodeUrl = sprintf('%s/%s/',$clusterUrl, $varElasticSearchNode);
+$indexTypeUrl = sprintf('%s/%s/',$indexUrl, $varElasticSearchIndexType);
 
 echo "Dropping current ElasticSearch index ...\n";
-exec("sh " . __DIR__ . "/indexing/deleteIndex.sh $clusterUrl");
+exec("sh " . __DIR__ . "/indexing/deleteIndex.sh $indexUrl");
 
 echo "Creating new index ...\n";
-exec("sh " . __DIR__ . "/indexing/createIndex.sh $clusterUrl");
+exec("sh " . __DIR__ . "/indexing/createIndex.sh $indexUrl");
 
-echo "Setting geolocation parameters ...\n";
-exec("sh " . __DIR__ . "/indexing/setGeolocation.sh $nodeUrl" . "_mapping $varElasticSearchNode");
+echo "Setting index mapping ...\n";
+exec("sh " . __DIR__ . "/indexing/setupIndex.sh $indexTypeUrl" . "_mapping $varElasticSearchIndexType");
 
 echo "\nIndexing...\n";
 
@@ -157,7 +158,7 @@ while ($flag == 0) {
         foreach ($cursor as $obj) {
             $i++;
             unset($obj['_id']);
-            curl_setopt($conn, CURLOPT_URL, $nodeUrl . $i);
+            curl_setopt($conn, CURLOPT_URL, $indexTypeUrl . $i);
             curl_setopt($conn, CURLOPT_POSTFIELDS, json_encode($obj));
             curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($conn, CURLOPT_CUSTOMREQUEST, strtoupper("PUT"));
