@@ -5,11 +5,34 @@ var app = require('../server');
 var config = app.get('app.config');
 
 config.app.verbose = true;
-config.es.elastic_cluster = config.es.elastic_cluster_test || 'tests';
-config.mongo.mongo_database = config.mongo.mongo_databas_test || 'tests';
+config.es.elastic_index = config.es.elastic_index_test || 'tests';
+config.mongo.mongo_database = config.mongo.mongo_database_test || 'tests';
 
 // Sets tests config
 app.set('app.config', config);
+
+describe('Tests configuration', function() {
+    describe('ElasticSearch configuration string', function() {
+        it('Ensures elastic configuration is valid', function(done) {
+            request(app).get('/').end(function(err, res) {
+                var cs = app.get('es.connection.string')('node_type');
+                assert(cs.indexOf("node_type") !== -1, "Expecting to find 'node_type' in " + cs);
+                assert(typeof cs === 'string', "Expecting to find 'string' got " + typeof cs);
+                done();
+            });
+        });
+    });
+
+    describe('MongoDB configuration string', function() {
+        it('Ensures MongoDB configuration is valid', function(done) {
+            request(app).get('/').end(function(err, res) {
+                var cs = app.get('mongo.connection.string')();
+                assert(typeof cs === 'string', "Expecting to find 'string' got " + typeof cs);
+                done();
+            });
+        });
+    });
+});
 
 describe('Tests accepted content types', function() {
     describe('GET /city', function() {
