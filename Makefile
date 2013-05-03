@@ -9,9 +9,9 @@ index:
 	bash ./resources/scripts/indexing/index.sh
 
 clean:
-	rm ./resources/data
-	rm ./resources/sources
-	rm ./node_modules
+	rm -rf ./resources/data
+	rm -rf ./resources/sources
+	rm -rf ./node_modules
 
 .PHONY: test
 
