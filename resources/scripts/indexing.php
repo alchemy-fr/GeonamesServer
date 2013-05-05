@@ -134,7 +134,7 @@ $i = 0;
 
 $indexUrl = sprintf('%s://%s:%s/%s/', $varElasticSearchScheme, $varElasticSearchHost, $varElasticSearchPort, $varElasticSearchIndex);
 
-$indexTypeUrl = sprintf('%s/%s/',$indexUrl, $varElasticSearchIndexType);
+$indexTypeUrl = sprintf('%s/%s/', $indexUrl, $varElasticSearchIndexType);
 
 echo "Dropping current ElasticSearch index ...\n";
 exec("sh " . __DIR__ . "/indexing/deleteIndex.sh $indexUrl");
@@ -169,7 +169,7 @@ while ($flag == 0) {
             try {
                 $res = curl_exec($conn);
             } catch (Exception $e) {
-                echo "An error ocurred: {$e->getMessage()} \nRetrying ...\n";
+                echo "An error occurred: {$e->getMessage()} \nRetrying ...\n";
                 sleep(5);
                 $res = curl_exec($conn);
             }
@@ -190,5 +190,5 @@ while ($flag == 0) {
     }
 }
 
-echo "$i entries proccessed. Tooks " . secsToString(floor(microtime(true)- $timeStart)) . " seconds\n";
+echo "$i entries processed. Took " . secsToString(floor(microtime(true)- $timeStart)) . " seconds\n";
 exit(0);
