@@ -9,7 +9,12 @@ if [ -z `which mongo` ]; then
 fi
 
 if [ -z `php -m | grep mongo` ]; then
-    echo "PHP-mongo extension not found. Please install it and run this script again."
+    echo "php mongo extension not found. Please install it and run this script again."
+    exit 1
+fi
+
+if [ -z `php -m | grep curl` ]; then
+    echo "php curl extension not found. Please install it and run this script again."
     exit 1
 fi
 
