@@ -56,7 +56,7 @@ query parameter parameter up to 100.
 
 - **limit** (optional, string) : The number of results.
 
-- **sortParams** (optional, array) : This parameter is used within the *closeness* sort parameter to provide a custom IP. `/city?sort=closeness&sortParams[ip]=XXXX.XX.XX.XXXX`
+- **client-ip** (optional, string) : This parameter is used within the *closeness* sort parameter to provide a custom IP. `/city?sort=closeness&client-ip=89.24.168.1`
 
 
 ### /city/{id}
