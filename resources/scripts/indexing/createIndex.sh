@@ -1,17 +1,27 @@
-curl -s -X POST $1 -d '{
-    "settings": {
-        "index": {
-            "analysis": {
-                "analyzer": {
-                    "geonames": {
-                        "type": "custom",
-                        "tokenizer": "whitespace",
-                        "filter": [
-                            "lowercase", "standard", "asciifolding"
+curl -s -X POST $1 -d '
+{
+    "settings":{
+        "index":{
+            "analysis":{
+                "analyzer":{
+                    "city":{
+                        "type":"custom",
+                        "tokenizer":"standard",
+                        "filter":[
+                             "lowercase",
+                             "asciifolding"
+                        ]
+                    },
+                    "lowercase":{
+                        "type":"custom",
+                        "tokenizer":"standard",
+                        "filter":[
+                            "lowercase"
                         ]
                     }
                 }
             }
         }
     }
-}'
+}
+'
