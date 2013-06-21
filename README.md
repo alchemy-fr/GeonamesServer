@@ -4,10 +4,196 @@
 
 A node.js server used to get the biggest or the closest cities based on a given HTTP request.
 
-## Documentation
+## Introduction
 
-Read The Documentation at [Read The Docs !](https://geonames-server.readthedocs.org/)
+This server's purpose is to interrogate an ElasticSearch index and a MongoDB
+database, and to return geolocation-related data. It relies on data found on
+http://www.geonames.org/. You can use this server to retrieve the approximative
+location of an IPV4 address, to get more details about a city identified by its
+geonameid, or to find the closest (or biggest) cities matching a given criteria.
 
+The server accepts only HTTP GET requests, and returns appropriatly filled XML
+or JSON trees.
+
+This server was created using `Express <http://expressjs.com/>`_.
+
+It supports `JSONP <http://en.wikipedia.org/wiki/JSONP>`_ and
+`CORS <http://en.wikipedia.org/wiki/Cross-origin_resource_sharing>`_ requests.
+
+## Installation
+
+### Prerequisites
+
+In order to make the Geonames Server run, you need to have installed MongoDB,
+ElasticSearch, PHP and NodeJS + NPM.
+
+**MongoDB**
+
+To install MongoDB, you should follow
+`the official MongoDB guides <http://www.mongodb.org/display/DOCS/Quickstart>`_.
+
+**ElasticSearch**
+
+If you use `homebrew <http://mxcl.github.com/homebrew/>`_, you can run
+**brew install elasticsearch** in order to install ElasticSearch.
+Otherwise, follow `the official guide <http://www.elasticsearch.org/guide/reference/setup/installation.html>`_.
+
+**NodeJS & npm**
+
+To install NodeJS, if you use **homebrew**, a simple **brew install node** is
+enough. Otherwise, you can download it from the
+`Node.js official website <http://nodejs.org/>`_.
+
+
+To ensure the proper functioning of these operations,
+`curl <http://fr2.php.net/manual/en/book.curl.php>`_ and
+`mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are
+required.
+
+See `mongo extension install details here <http://php.net/manual/fr/mongo.installation.php>`_
+
+Finally, if you want the geolocation to work, you will need the **libgeoip C
+library**, version **1.4.8** or higher. You can either install it through a
+package manager (such as **homebrew** or **aptitude**), or build it using
+the following commands (`source <http://github.com/kuno/GeoIP>`_):
+
+```
+wget http://geolite.maxmind.com/download/geoip/api/c/GeoIP-1.4.8.tar.gz
+tar -xvzf GeoIP-1.4.8.tar.gz
+cd GeoIP-1.4.8
+./configure --prefix=/usr
+make
+sudo make install
+```
+
+### Configuration
+
+Once all required dependencies are installed, you must set the configuration
+files located in the **config** folder.
+
+First copy the configuration sample files and fill appropriate values according
+to your system setup.
+
+```
+cp ./config/elasticsearch.cfg.sample ./config/elasticsearch.cfg
+cp ./config/mongo.cfg.sample ./config/mongo.cfg
+cp ./config/server.json.sample ./config/server.json
+```
+
+** ElasticSearch configuration**
+
+```
+elastic_host="127.0.0.1"
+elastic_port="9200"
+elastic_scheme="http"
+elastic_index="geonames"
+elastic_index_test="tests"
+```
+
+** MongoDB configuration**
+
+```
+mongo_host="127.0.0.1"
+mongo_port="27017"
+mongo_user=""
+mongo_pass=""
+mongo_database="geonames"
+mongo_database_test="tests"
+```
+
+** Server configuration**
+
+```json
+{
+    "app": {
+        "verbose": false,
+        "port": 3000,
+        "allowed_domains": ["*"],
+        "max_result_per_page" : 30
+    },
+    "geo": {
+        "geolitepath": "./resources/data/GeoLiteCity.dat"
+    }
+}
+```
+
+### Setup
+
+Once dependencies are installed, you need to fill the MongoDB
+database with geonames data, and then index this data with ElasticSearch.
+
+To do so, make sure MongoDB and ElasticSearch are running then run the
+following command within the **root** folder:
+
+`make install`
+
+It will download in **resources** folder the necessary files from the geonames
+servers, format them to make them work with MongoDB, import them to MongoDB,
+and index the new entries in ElasticSearch.
+
+Note : The installation process takes at least one hour.
+
+From now on, you should be able to access to your ElasticSearch index through
+your web browser or through any request-forming tool (such as **curl**),
+as described `here <http://www.elasticsearch.org/guide/reference/query-dsl/>`_.
+
+For instance, you can try:
+
+`curl -X GET "$elastic_host/$index_name/cities/_count"`
+
+This should return you a JSON object containing, under the "count" field,
+the number of entries indexed under your cluster.
+
+## Usage
+
+To start the server, make sure you have **node** installed, and run:
+
+`node server`
+
+Then, you can send GET requests to it (through a web browser or any request
+tool such as **curl**).
+
+### Accepted content types
+
+GeonamesServer can return data formated in two types, **json** or **xml**,
+according to the type specified within the header request
+(see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
+qvalue ratings, choosing the return type by its rating.
+If * is specified, data will be returned as a **json** document.
+If neither **xml**, **json** nor * are specified, the server will answer with a
+*406 Not acceptable* error.
+
+### CORS Requests
+
+All responses from the GeonamesServer include required headers to be
+`CORS <http://en.wikipedia.org/wiki/Cross-origin_resource_sharing>`_ compliant
+
+### JSONP Requests
+
+The GeonamesServer supports `JSONP <http://en.wikipedia.org/wiki/JSONP>` requests.
+The callback parameter is `callback`.
+
+*Request*
+
+`/ip?ip=4.23.171.0&callback=myFunction`
+
+*Response*
+
+```json
+myFunction(    {
+    "geonames": {
+          "ip": "4.23.171.0",
+          "geoname": {
+                "city": "New York",
+                "country_code": "US",
+                "country": "United States",
+                "longitude": "-73.98",
+                "latitude": "40.75",
+                "fips": "New York"
+          }
+    }
+})
+```
 
 ## Routes
 
@@ -81,141 +267,162 @@ Following are the results returned for the request */city/name=paris
 
 ##### xml
 
-    <?xml version="1.0" encoding="UTF-8"?>
-        <geonames>
-            <totalResultsCount>30</totalResultsCount>
-            <geoname>
-              <geonameid>2988507</geonameid>
-              <title>Paris</title>
-              <title_alt>paris</title_alt>
-              <title_match>Paris</title_match>
-              <country>France</country>
-              <country_match>France</country_match>
-              <population>2138551</population>
-              <latitude>48.85</latitude>
-              <longitude>2.35</longitude>
-              <region>Île-de-France</region>
-            </geoname>
-            <geoname>
-              <geonameid>4717560</geonameid>
-              <title>Paris</title>
-              <title_alt>paris</title_alt>
-              <title_match>Paris</title_match>
-              <country>United States</country>
-              <country_match>United States</country_match>
-              <population>25171</population>
-              <latitude>33.66</latitude>
-              <longitude>-95.56</longitude>
-              <region>Texas</region>
-            </geoname>
-            <geoname>
-              <geonameid>3023645</geonameid>
-              <title>Cormeilles-en-Parisis</title>
-              <title_alt>cormeilles-en-parisis</title_alt>
-              <title_match>Cormeilles-en-Parisis</title_match>
-              <country>France</country>
-              <country_match>France</country_match>
-              <population>21973</population>
-              <latitude>48.97</latitude>
-              <longitude>2.2</longitude>
-              <region>Île-de-France</region>
-            </geoname>
-                ...
-        </geonames>
+```
+<?xml version="1.0" encoding="UTF-8"?>
+    <geonames>
+        <totalResultsCount>30</totalResultsCount>
+        <geoname>
+          <geonameid>2988507</geonameid>
+          <title>Paris</title>
+          <title_alt>paris</title_alt>
+          <title_match>Paris</title_match>
+          <country>France</country>
+          <country_match>France</country_match>
+          <population>2138551</population>
+          <latitude>48.85</latitude>
+          <longitude>2.35</longitude>
+          <region>Île-de-France</region>
+        </geoname>
+        <geoname>
+          <geonameid>4717560</geonameid>
+          <title>Paris</title>
+          <title_alt>paris</title_alt>
+          <title_match>Paris</title_match>
+          <country>United States</country>
+          <country_match>United States</country_match>
+          <population>25171</population>
+          <latitude>33.66</latitude>
+          <longitude>-95.56</longitude>
+          <region>Texas</region>
+        </geoname>
+        <geoname>
+          <geonameid>3023645</geonameid>
+          <title>Cormeilles-en-Parisis</title>
+          <title_alt>cormeilles-en-parisis</title_alt>
+          <title_match>Cormeilles-en-Parisis</title_match>
+          <country>France</country>
+          <country_match>France</country_match>
+          <population>21973</population>
+          <latitude>48.97</latitude>
+          <longitude>2.2</longitude>
+          <region>Île-de-France</region>
+        </geoname>
+            ...
+    </geonames>
+```
 
 #### json
 
-    {
-        "geonames": {
-          "totalResultsCount": "30",
-          "geoname": [
-            {
-              "geonameid": "2988507",
-              "title": "Paris",
-              "country": "France",
-              "match": {
-                "title": "Paris",
-                "country": "France"
-              },
-              "population": "2138551",
-              "latitude": "48.85",
-              "longitude": "2.35",
-              "names": [
-                "paris",
-                "baariis",
-                "bahliz",
-                "gorad paryzh",
-                "lungsod ng paris",
-                "lutece",
-                "lutetia",
-                "lutetia parisorum",
-                "par",
-                "pa-ri",
-                "paarys",
-                "palika",
-                "paname",
-                "pantruche",
-                "paraeis",
-                "paras",
-                "pari",
-                "paries",
-                "parigge",
-                "pariggi",
-                "parighji",
-                "parigi",
-                "pariis",
-                "pariisi",
-                "parij",
-                "parijs",
-                "paris",
-                "parisi",
-                "parixe",
-                "pariz",
-              ],
-              "region": "Île-de-France",
-              "title_alt": "paris"
-            },
-            {
-              "geonameid": "4717560",
-              "title": "Paris",
-              "country": "United States",
-              "match": {
-                "title": "Paris",
-                "country": "United States"
-              },
-              "population": "25171",
-              "latitude": "33.66",
-              "longitude": "-95.56",
-              "names": [
-                "paris",
-                "prx",
-                "parizh",
-                "париж"
-              ],
-              "region": "Texas",
-              "title_alt": "paris"
-            },
-            {
-              "geonameid": "3023645",
-              "title": "Cormeilles-en-Parisis",
-              "country": "France",
-              "match": {
-                "title": "Cormeilles-en-Parisis",
-                "country": "France"
-              },
-              "population": "21973",
-              "latitude": "48.97",
-              "longitude": "2.2",
-              "names": [
-                "cormeilles-en-parisis",
-                "cormeilles",
-                "cormeilles-en-parisis"
-              ],
-              "region": "Île-de-France",
-              "title_alt": "cormeilles-en-parisis"
-        }
+```json
+{
+    "geonames": {
+      "totalResultsCount": "30",
+      "geoname": [
+        {
+          "geonameid": "2988507",
+          "title": "Paris",
+          "country": "France",
+          "match": {
+            "title": "Paris",
+            "country": "France"
+          },
+          "population": "2138551",
+          "latitude": "48.85",
+          "longitude": "2.35",
+          "names": [
+            "paris",
+            "baariis",
+            "bahliz",
+            "gorad paryzh",
+            "lungsod ng paris",
+            "lutece",
+            "lutetia",
+            "lutetia parisorum",
+            "par",
+            "pa-ri",
+            "paarys",
+            "palika",
+            "paname",
+            "pantruche",
+            "paraeis",
+            "paras",
+            "pari",
+            "paries",
+            "parigge",
+            "pariggi",
+            "parighji",
+            "parigi",
+            "pariis",
+            "pariisi",
+            "parij",
+            "parijs",
+            "paris",
+            "parisi",
+            "parixe",
+            "pariz",
+          ],
+          "region": "Île-de-France",
+          "title_alt": "paris"
+        },
+        {
+          "geonameid": "4717560",
+          "title": "Paris",
+          "country": "United States",
+          "match": {
+            "title": "Paris",
+            "country": "United States"
+          },
+          "population": "25171",
+          "latitude": "33.66",
+          "longitude": "-95.56",
+          "names": [
+            "paris",
+            "prx",
+            "parizh",
+            "париж"
+          ],
+          "region": "Texas",
+          "title_alt": "paris"
+        },
+        {
+          "geonameid": "3023645",
+          "title": "Cormeilles-en-Parisis",
+          "country": "France",
+          "match": {
+            "title": "Cormeilles-en-Parisis",
+            "country": "France"
+          },
+          "population": "21973",
+          "latitude": "48.97",
+          "longitude": "2.2",
+          "names": [
+            "cormeilles-en-parisis",
+            "cormeilles",
+            "cormeilles-en-parisis"
+          ],
+          "region": "Île-de-France",
+          "title_alt": "cormeilles-en-parisis"
     }
+}
+```
 
+## Contribute
+
+You found a bug and resolved it ? You added a feature you want to share ?
+You optimized the code or made it more aesthetically pleasing ? You found
+a typo in this doc and fixed it ? Feel free to send a
+`Pull Request <http://help.github.com/send-pull-requests/>`_
+on GitHub, we will be glad to merge your code.
+
+## Testing
+
+This server relies on `Mocha <http://visionmedia.github.com/mocha/>`_
+and `Supertest <https://github.com/visionmedia/supertest>`_ for unit testing.
+All you have to do is to run the following command in the root folder:
+
+```
+make test
+```
 
 ## License
 
