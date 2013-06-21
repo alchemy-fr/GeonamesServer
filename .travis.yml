@@ -6,7 +6,9 @@ services:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install php5 libgeoip-dev
+  - sudo apt-get install php5-cli php5-curl libgeoip-dev
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --prefer-source
   - cp config/elasticsearch.cfg.sample config/elasticsearch.cfg
   - cp config/mongo.cfg.sample config/mongo.cfg
   - cp config/server.json.sample config/server.json

@@ -111,10 +111,10 @@ echo "Start importing 'countrynames.txt' in countrynames collection"
 mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database_test -c countrynames \
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
-bash "$SCRIPT_DIR/indexing/deleteIndex.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/"
+php "$SCRIPT_DIR/console.php" index:delete $elastic_host $elastic_port $elastic_scheme $elastic_index_test
 echo ""
-bash "$SCRIPT_DIR/indexing/createIndex.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/"
+php "$SCRIPT_DIR/console.php" index:create $elastic_host $elastic_port $elastic_scheme $elastic_index_test
 echo ""
-bash "$SCRIPT_DIR/indexing/setupIndex.sh" "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/cities/_mapping" "cities"
+php "$SCRIPT_DIR/console.php" index:setup $elastic_host $elastic_port $elastic_scheme $elastic_index_test cities
 echo ""
 while read line; do curl --silent -XPOST "$elastic_scheme://$elastic_host:$elastic_port/$elastic_index_test/cities" -d "$line"; done < "$FIXTURE_DIR/indexes" > /dev/null
