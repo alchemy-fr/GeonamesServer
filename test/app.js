@@ -36,16 +36,6 @@ describe('Tests configuration', function() {
 
 describe('Tests accepted content types', function() {
     describe('GET /city', function() {
-        it('responds with a XML file', function(done) {
-            request(app)
-                    .get('/city/')
-                    .set('Accept', 'text/xml')
-                    .expect('Content-Type', "text/xml; charset=utf-8")
-                    .expect(200, done);
-        });
-    });
-
-    describe('GET /city', function() {
         it('responds with a JSON file', function(done) {
             request(app)
                     .get('/city')
@@ -74,16 +64,6 @@ describe('Tests accepted content types', function() {
     });
 
     describe('GET /city/2988507', function() {
-        it('responds with a XML file', function(done) {
-            request(app)
-                    .get('/city/2988507')
-                    .set('Accept', 'text/xml')
-                    .expect('Content-Type', "text/xml; charset=utf-8")
-                    .expect(200, done);
-        });
-    });
-
-    describe('GET /city/2988507', function() {
         it('responds with a JSON file', function(done) {
             request(app)
                     .get('/city/2988507')
@@ -108,16 +88,6 @@ describe('Tests accepted content types', function() {
                     .get('/city/2988507')
                     .set('Accept', 'text/html')
                     .expect(406, done);
-        });
-    });
-
-    describe('GET /ip', function() {
-        it('responds with a XML file', function(done) {
-            request(app)
-                    .get('/ip')
-                    .set('Accept', 'text/xml')
-                    .expect('Content-Type', "text/xml; charset=utf-8")
-                    .expect(200, done);
         });
     });
 
@@ -255,7 +225,7 @@ describe('Tests /city route', function() {
                         var second = result.geonames.geoname.shift();
                         var third = result.geonames.geoname.shift();
                         assert(parseInt(first.population) > parseInt(second.population));
-                        assert(parseInt(second.population) > parseInt(third.population));
+                        assert(parseInt(first.population) > parseInt(third.population));
                         done();
                     });
         });
@@ -275,34 +245,34 @@ describe('Tests /city route', function() {
         });
     });
 
-    describe('GET /city?name=paris&sort=closeness&sortParams[ip]=173.194.40.162&limit=1', function() {
+    describe('GET /city?name=paris&sort=closeness&client-ip=173.236.51.130&limit=1', function() {
         it('Returns a collection when sorting by closeness and providing an ip', function(done) {
             request(app)
-                    .get('/city?name=paris&sort=closeness&sortParams[ip]=173.194.40.162&limit=1')
+                    .get('/city?name=paris&sort=closeness&client-ip=173.236.51.130&limit=1')
                     .expect(200)
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
                         assert.equal(result.geonames.totalResultsCount, 1, "Expecting 1 got " + result.geonames.totalResultsCount);
                         var result = result.geonames.geoname.pop();
-                        assert(result.country.indexOf("United") !== -1, "Expecting to find 'United' in " + result.country);
+                        assert(result.country.name.indexOf("United") !== -1, "Expecting to find 'United' in " + result.country);
                         done();
                     });
         });
     });
 
-    describe('GET /city?name=paris&sort=closeness&sortParams[ip]=invalid-ip', function() {
+    describe('GET /city?name=paris&sort=closeness&client-ip=invalid-ip', function() {
         it('Returns 400 when ip is not valid', function(done) {
             request(app)
-                    .get('/city?name=paris&sort=closeness&sortParams[ip]=invalid-ip')
+                    .get('/city?name=paris&sort=closeness&client-ip=invalid-ip')
                     .expect(400, done);
         });
     });
 
-    describe('GET /city?name=paris&sort=closeness&sortParams[ip]=127.0.0.1', function() {
+    describe('GET /city?name=paris&sort=closeness&client-ip=127.0.0.1', function() {
         it('Test fallback to sort by population if geo ip failed', function(done) {
             request(app)
-                    .get('/city?name=paris&sort=closeness&sortParams[ip]=127.0.0.1')
+                    .get('/city?name=paris&sort=closeness&client-ip=127.0.0.1')
                     .expect(200).
                     end(function(err, res) {
                         if (err) return done(err);
@@ -439,20 +409,6 @@ describe('Tests /city route', function() {
                         var city = result.geonames.geoname[0];
                         assert.equal(city.location.latitude, "48.81");
                         assert.equal(city.location.longitude, "2.38");
-                        done();
-                    });
-        });
-    });
-
-    describe("GET /city?name=paris&limit=1", function() {
-        it('Returns XML response with geopoint location', function(done) {
-            request(app)
-                    .get("/city?name=paris&limit=1&sort=population")
-                    .set('Accept', 'text/xml')
-                    .expect(200)
-                    .end(function(err, res) {
-                        if (err) return done(err);
-                        assert(res.text.indexOf('<location latitude="48.81" longitude="2.38"/>') !== -1);
                         done();
                     });
         });

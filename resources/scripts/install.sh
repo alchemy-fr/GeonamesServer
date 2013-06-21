@@ -184,4 +184,4 @@ mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
 echo "Start indexing ..."
-php "$SCRIPT_DIR/indexing.php" $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass
+php "$SCRIPT_DIR/console.php" do-indexation $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass

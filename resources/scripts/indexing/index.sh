@@ -58,4 +58,4 @@ if [ -n "$mongo_pass" ]; then
 fi
 
 echo "Start indexing ..."
-php "$SCRIPT_DIR/indexing.php" $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass
+php "$SCRIPT_DIR/console.php" do-indexation $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass

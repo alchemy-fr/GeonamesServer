@@ -31,9 +31,6 @@ app.use(middlewares.lowercase(app));
 // Formalize sort query parameter
 app.use(middlewares.formalizeSortParameter(app));
 
-// Formalize order query parameter
-app.use(middlewares.formalizeOrderParameter(app));
-
 // Formalize limit query parameter
 app.use(middlewares.formalizeLimitParameter(app));
 
