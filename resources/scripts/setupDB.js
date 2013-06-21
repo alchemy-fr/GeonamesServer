@@ -29,10 +29,12 @@
         place.names = names;
 
         if(place.longitude && place.latitude) {
-            place.pin = {};
-            place.pin.location = {};
-            place.pin.location.lat = Math.round(place.latitude * 100) / 100;
-            place.pin.location.lon = Math.round(place.longitude * 100) / 100;
+            place.pin = {
+                "location": {
+                    "lat": Math.round(place.latitude * 100) / 100,
+                    "lon": Math.round(place.longitude * 100) / 100
+                }
+            };
         }
 
         db.cities.save(place);

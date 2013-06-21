@@ -1,6 +1,36 @@
-curl -s -X POST $1 -d '
+curl -XDELETE "http://localhost:9200/geonames"
+ 
+curl -XPOST "http://localhost:9200/geonames/" -d '
 {
-    "'$2'":{
+   "settings":{
+      "index":{
+         "analysis":{
+            "analyzer":{
+               "city":{
+                  "type":"custom",
+                  "tokenizer":"standard",
+                  "filter":[
+                     "lowercase",
+                     "asciifolding"
+                  ]
+               },
+               "lowercase":{
+                  "type":"custom",
+                  "tokenizer":"standard",
+                  "filter":[
+                     "lowercase"
+                  ]
+               }
+            }
+         }
+      }
+   }
+}
+'
+
+curl -XPOST "http://localhost:9200/geonames2/cities/_mapping" -d '
+{
+    "cities":{
         "_all":{
             "analyzer":"lowercase"
         },
@@ -8,34 +38,6 @@ curl -s -X POST $1 -d '
             "geonameid":{
                 "type":"integer",
                 "index":"not_analyzed"
-            },
-            "name":{
-                "type":"multi_field",
-                "fields":{
-                    "name":{
-                        "type":"string",
-                        "index":"analyzed",
-                        "analyzer":"city"
-                    },
-                    "untouched":{
-                        "type":"string",
-                        "index":"not_analyzed"
-                    }
-                }
-            },
-            "names":{
-                "type":"multi_field",
-                "fields":{
-                    "names":{
-                        "type":"string",
-                        "index":"analyzed",
-                        "analyzer":"city"
-                    },
-                    "untouched":{
-                        "type":"string",
-                        "index":"not_analyzed"
-                    }
-                }
             },
             "asciiname": {
                 "type":"string",
@@ -78,8 +80,7 @@ curl -s -X POST $1 -d '
                 "type":"string"
             },
             "population": {
-                "type":"integer",
-                "null_value":""
+                "type":"integer"
             },
             "elevation": {
                 "type":"integer"
@@ -93,7 +94,7 @@ curl -s -X POST $1 -d '
             },
             "modificationDate": {
                 "type":"date",
-                "format":"yyyy-MM-dd",
+                "format":"yyyy-MM-dd"
             },
             "pin" : {
                 "properties" : {
@@ -106,3 +107,5 @@ curl -s -X POST $1 -d '
     }
 }
 '
+
+curl -XPOST "http://localhost:9200/geonames/_refresh"
