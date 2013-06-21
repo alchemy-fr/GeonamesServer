@@ -39,7 +39,6 @@ module.exports = function(app) {
             if ('closeness' === app.get('req.sort')) {
                 ip = req.query['client-ip'] || null;
 
-                console.log('ip');
                 if (!common.isIpV4(ip)) {
                     res.send(400, 'The provided IP is not valid');
                     return;

@@ -209,8 +209,6 @@ abstract class AbstractIndexCommand extends Command
 
         $response = $this->getGuzzle($input)->put($uri, null, json_encode($mapping))->send();
 
-        print($response);
-        
         if (!$response->isSuccessful()) {
             throw new RuntimeException('Failed to setup mapping');
         }
