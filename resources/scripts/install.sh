@@ -33,6 +33,18 @@ if [ -z `which php` ]; then
     exit 1
 fi
 
+if [ -z `which composer` ]; then
+    echo "composer not found. Please install it and run this script again."
+    exit 1
+fi
+
+composer install --prefer-source
+
+if [ $? -eq 1 ]; then
+    echo "Failed to install composer dependencies"
+    exit
+fi
+
 # Define paths
 if [ -z "$ROOT_PATH" ]; then
  ROOT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
