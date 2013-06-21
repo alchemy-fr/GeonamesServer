@@ -441,6 +441,20 @@ Following are the results returned for the request */city/name=paris&limit=2
 }
 ```
 
+## Contribute
+
+You found a bug and resolved it ? You added a feature you want to share ?
+You optimized the code or made it more aesthetically pleasing ? You found
+a typo in this doc and fixed it ? Feel free to send a
+`Pull Request <http://help.github.com/send-pull-requests/>`_
+on GitHub, we will be glad to merge your code.
+
+## Test
+
+This server relies on `Mocha <http://visionmedia.github.com/mocha/>`_
+and `Supertest <https://github.com/visionmedia/supertest>`_ for unit testing.
+All you have to do is to run the following command in the root folder:
+
 ```
 make test
 ```
