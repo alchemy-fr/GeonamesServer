@@ -202,8 +202,7 @@ All these routes can only be accessed through GET requests.
 
 Any other methods will result in a *405 Method not allowed* error.
 
-The results will be sent as text/xml or application/json files, according
-to the accept field within the request header.
+The results will be sent with the application/json mimetype.
 
 If the *sort* parameter is specified and set to *closeness*
 but the location of the request could not be determined
@@ -249,170 +248,198 @@ Returns the city in which the given IP address is located
 
 ## Accepted content types
 
-GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
-within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
-qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a
-**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a
-*406 Not acceptable* error.
+GeonamesServer can return data formated in **json**.
 
 ### Examples of response
 
-Following are the results returned for the request */city/name=paris
-
-##### xml
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-    <geonames>
-        <totalResultsCount>30</totalResultsCount>
-        <geoname>
-          <geonameid>2988507</geonameid>
-          <title>Paris</title>
-          <title_alt>paris</title_alt>
-          <title_match>Paris</title_match>
-          <country>France</country>
-          <country_match>France</country_match>
-          <population>2138551</population>
-          <latitude>48.85</latitude>
-          <longitude>2.35</longitude>
-          <region>Île-de-France</region>
-        </geoname>
-        <geoname>
-          <geonameid>4717560</geonameid>
-          <title>Paris</title>
-          <title_alt>paris</title_alt>
-          <title_match>Paris</title_match>
-          <country>United States</country>
-          <country_match>United States</country_match>
-          <population>25171</population>
-          <latitude>33.66</latitude>
-          <longitude>-95.56</longitude>
-          <region>Texas</region>
-        </geoname>
-        <geoname>
-          <geonameid>3023645</geonameid>
-          <title>Cormeilles-en-Parisis</title>
-          <title_alt>cormeilles-en-parisis</title_alt>
-          <title_match>Cormeilles-en-Parisis</title_match>
-          <country>France</country>
-          <country_match>France</country_match>
-          <population>21973</population>
-          <latitude>48.97</latitude>
-          <longitude>2.2</longitude>
-          <region>Île-de-France</region>
-        </geoname>
-            ...
-    </geonames>
-```
+Following are the results returned for the request */city/name=paris&limit=2
 
 #### json
 
 ```json
 {
     "geonames": {
-      "totalResultsCount": "30",
-      "geoname": [
-        {
-          "geonameid": "2988507",
-          "title": "Paris",
-          "country": "France",
-          "match": {
-            "title": "Paris",
-            "country": "France"
-          },
-          "population": "2138551",
-          "latitude": "48.85",
-          "longitude": "2.35",
-          "names": [
-            "paris",
-            "baariis",
-            "bahliz",
-            "gorad paryzh",
-            "lungsod ng paris",
-            "lutece",
-            "lutetia",
-            "lutetia parisorum",
-            "par",
-            "pa-ri",
-            "paarys",
-            "palika",
-            "paname",
-            "pantruche",
-            "paraeis",
-            "paras",
-            "pari",
-            "paries",
-            "parigge",
-            "pariggi",
-            "parighji",
-            "parigi",
-            "pariis",
-            "pariisi",
-            "parij",
-            "parijs",
-            "paris",
-            "parisi",
-            "parixe",
-            "pariz",
-          ],
-          "region": "Île-de-France",
-          "title_alt": "paris"
-        },
-        {
-          "geonameid": "4717560",
-          "title": "Paris",
-          "country": "United States",
-          "match": {
-            "title": "Paris",
-            "country": "United States"
-          },
-          "population": "25171",
-          "latitude": "33.66",
-          "longitude": "-95.56",
-          "names": [
-            "paris",
-            "prx",
-            "parizh",
-            "париж"
-          ],
-          "region": "Texas",
-          "title_alt": "paris"
-        },
-        {
-          "geonameid": "3023645",
-          "title": "Cormeilles-en-Parisis",
-          "country": "France",
-          "match": {
-            "title": "Cormeilles-en-Parisis",
-            "country": "France"
-          },
-          "population": "21973",
-          "latitude": "48.97",
-          "longitude": "2.2",
-          "names": [
-            "cormeilles-en-parisis",
-            "cormeilles",
-            "cormeilles-en-parisis"
-          ],
-          "region": "Île-de-France",
-          "title_alt": "cormeilles-en-parisis"
+        "totalResultsCount": "2",
+        "geoname": [
+            {
+                "score": 884.5834,
+                "geonameid": 2988507,
+                "name": "Paris",
+                "country": {
+                    "name": "France",
+                    "code": "FR"
+                },
+                "timezone": "Europe/Paris",
+                "feature": {
+                    "class": "P",
+                    "code": "PPLC"
+                },
+                "population": 2138551,
+                "location": {
+                    "latitude": 48.85341,
+                    "longitude": 2.3488
+                },
+                "names": [
+                    "paris",
+                    "baariis",
+                    "bahliz",
+                    "gorad paryzh",
+                    "lungsod ng paris",
+                    "lutece",
+                    "lutetia",
+                    "lutetia parisorum",
+                    "par",
+                    "pa-ri",
+                    "paarys",
+                    "palika",
+                    "paname",
+                    "pantruche",
+                    "paraeis",
+                    "paras",
+                    "pari",
+                    "paries",
+                    "parigge",
+                    "pariggi",
+                    "parighji",
+                    "parigi",
+                    "pariis",
+                    "pariisi",
+                    "parij",
+                    "parijs",
+                    "paris",
+                    "parisi",
+                    "parixe",
+                    "pariz",
+                    "parize",
+                    "parizh",
+                    "parizh osh",
+                    "parizh'",
+                    "parizo",
+                    "parizs",
+                    "pariž",
+                    "parys",
+                    "paryz",
+                    "paryzius",
+                    "paryż",
+                    "paryžius",
+                    "paräis",
+                    "parís",
+                    "paríž",
+                    "parîs",
+                    "parĩ",
+                    "parī",
+                    "parīze",
+                    "paříž",
+                    "páras",
+                    "párizs",
+                    "ville-lumiere",
+                    "ville-lumière",
+                    "ba li",
+                    "barys",
+                    "pairisa",
+                    "pali",
+                    "pari",
+                    "paris",
+                    "parys",
+                    "paryzh",
+                    "perisa",
+                    "pryz",
+                    "pyaris",
+                    "pyarisa",
+                    "pyrs",
+                    "παρίσι",
+                    "горад парыж",
+                    "париж",
+                    "париж ош",
+                    "парижь",
+                    "париз",
+                    "парис",
+                    "паріж",
+                    "փարիզ",
+                    "פאריז",
+                    "פריז",
+                    "باريس",
+                    "پارىژ",
+                    "پاريس",
+                    "پاریس",
+                    "پیرس",
+                    "ܦܐܪܝܣ",
+                    "पॅरिस",
+                    "पेरिस",
+                    "पैरिस",
+                    "প্যারিস",
+                    "ਪੈਰਿਸ",
+                    "પૅરિસ",
+                    "பாரிஸ்",
+                    "పారిస్",
+                    "ಪ್ಯಾರಿಸ್",
+                    "പാരിസ്",
+                    "ปารีส",
+                    "ཕ་རི།",
+                    "ပါရီမြို့",
+                    "პარიზი",
+                    "ፓሪስ",
+                    "ប៉ារីស",
+                    "パリ",
+                    "巴黎",
+                    "파리"
+                ],
+                "admin1Code": "A8",
+                "admin2Code": 75,
+                "admin3Code": 751,
+                "admin4Code": 75056,
+                "updatedOn": "2012-08-19",
+                "region": {
+                    "code": "FR.A8",
+                    "name": "Île-de-France"
+                }
+            },
+            {
+                "score": 312.7515,
+                "geonameid": 4717560,
+                "name": "Paris",
+                "country": {
+                    "name": "United States",
+                    "code": "US"
+                },
+                "timezone": "America/Chicago",
+                "feature": {
+                    "class": "P",
+                    "code": "PPLA2"
+                },
+                "population": 25171,
+                "location": {
+                    "latitude": 33.66094,
+                    "longitude": -95.55551
+                },
+                "names": [
+                    "paris",
+                    "prx",
+                    "paris",
+                    "parizh",
+                    "barys",
+                    " tksas",
+                    "parys",
+                    " tgzas",
+                    "париж",
+                    "парис",
+                    "باريس، تكساس",
+                    "پاریس، تگزاس"
+                ],
+                "admin1Code": "TX",
+                "admin2Code": 277,
+                "admin3Code": "",
+                "admin4Code": "",
+                "updatedOn": "2011-05-14",
+                "region": {
+                    "code": "US.TX",
+                    "name": "Texas"
+                }
+            }
+        ]
     }
 }
 ```
-
-## Contribute
-
-You found a bug and resolved it ? You added a feature you want to share ?
-You optimized the code or made it more aesthetically pleasing ? You found
-a typo in this doc and fixed it ? Feel free to send a
-`Pull Request <http://help.github.com/send-pull-requests/>`_
-on GitHub, we will be glad to merge your code.
-
-## Testing
-
-This server relies on `Mocha <http://visionmedia.github.com/mocha/>`_
-and `Supertest <https://github.com/visionmedia/supertest>`_ for unit testing.
-All you have to do is to run the following command in the root folder:
 
 ```
 make test
