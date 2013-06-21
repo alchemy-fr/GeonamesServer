@@ -116,12 +116,10 @@ abstract class AbstractIndexCommand extends Command
                                 'type'     => 'string',
                                 'index'    => 'analyzed',
                                 'analyzer' => 'city',
-                                'boost'  => 5,
                             ),
                             'untouched' => array(
                                 'type'  => 'string',
                                 'index' => 'not_analyzed',
-                                'boost'  => 8,
                             ),
                         ),
                     ),
