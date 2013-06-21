@@ -27,7 +27,7 @@ module.exports = function(app) {
                 });
 
                 if (codes.length === 0) {
-                    common.sendEmptyResponse(res, app.get('req.type'));
+                    common.sendEmptyResponse(res);
                     return;
                 }
             }
@@ -72,12 +72,11 @@ module.exports = function(app) {
                     codes,
                     point,
                     app.get('req.sort'),
-                    app.get('req.limit'),
-                    app.get('req.ord')
+                    app.get('req.limit')
             );
 
             request({
-                uri: app.get('es.connection.string')('cities'),
+                uri: app.get('es.connection.string')('cities')+'?pretty=true',
                 body: requestBody
             }, function(error, response, hits) {
                 if (!error && response.statusCode === 200) {
@@ -87,22 +86,18 @@ module.exports = function(app) {
                     var adminCodes = result.admincodes;
 
                     if (datas.length === 0) {
-                        common.sendEmptyResponse(res, app.get('req.type'));
+                        common.sendEmptyResponse(res);
                         return;
                     }
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
                     db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
-                        if ('xml' === app.get('req.type')) {
-                            res.send(controller.xmlFromQueryLookup(adminCodes, datas, cityName, countryName));
-                        } else {
-                            res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas, cityName, countryName));
-                        }
+                        res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas, cityName));
                     });
                 } else {
                     console.log('elastic search error, got error ', error, ' status code ', res.statusCode, ' and response ', response);
-                    common.sendEmptyResponse(res, app.get('req.type'));
+                    common.sendEmptyResponse(res);
                 }
             });
         });
@@ -128,21 +123,17 @@ module.exports = function(app) {
                     var adminCodes = result.admincodes;
 
                     if (datas === 0) {
-                        common.sendEmptyResponse(res, app.get('req.type'));
+                        common.sendEmptyResponse(res);
                         return;
                     }
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
                     db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
-                        if ('xml' === app.get('req.type')) {
-                            res.send(controller.xmlFromQueryLookup(result, datas));
-                        } else {
-                            res.jsonp(controller.jsonFromQueryLookup(result, datas));
-                        }
+                        res.jsonp(controller.jsonFromQueryLookup(result, datas));
                     });
                 } else {
-                    common.sendEmptyResponse(res, app.get('req.type'));
+                    common.sendEmptyResponse(res);
                 }
             });
         });
@@ -161,7 +152,7 @@ module.exports = function(app) {
         var city = geoloc.getCityFromIp(ip, app.get('app.config').geo.geolitepath);
 
         if (!city) {
-            return common.sendEmptyResponse(res, app.get('req.type'));
+            return common.sendEmptyResponse(res);
         }
 
         var adminCodeCollection = db.collection('admincodes');
@@ -169,11 +160,7 @@ module.exports = function(app) {
         var code = city.country_code + '.' + city.region;
 
         adminCodeCollection.findOne({code: code}, function(err, result) {
-            if ('xml' === app.get('req.type')) {
-                res.send(controller.xmlFromIpLookup(result, city, ip));
-            } else {
-                res.jsonp(controller.jsonFromIpLookup(result, city, ip));
-            }
+            res.jsonp(controller.jsonFromIpLookup(result, city, ip));
         });
     });
 };
