@@ -5,6 +5,7 @@ use Guzzle\Http\Client as Guzzle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Guzzle\Plugin\Backoff\BackoffPlugin;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 
 abstract class AbstractIndexCommand extends Command
 {
@@ -88,9 +89,18 @@ abstract class AbstractIndexCommand extends Command
     
     protected function doDeleteIndex(InputInterface $input, OutputInterface $output)
     {
-        $response = $this->getGuzzle($input)->delete()->send();
+        $ignoreResponse = false;
+        try {
+            $response = $this->getGuzzle($input)->delete()->send();
+        } catch (ClientErrorResponseException $e) {
+            // ignore if deleting a non-existing index
+            if (404 !== $e->getResponse()->getStatusCode()) {
+                throw $e;
+            }
+            $ignoreResponse = true;
+        }
         
-        if (!$response->isSuccessful()) {
+        if (!$ignoreResponse && !$response->isSuccessful()) {
             throw new RuntimeException('Failed to delete index');
         }
         
