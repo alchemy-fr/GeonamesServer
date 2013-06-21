@@ -37,15 +37,12 @@ module.exports = function(app) {
             var point;
 
             if ('closeness' === app.get('req.sort')) {
-                var sortParams = req.query.sortParams || [];
+                ip = req.query['client-ip'] || null;
 
-                if ('ip' in sortParams) {
-                    ip = sortParams['ip'];
-
-                    if (!common.isIpV4(ip)) {
-                        res.send(400, 'The provided IP is not valid');
-                        return;
-                    }
+                console.log('ip');
+                if (!common.isIpV4(ip)) {
+                    res.send(400, 'The provided IP is not valid');
+                    return;
                 }
 
                 // if ip or city could not be found fallback to sort by population

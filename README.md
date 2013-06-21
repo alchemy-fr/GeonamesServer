@@ -231,19 +231,13 @@ query parameter parameter up to 100.
   - population : The results will be sorted by population.
   - closeness : The results will be sorted by closeness to the place the request was sent from.
 
-- **ord** (optional, string, default value : desc) available values :
-
-  - desc : The results will be displayed in descending order.
-  - asc : The results will be displayed in ascending order.
-
 - **name** (optional, string) : Filters city whose begins with a given name.
 
 - **country** (optional, string) : Only cities located in countries whose name begins with this parameter will be returned.
 
 - **limit** (optional, string) : The number of results.
 
-- **sortParams** (optional, array) : This parameter is used within the *closeness* sort parameter to provide a custom IP. `/city?sort=closeness&sortParams[ip]=XXXX.XX.XX.XXXX`
-
+- **client-ip** (optional, string) : This parameter is used within the *closeness* sort parameter to provide a custom remote IP. `/city?sort=closeness&client-ip=80.12.81.19`
 
 ### /city/{id}
 
