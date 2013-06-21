@@ -32,12 +32,20 @@ module.exports = function(app) {
                 }
             }
 
-            // Get client ip
-            var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || null;
             var point;
 
             if ('closeness' === app.get('req.sort')) {
-                ip = req.query['client-ip'] || null;
+                // Get client ip
+                var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || null;
+
+                if ('127.0.0.1' === ip) {
+                    console.error('Error : Detected remote client address is 127.0.0.1, server is probably misconfigured.');
+                    ip = null;
+                }
+
+                if (null !== req.query['client-ip']) {
+                    ip = req.query['client-ip'];
+                }
 
                 if (!common.isIpV4(ip)) {
                     res.send(400, 'The provided IP is not valid');
