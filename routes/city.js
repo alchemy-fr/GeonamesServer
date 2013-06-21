@@ -80,7 +80,7 @@ module.exports = function(app) {
             );
 
             request({
-                uri: app.get('es.connection.string')('cities')+'?pretty=true',
+                uri: app.get('es.connection.string')('cities'),
                 body: requestBody
             }, function(error, response, hits) {
                 if (!error && response.statusCode === 200) {
