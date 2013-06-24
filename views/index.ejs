@@ -1,227 +1,398 @@
-<!DOCTYPE html><html><head><title></title><link type="text/css" rel="stylesheet" href="http://jasonm23.github.com/markdown-css-themes/swiss.css"></head><body><div>Loading...</div><textarea id="mdstr" style=display:none># GeonamesServer
+<html>
+    <head>
+        <style>
+                @charset "utf-8";
 
-[![Build Status](https://secure.travis-ci.org/alchemy-fr/GeonamesServer.png?branch=master)](https://travis-ci.org/alchemy-fr/GeonamesServer)
+                /**
+                 * markdown.css
+                 *
+                 * This program is free software: you can redistribute it and/or modify it under
+                 * the terms of the GNU Lesser General Public License as published by the Free
+                 * Software Foundation, either version 3 of the License, or (at your option) any
+                 * later version.
+                 *
+                 * This program is distributed in the hope that it will be useful, but WITHOUT
+                 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+                 * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+                 * details.
+                 *
+                 * You should have received a copy of the GNU Lesser General Public License
+                 * along with this program. If not, see http://gnu.org/licenses/lgpl.txt.
+                 *
+                 * @project      Weblog and Open Source Projects of Florian Wolters
+                 * @version      GIT: $Id$
+                 * @package      xhtml-css
+                 * @author       Florian Wolters <florian.wolters.85@googlemail.com>
+                 * @copyright    2012 Florian Wolters
+                 * @cssdoc       version 1.0-pre
+                 * @license      http://gnu.org/licenses/lgpl.txt GNU Lesser General Public License
+                 * @link         http://github.com/FlorianWolters/jekyll-bootstrap-theme
+                 * @media        all
+                 * @valid        true
+                 */
 
-A node.js server used to get the biggest or the closest cities based on a given HTTP request.
+                body {
+                    font-family: Helvetica, Arial, Freesans, clean, sans-serif;
+                    padding:1em;
+                    margin:auto;
+                    max-width:42em;
+                    background:#fefefe;
+                }
 
-## Documentation
+                h1, h2, h3, h4, h5, h6 {
+                    font-weight: bold;
+                }
 
-Read The Documentation at [Read The Docs !](https://geonames-server.readthedocs.org/)
+                h1 {
+                    color: #000000;
+                    font-size: 28px;
+                }
 
+                h2 {
+                    border-bottom: 1px solid #CCCCCC;
+                    color: #000000;
+                    font-size: 24px;
+                }
 
-## Routes
+                h3 {
+                    font-size: 18px;
+                }
 
-The following is a list of available routes.
-All these routes can only be accessed through GET requests.
+                h4 {
+                    font-size: 16px;
+                }
 
-Any other methods will result in a *405 Method not allowed* error.
+                h5 {
+                    font-size: 14px;
+                }
 
-The results will be sent as text/xml or application/json files, according
-to the accept field within the request header.
+                h6 {
+                    color: #777777;
+                    background-color: inherit;
+                    font-size: 14px;
+                }
 
-If the *sort* parameter is specified and set to *closeness*
-but the location of the request could not be determined
-(due to a lack of data within the GEOIP database or GEOIP module not
-being installed), the current sort will be replaced by the *population* sort.
+                hr {
+                    height: 0.2em;
+                    border: 0;
+                    color: #CCCCCC;
+                    background-color: #CCCCCC;
+                }
 
-If a mandatory parameter or unknown parameter value is detected the server will
-respond with a *400 Bad Request* error.
+                p, blockquote, ul, ol, dl, li, table, pre {
+                    margin: 15px 0;
+                }
 
-### /
+                code, pre {
+                    border-radius: 3px;
+                    background-color: #F8F8F8;
+                    color: inherit;
+                }
 
-Returns a quick documentation in HTML format.
+                code {
+                    border: 1px solid #EAEAEA;
+                    margin: 0 2px;
+                    padding: 0 5px;
+                }
 
-### /city
+                pre {
+                    border: 1px solid #CCCCCC;
+                    line-height: 1.25em;
+                    overflow: auto;
+                    padding: 6px 10px;
+                }
 
-Gets the list of all the cities in the database, limited to *max_result_per_page* results by default.
+                pre > code {
+                    border: 0;
+                    margin: 0;
+                    padding: 0;
+                }
 
-*max_result_per_page* is setted from configuration files or overridden with limit
-query parameter parameter up to 100.
+                a, a:visited {
+                    color: #4183C4;
+                    background-color: inherit;
+                    text-decoration: none;
+                }
+        </style>
+    </head>
+    <body>
+        <h1>GeonamesServer</h1>
 
-#### Parameters
+        <p>
+            <a href="https://travis-ci.org/alchemy-fr/GeonamesServer">
+                <img alt="Build Status" src="https://secure.travis-ci.org/alchemy-fr/GeonamesServer.png?branch=master">
+            </a>
+        </p>
 
-- **sort** (optional, string, default value : population) available values :
+        <p>A node.js server used to get the biggest or the closest cities based on a given HTTP request.</p>
 
-  - population : The results will be sorted by population.
-  - closeness : The results will be sorted by closeness to the place the request was sent from.
+        <h2>Usage</h2>
 
-- **ord** (optional, string, default value : desc) available values :
+        <h3>CORS Requests</h3>
 
-  - desc : The results will be displayed in descending order.
-  - asc : The results will be displayed in ascending order.
+        <p>All responses from the GeonamesServer include required headers to be
+        <a href="http://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a> compliant</p>
 
-- **name** (optional, string) : Filters city whose begins with a given name.
+        <h3>JSONP Requests</h3>
 
-- **country** (optional, string) : Only cities located in countries whose name begins with this parameter will be returned.
+        <p>The GeonamesServer supports <a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a> requests.
+        The callback parameter is <code>callback</code>.</p>
 
-- **limit** (optional, string) : The number of results.
+        <p><em>Request</em></p>
 
-- **sortParams** (optional, array) : This parameter is used within the *closeness* sort parameter to provide a custom IP. `/city?sort=closeness&amp;sortParams[ip]=XXXX.XX.XX.XXXX`
+        <p><pre><code>/ip?ip=4.23.171.0&amp;callback=myFunction</code></pre></p>
 
+        <p><em>Response</em></p>
 
-### /city/{id}
+        <p><pre><code>json
+        myFunction(    {
+            "geonames": {
+                  "ip": "4.23.171.0",
+                  "geoname": {
+                        "city": "New York",
+                        "country_code": "US",
+                        "country": "United States",
+                        "longitude": "-73.98",
+                        "latitude": "40.75",
+                        "fips": "New York"
+                  }
+            }
+        })
+        </code></pre></p>
 
-Returns the city which *geonameid* value is equal to the given id.
+        <h2>Routes</h2>
 
-### /ip?ip={ip}
+        <p>The following is a list of available routes.
+        All these routes can only be accessed through GET requests.</p>
 
-Returns the city in which the given IP address is located
+        <p>Any other methods will result in a <em>405 Method not allowed</em> error.</p>
 
-## Accepted content types
+        <p>The results will be sent with the application/json mimetype.</p>
 
-GeonamesServer can return data formated in two types, **json** or **xml**, according to the type specified
-within the header request (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
-qvalue ratings, choosing the return type by its rating. If * is specified, data will be returned as a
-**json** document. If neither **xml**, **json** nor * are specified, the server will answer with a
-*406 Not acceptable* error.
+        <p>If the <em>sort</em> parameter is specified and set to <em>closeness</em>
+        but the location of the request could not be determined
+        (due to a lack of data within the GEOIP database or GEOIP module not
+        being installed), the current sort will be replaced by the <em>population</em> sort.</p>
 
-### Examples of response
+        <p>If a mandatory parameter or unknown parameter value is detected the server will
+        respond with a <em>400 Bad Request</em> error.</p>
 
-Following are the results returned for the request */city/name=paris
+        <h3>/</h3>
 
-##### xml
+        <p>Returns a quick documentation in HTML format.</p>
 
-    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-        &lt;geonames&gt;
-            &lt;totalResultsCount&gt;30&lt;/totalResultsCount&gt;
-            &lt;geoname&gt;
-              &lt;geonameid&gt;2988507&lt;/geonameid&gt;
-              &lt;title&gt;Paris&lt;/title&gt;
-              &lt;title_alt&gt;paris&lt;/title_alt&gt;
-              &lt;title_match&gt;Paris&lt;/title_match&gt;
-              &lt;country&gt;France&lt;/country&gt;
-              &lt;country_match&gt;France&lt;/country_match&gt;
-              &lt;population&gt;2138551&lt;/population&gt;
-              &lt;latitude&gt;48.85&lt;/latitude&gt;
-              &lt;longitude&gt;2.35&lt;/longitude&gt;
-              &lt;region&gt;Île-de-France&lt;/region&gt;
-            &lt;/geoname&gt;
-            &lt;geoname&gt;
-              &lt;geonameid&gt;4717560&lt;/geonameid&gt;
-              &lt;title&gt;Paris&lt;/title&gt;
-              &lt;title_alt&gt;paris&lt;/title_alt&gt;
-              &lt;title_match&gt;Paris&lt;/title_match&gt;
-              &lt;country&gt;United States&lt;/country&gt;
-              &lt;country_match&gt;United States&lt;/country_match&gt;
-              &lt;population&gt;25171&lt;/population&gt;
-              &lt;latitude&gt;33.66&lt;/latitude&gt;
-              &lt;longitude&gt;-95.56&lt;/longitude&gt;
-              &lt;region&gt;Texas&lt;/region&gt;
-            &lt;/geoname&gt;
-            &lt;geoname&gt;
-              &lt;geonameid&gt;3023645&lt;/geonameid&gt;
-              &lt;title&gt;Cormeilles-en-Parisis&lt;/title&gt;
-              &lt;title_alt&gt;cormeilles-en-parisis&lt;/title_alt&gt;
-              &lt;title_match&gt;Cormeilles-en-Parisis&lt;/title_match&gt;
-              &lt;country&gt;France&lt;/country&gt;
-              &lt;country_match&gt;France&lt;/country_match&gt;
-              &lt;population&gt;21973&lt;/population&gt;
-              &lt;latitude&gt;48.97&lt;/latitude&gt;
-              &lt;longitude&gt;2.2&lt;/longitude&gt;
-              &lt;region&gt;Île-de-France&lt;/region&gt;
-            &lt;/geoname&gt;
-                ...
-        &lt;/geonames&gt;
+        <h3>/city</h3>
 
-#### json
+        <p>Gets the list of all the cities in the database, limited to *max<em>result</em>per_page* results by default.</p>
 
-    {
-        &quot;geonames&quot;: {
-          &quot;totalResultsCount&quot;: &quot;30&quot;,
-          &quot;geoname&quot;: [
-            {
-              &quot;geonameid&quot;: &quot;2988507&quot;,
-              &quot;title&quot;: &quot;Paris&quot;,
-              &quot;country&quot;: &quot;France&quot;,
-              &quot;match&quot;: {
-                &quot;title&quot;: &quot;Paris&quot;,
-                &quot;country&quot;: &quot;France&quot;
-              },
-              &quot;population&quot;: &quot;2138551&quot;,
-              &quot;latitude&quot;: &quot;48.85&quot;,
-              &quot;longitude&quot;: &quot;2.35&quot;,
-              &quot;names&quot;: [
-                &quot;paris&quot;,
-                &quot;baariis&quot;,
-                &quot;bahliz&quot;,
-                &quot;gorad paryzh&quot;,
-                &quot;lungsod ng paris&quot;,
-                &quot;lutece&quot;,
-                &quot;lutetia&quot;,
-                &quot;lutetia parisorum&quot;,
-                &quot;par&quot;,
-                &quot;pa-ri&quot;,
-                &quot;paarys&quot;,
-                &quot;palika&quot;,
-                &quot;paname&quot;,
-                &quot;pantruche&quot;,
-                &quot;paraeis&quot;,
-                &quot;paras&quot;,
-                &quot;pari&quot;,
-                &quot;paries&quot;,
-                &quot;parigge&quot;,
-                &quot;pariggi&quot;,
-                &quot;parighji&quot;,
-                &quot;parigi&quot;,
-                &quot;pariis&quot;,
-                &quot;pariisi&quot;,
-                &quot;parij&quot;,
-                &quot;parijs&quot;,
-                &quot;paris&quot;,
-                &quot;parisi&quot;,
-                &quot;parixe&quot;,
-                &quot;pariz&quot;,
-              ],
-              &quot;region&quot;: &quot;Île-de-France&quot;,
-              &quot;title_alt&quot;: &quot;paris&quot;
-            },
-            {
-              &quot;geonameid&quot;: &quot;4717560&quot;,
-              &quot;title&quot;: &quot;Paris&quot;,
-              &quot;country&quot;: &quot;United States&quot;,
-              &quot;match&quot;: {
-                &quot;title&quot;: &quot;Paris&quot;,
-                &quot;country&quot;: &quot;United States&quot;
-              },
-              &quot;population&quot;: &quot;25171&quot;,
-              &quot;latitude&quot;: &quot;33.66&quot;,
-              &quot;longitude&quot;: &quot;-95.56&quot;,
-              &quot;names&quot;: [
-                &quot;paris&quot;,
-                &quot;prx&quot;,
-                &quot;parizh&quot;,
-                &quot;париж&quot;
-              ],
-              &quot;region&quot;: &quot;Texas&quot;,
-              &quot;title_alt&quot;: &quot;paris&quot;
-            },
-            {
-              &quot;geonameid&quot;: &quot;3023645&quot;,
-              &quot;title&quot;: &quot;Cormeilles-en-Parisis&quot;,
-              &quot;country&quot;: &quot;France&quot;,
-              &quot;match&quot;: {
-                &quot;title&quot;: &quot;Cormeilles-en-Parisis&quot;,
-                &quot;country&quot;: &quot;France&quot;
-              },
-              &quot;population&quot;: &quot;21973&quot;,
-              &quot;latitude&quot;: &quot;48.97&quot;,
-              &quot;longitude&quot;: &quot;2.2&quot;,
-              &quot;names&quot;: [
-                &quot;cormeilles-en-parisis&quot;,
-                &quot;cormeilles&quot;,
-                &quot;cormeilles-en-parisis&quot;
-              ],
-              &quot;region&quot;: &quot;Île-de-France&quot;,
-              &quot;title_alt&quot;: &quot;cormeilles-en-parisis&quot;
+        <p>*max<em>result</em>per_page* is setted from configuration files or overridden with limit
+        query parameter parameter up to 100.</p>
+
+        <h4>Parameters</h4>
+
+        <ul><li><p><strong>sort</strong> (optional, string, default value : population) available values :</p><ul><li><p>population : The results will be sorted by population.</p></li><li><p>closeness : The results will be sorted by closeness to the place the request was sent from.</p></li></ul></li><li><p><strong>name</strong> (optional, string) : Filters city whose begins with a given name.</p></li><li><p><strong>country</strong> (optional, string) : Only cities located in countries whose name begins with this parameter will be returned.</p></li><li><p><strong>limit</strong> (optional, string) : The number of results.</p></li><li><p><strong>client-ip</strong> (optional, string) : This parameter is used within the <em>closeness</em> sort parameter to provide a custom remote IP. <code>/city?sort=closeness&amp;client-ip=80.12.81.19</code></p></li></ul>
+
+        <h3>/city/{id}</h3>
+
+        <p>Returns the city which <em>geonameid</em> value is equal to the given id.</p>
+
+        <h3>/ip?ip={ip}</h3>
+
+        <p>Returns the city in which the given IP address is located</p>
+
+        <h2>Accepted content types</h2>
+
+        <p>GeonamesServer can return data formated in <strong>json</strong>.</p>
+
+        <h3>Examples of response</h3>
+
+        <p>Following are the results returned for the request */city/name=paris&amp;limit=2</p>
+
+        <h4>json</h4>
+
+        <p><pre><code>json
+        {
+            "geonames": {
+                "totalResultsCount": "2",
+                "geoname": [
+                    {
+                        "score": 884.5834,
+                        "geonameid": 2988507,
+                        "name": "Paris",
+                        "country": {
+                            "name": "France",
+                            "code": "FR"
+                        },
+                        "timezone": "Europe/Paris",
+                        "feature": {
+                            "class": "P",
+                            "code": "PPLC"
+                        },
+                        "population": 2138551,
+                        "location": {
+                            "latitude": 48.85341,
+                            "longitude": 2.3488
+                        },
+                        "names": [
+                            "paris",
+                            "baariis",
+                            "bahliz",
+                            "gorad paryzh",
+                            "lungsod ng paris",
+                            "lutece",
+                            "lutetia",
+                            "lutetia parisorum",
+                            "par",
+                            "pa-ri",
+                            "paarys",
+                            "palika",
+                            "paname",
+                            "pantruche",
+                            "paraeis",
+                            "paras",
+                            "pari",
+                            "paries",
+                            "parigge",
+                            "pariggi",
+                            "parighji",
+                            "parigi",
+                            "pariis",
+                            "pariisi",
+                            "parij",
+                            "parijs",
+                            "paris",
+                            "parisi",
+                            "parixe",
+                            "pariz",
+                            "parize",
+                            "parizh",
+                            "parizh osh",
+                            "parizh'",
+                            "parizo",
+                            "parizs",
+                            "pariž",
+                            "parys",
+                            "paryz",
+                            "paryzius",
+                            "paryż",
+                            "paryžius",
+                            "paräis",
+                            "parís",
+                            "paríž",
+                            "parîs",
+                            "parĩ",
+                            "parī",
+                            "parīze",
+                            "paříž",
+                            "páras",
+                            "párizs",
+                            "ville-lumiere",
+                            "ville-lumière",
+                            "ba li",
+                            "barys",
+                            "pairisa",
+                            "pali",
+                            "pari",
+                            "paris",
+                            "parys",
+                            "paryzh",
+                            "perisa",
+                            "pryz",
+                            "pyaris",
+                            "pyarisa",
+                            "pyrs",
+                            "παρίσι",
+                            "горад парыж",
+                            "париж",
+                            "париж ош",
+                            "парижь",
+                            "париз",
+                            "парис",
+                            "паріж",
+                            "փարիզ",
+                            "פאריז",
+                            "פריז",
+                            "باريس",
+                            "پارىژ",
+                            "پاريس",
+                            "پاریس",
+                            "پیرس",
+                            "ܦܐܪܝܣ",
+                            "पॅरिस",
+                            "पेरिस",
+                            "पैरिस",
+                            "প্যারিস",
+                            "ਪੈਰਿਸ",
+                            "પૅરિસ",
+                            "பாரிஸ்",
+                            "పారిస్",
+                            "ಪ್ಯಾರಿಸ್",
+                            "പാരിസ്",
+                            "ปารีส",
+                            "ཕ་རི།",
+                            "ပါရီမြို့",
+                            "პარიზი",
+                            "ፓሪስ",
+                            "ប៉ារីស",
+                            "パリ",
+                            "巴黎",
+                            "파리"
+                        ],
+                        "admin1Code": "A8",
+                        "admin2Code": 75,
+                        "admin3Code": 751,
+                        "admin4Code": 75056,
+                        "updatedOn": "2012-08-19",
+                        "region": {
+                            "code": "FR.A8",
+                            "name": "Île-de-France"
+                        }
+                    },
+                    {
+                        "score": 312.7515,
+                        "geonameid": 4717560,
+                        "name": "Paris",
+                        "country": {
+                            "name": "United States",
+                            "code": "US"
+                        },
+                        "timezone": "America/Chicago",
+                        "feature": {
+                            "class": "P",
+                            "code": "PPLA2"
+                        },
+                        "population": 25171,
+                        "location": {
+                            "latitude": 33.66094,
+                            "longitude": -95.55551
+                        },
+                        "names": [
+                            "paris",
+                            "prx",
+                            "paris",
+                            "parizh",
+                            "barys",
+                            " tksas",
+                            "parys",
+                            " tgzas",
+                            "париж",
+                            "парис",
+                            "باريس، تكساس",
+                            "پاریس، تگزاس"
+                        ],
+                        "admin1Code": "TX",
+                        "admin2Code": 277,
+                        "admin3Code": "",
+                        "admin4Code": "",
+                        "updatedOn": "2011-05-14",
+                        "region": {
+                            "code": "US.TX",
+                            "name": "Texas"
+                        }
+                    }
+                ]
+            }
         }
-    }
-
-
-## License
-
-This project is licensed under the [MIT license](http://opensource.org/licenses/MIT).
-
-
-</textarea><script src="https://raw.github.com/evilstreak/markdown-js/master/lib/markdown.js"></script><script>var mdstr = document.getElementById('mdstr').value;
-var html = markdown.toHTML(mdstr);
-document.body.innerHTML = html;</script></body></html>
+        </code></pre></p>
+    </body>
+</html>

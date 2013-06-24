@@ -12,8 +12,7 @@ http://www.geonames.org/. You can use this server to retrieve the approximative
 location of an IPV4 address, to get more details about a city identified by its
 geonameid, or to find the closest (or biggest) cities matching a given criteria.
 
-The server accepts only HTTP GET requests, and returns appropriatly filled XML
-or JSON trees.
+The server accepts only HTTP GET requests, and returns appropriatly filled JSON trees.
 
 This server was created using `Express <http://expressjs.com/>`_.
 
@@ -152,16 +151,6 @@ To start the server, make sure you have **node** installed, and run:
 
 Then, you can send GET requests to it (through a web browser or any request
 tool such as **curl**).
-
-### Accepted content types
-
-GeonamesServer can return data formated in two types, **json** or **xml**,
-according to the type specified within the header request
-(see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html). The server supports
-qvalue ratings, choosing the return type by its rating.
-If * is specified, data will be returned as a **json** document.
-If neither **xml**, **json** nor * are specified, the server will answer with a
-*406 Not acceptable* error.
 
 ### CORS Requests
 
