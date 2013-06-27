@@ -43,7 +43,7 @@ module.exports = function(app) {
                     ip = null;
                 }
 
-                if (null !== req.query['client-ip']) {
+                if ('undefined' !== typeof(req.query['client-ip'])) {
                     ip = req.query['client-ip'];
                 }
 
@@ -184,7 +184,7 @@ module.exports = function(app) {
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
                     datas = datas.pop();
-                    
+
                     db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
                         res.jsonp(controller.jsonFromIpLookup(adminCodes, datas, ip));
                     });
