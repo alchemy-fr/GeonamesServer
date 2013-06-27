@@ -164,23 +164,50 @@ The callback parameter is `callback`.
 
 *Request*
 
-`/ip?ip=4.23.171.0&callback=myFunction`
+`/ip?ip=5.49.69.114&callback=myFunction`
 
 *Response*
 
 ```json
-myFunction(    {
-    "geonames": {
-          "ip": "4.23.171.0",
-          "geoname": {
-                "city": "New York",
-                "country_code": "US",
-                "country": "United States",
-                "longitude": "-73.98",
-                "latitude": "40.75",
-                "fips": "New York"
-          }
+myFunction({
+  "result": {
+    "ip": "5.49.69.114",
+    "geoname": {
+      "score": 581701.56,
+      "geonameid": 2992090,
+      "name": "Montreuil",
+      "country": {
+        "name": "France",
+        "code": "FR"
+      },
+      "timezone": "Europe/Paris",
+      "feature": {
+        "class": "P",
+        "code": "PPL"
+      },
+      "population": 90652,
+      "location": {
+        "latitude": 48.86415,
+        "longitude": 2.44322
+      },
+      "names": [
+        "montreuil",
+        "montrej",
+        "montreuil",
+        "montreuil-sous-bois",
+        "монтрей"
+      ],
+      "admin1Code": "A8",
+      "admin2Code": 93,
+      "admin3Code": 931,
+      "admin4Code": 93048,
+      "updatedOn": "2012-01-18",
+      "region": {
+        "code": "FR.A8",
+        "name": "Île-de-France"
+      }
     }
+  }
 })
 ```
 
@@ -227,29 +254,13 @@ query parameter parameter up to 100.
 
 - **client-ip** (optional, string) : This parameter is used within the *closeness* sort parameter to provide a custom remote IP. `/city?sort=closeness&client-ip=80.12.81.19`
 
-### /city/{id}
-
-Returns the city which *geonameid* value is equal to the given id.
-
-### /ip?ip={ip}
-
-Returns the city in which the given IP address is located
-
-## Accepted content types
-
-GeonamesServer can return data formated in **json**.
-
-### Examples of response
-
-Following are the results returned for the request */city/name=paris&limit=2
-
-#### json
+Here is the result returned for the request `/city/name=paris&limit=2` 
 
 ```json
 {
-    "geonames": {
-        "totalResultsCount": "2",
-        "geoname": [
+    "results": {
+        "total": "2",
+        "data": [
             {
                 "score": 884.5834,
                 "geonameid": 2988507,
@@ -429,6 +440,102 @@ Following are the results returned for the request */city/name=paris&limit=2
     }
 }
 ```
+
+### /city/{id}
+
+Returns the city which *geonameid* value is equal to the given id.
+
+Result for `/city/2992092`
+
+```
+{
+  "score": 0.034130126,
+  "geonameid": 2992092,
+  "name": "Montreuil",
+  "country": {
+    "name": "France",
+    "code": "FR"
+  },
+  "timezone": "Europe/Paris",
+  "feature": {
+    "class": "P",
+    "code": "PPL"
+  },
+  "population": 698,
+  "location": {
+    "latitude": 46.408,
+    "longitude": -0.83756
+  },
+  "names": [
+    "montreuil",
+    "montrej",
+    "montreuil",
+    "монтрей"
+  ],
+  "admin1Code": "B5",
+  "admin2Code": 85,
+  "admin3Code": 851,
+  "admin4Code": 85148,
+  "updatedOn": "2012-01-18",
+  "region": {
+    "code": "FR.B5",
+    "name": "Pays de la Loire"
+  }
+}
+```
+
+### /ip?ip={ip}
+
+Returns the city in which the given IP address is located
+
+Result for `/ip?ip=5.49.69.114`
+
+```
+{
+  "result": {
+    "ip": "5.49.69.114",
+    "geoname": {
+      "score": 581701.56,
+      "geonameid": 2992090,
+      "name": "Montreuil",
+      "country": {
+        "name": "France",
+        "code": "FR"
+      },
+      "timezone": "Europe/Paris",
+      "feature": {
+        "class": "P",
+        "code": "PPL"
+      },
+      "population": 90652,
+      "location": {
+        "latitude": 48.86415,
+        "longitude": 2.44322
+      },
+      "names": [
+        "montreuil",
+        "montrej",
+        "montreuil",
+        "montreuil-sous-bois",
+        "монтрей"
+      ],
+      "admin1Code": "A8",
+      "admin2Code": 93,
+      "admin3Code": 931,
+      "admin4Code": 93048,
+      "updatedOn": "2012-01-18",
+      "region": {
+        "code": "FR.A8",
+        "name": "Île-de-France"
+      }
+    }
+  }
+}
+```
+
+## Accepted content types
+
+GeonamesServer can return data formated in **json**.
 
 ## Contribute
 
