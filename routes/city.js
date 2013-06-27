@@ -48,7 +48,7 @@ module.exports = function(app) {
                 }
 
                 if (!common.isIpV4(ip)) {
-                    return common.sendBadRequestResponse(res, "The provided IP is not valid");
+                    return common.sendBadRequestResponse(res, "The provided IP " + ip + " is not valid");
                 }
 
                 // if ip or city could not be found fallback to sort by population
