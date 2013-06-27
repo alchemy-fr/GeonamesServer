@@ -48,8 +48,7 @@ module.exports = function(app) {
                 }
 
                 if (!common.isIpV4(ip)) {
-                    res.send(400, 'The provided IP is not valid');
-                    return;
+                    return common.sendBadRequestResponse(res, "The provided IP is not valid");
                 }
 
                 // if ip or city could not be found fallback to sort by population
@@ -97,11 +96,11 @@ module.exports = function(app) {
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
                     db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
-                        res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas, cityName));
+                        res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas));
                     });
                 } else {
                     console.log('elastic search error, got error ', error, ' status code ', res.statusCode, ' and response ', response);
-                    common.sendEmptyResponse(res);
+                    return common.sendErrorResponse(res);
                 }
             });
         });
@@ -126,18 +125,19 @@ module.exports = function(app) {
                     var datas = result.data;
                     var adminCodes = result.admincodes;
 
-                    if (datas === 0) {
-                        common.sendEmptyResponse(res);
+                    if (datas.length === 0) {
+                        common.sendNotFoundResponse(res);
                         return;
                     }
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
+                    datas = datas.pop();
 
                     db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
-                        res.jsonp(controller.jsonFromQueryLookup(result, datas));
+                        res.jsonp(controller.jsonFromGeonameLookup(result, datas));
                     });
                 } else {
-                    common.sendEmptyResponse(res);
+                    return common.sendErrorResponse(res);
                 }
             });
         });
@@ -149,22 +149,50 @@ module.exports = function(app) {
         var ip = req.query.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         if (!common.isIpV4(ip)) {
-            res.send(400, 'Could not determine your remote IP or the provided one is not valid');
-            return;
+            return common.sendBadRequestResponse(res, "Could not determine your remote IP or the provided one is not valid");
         }
 
         var city = geoloc.getCityFromIp(ip, app.get('app.config').geo.geolitepath);
 
         if (!city) {
-            return common.sendEmptyResponse(res);
+            return common.sendNotFoundResponse(res);
         }
 
-        var adminCodeCollection = db.collection('admincodes');
+        var countryNamesCollection = db.collection('countrynames');
+        countryNamesCollection.find({}, function(err, countries) {
+            var requestBody = controller.esQuery.findCitiesByName(
+                city.city,
+                [city.country_code.toLowerCase()],
+                {longitude:city.longitude,latitude:city.latitude},
+                'closeness',
+                1
+            );
 
-        var code = city.country_code + '.' + city.region;
+            request({
+                uri: app.get('es.connection.string')('cities'),
+                body: requestBody
+            }, function(error, response, hits) {
+                if (!error && response.statusCode === 200) {
+                    var result = common.formatHits(hits);
 
-        adminCodeCollection.findOne({code: code}, function(err, result) {
-            res.jsonp(controller.jsonFromIpLookup(result, city, ip));
+                    var datas = result.data;
+                    var adminCodes = result.admincodes;
+
+                    if (datas.length === 0) {
+                        return common.sendNotFoundResponse(res);
+                    }
+
+                    var datas = controller.sortDatasFromCountries(datas, countries);
+                    datas = datas.pop();
+                    
+                    db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
+                        res.jsonp(controller.jsonFromIpLookup(adminCodes, datas, ip));
+                    });
+                } else {
+                    console.log('elastic search error, got error ', error, ' status code ', res.statusCode, ' and response ', response);
+                    return common.sendErrorResponse(res);
+                }
+            });
         });
     });
 };

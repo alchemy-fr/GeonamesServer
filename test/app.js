@@ -94,7 +94,7 @@ describe('Tests accepted content types', function() {
     describe('GET /ip', function() {
         it('responds with a JSON file', function(done) {
             request(app)
-                    .get('/ip')
+                    .get('/ip?ip=80.12.81.19')
                     .set('Accept', 'application/json')
                     .expect('Content-Type', "application/json; charset=utf-8")
                     .expect(200, done);
@@ -104,7 +104,7 @@ describe('Tests accepted content types', function() {
     describe('GET /ip', function() {
         it('by default responds with a JSON file', function(done) {
             request(app)
-                    .get('/ip')
+                    .get('/ip?ip=80.12.81.19')
                     .expect('Content-Type', "application/json; charset=utf-8")
                     .expect(200, done);
         });
@@ -113,9 +113,17 @@ describe('Tests accepted content types', function() {
     describe('GET /ip', function() {
         it('by default responds with a JSON file', function(done) {
             request(app)
-                    .get('/ip')
+                    .get('/ip?ip=80.12.81.19')
                     .set('Accept', 'text/html')
                     .expect(406, done);
+        });
+    });
+
+    describe('GET /ip', function() {
+        it('responds with a 404 if not found', function(done) {
+            request(app)
+                    .get('/ip?ip=127.0.0.1')
+                    .expect(404, done);
         });
     });
 });
@@ -298,7 +306,8 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.geonames.totalResultsCount, 1, "Expecting 1 got " + result.geonames.totalResultsCount);
+                        assert.equal(result.name, "Paris", "Expecting name 'Paris'");
+                        assert.equal(result.geonameid, 2988507, "Expecting geonameid '2988507'");
                         done();
                     });
         });
@@ -308,11 +317,11 @@ describe('Tests /city route', function() {
         it('Returns nothing when city can not be found', function(done) {
             request(app)
                     .get('/city/0000000')
-                    .expect(200)
+                    .expect(404)
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.geonames.totalResultsCount, 0, "Expecting 0 got " + result.geonames.totalResultsCount);
+                        assert.equal(result.error, "not found", "Expecting a not found message");
                         done();
                     });
         });
