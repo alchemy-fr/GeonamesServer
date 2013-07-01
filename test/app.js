@@ -91,6 +91,15 @@ describe('Tests accepted content types', function() {
         });
     });
 
+    describe('GET /city/6587', function() {
+        it('an unknown geonameid returns a 404', function(done) {
+            request(app)
+                    .get('/city/6587')
+                    .expect('Content-Type', "application/json; charset=utf-8")
+                    .expect(404, done);
+        });
+    });
+
     describe('GET /ip', function() {
         it('responds with a JSON file', function(done) {
             request(app)
@@ -157,8 +166,7 @@ describe('Tests /city route', function() {
                     .expect(200)
                     .end(function(err, res) {
                         if (err) return done(err);
-                        var result = JSON.parse(res.text);
-                        assert.equal(result.results.total,30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -171,8 +179,7 @@ describe('Tests /city route', function() {
                     .expect(200)
                     .end(function(err, res) {
                         if (err) return done(err);
-                        var result = JSON.parse(res.text);
-                        assert.equal(result.results.total,1, "Expecting 1 got " + result.results.total);
+                        assert.equal(1, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -186,7 +193,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -200,7 +207,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -214,7 +221,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -228,10 +235,10 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
-                        var first = result.results.data.shift();
-                        var second = result.results.data.shift();
-                        var third = result.results.data.shift();
+                        assert.equal(30, res.header['x-geonames-total']);
+                        var first = result.shift();
+                        var second = result.shift();
+                        var third = result.shift();
                         assert(parseInt(first.population) > parseInt(second.population));
                         assert(parseInt(first.population) > parseInt(third.population));
                         done();
@@ -247,7 +254,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -261,8 +268,8 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 1, "Expecting 1 got " + result.results.total);
-                        var result = result.results.data.pop();
+                        assert.equal(1, res.header['x-geonames-total']);
+                        var result = result.pop();
                         assert(result.country.name.indexOf("United") !== -1, "Expecting to find 'United' in " + result.country);
                         done();
                     });
@@ -334,8 +341,7 @@ describe('Tests /city route', function() {
                     .expect(200)
                     .end(function(err, res) {
                         if (err) return done(err);
-                        var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 0, "Expecting 0 got " + result.results.total);
+                        assert.equal(0, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -349,7 +355,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 2, "Expecting 2 got " + result.results.total);
+                        assert.equal(2, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -371,7 +377,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -385,7 +391,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 30, "Expecting 30 got " + result.results.total);
+                        assert.equal(30, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -400,7 +406,7 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 1, "Expecting 1 got " + result.results.total);
+                        assert.equal(1, res.header['x-geonames-total']);
                         done();
                     });
         });
@@ -414,8 +420,8 @@ describe('Tests /city route', function() {
                     .end(function(err, res) {
                         if (err) return done(err);
                         var result = JSON.parse(res.text);
-                        assert.equal(result.results.total, 1, "Expecting 1 got " + result.results.total);
-                        var city = result.results.data[0];
+                        assert.equal(1, res.header['x-geonames-total']);
+                        var city = result[0];
                         assert.equal(city.location.latitude, "48.81");
                         assert.equal(city.location.longitude, "2.38");
                         done();
