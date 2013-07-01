@@ -170,44 +170,39 @@ The callback parameter is `callback`.
 
 ```json
 myFunction({
-  "result": {
-    "ip": "5.49.69.114",
-    "geoname": {
-      "score": 581701.56,
-      "geonameid": 2992090,
-      "name": "Montreuil",
-      "country": {
-        "name": "France",
-        "code": "FR"
-      },
-      "timezone": "Europe/Paris",
-      "feature": {
-        "class": "P",
-        "code": "PPL"
-      },
-      "population": 90652,
-      "location": {
-        "latitude": 48.86415,
-        "longitude": 2.44322
-      },
-      "names": [
-        "montreuil",
-        "montrej",
-        "montreuil",
-        "montreuil-sous-bois",
-        "монтрей"
-      ],
-      "admin1Code": "A8",
-      "admin2Code": 93,
-      "admin3Code": 931,
-      "admin4Code": 93048,
-      "updatedOn": "2012-01-18",
-      "region": {
-        "code": "FR.A8",
-        "name": "Île-de-France"
-      }
+    "score": 581701.56,
+    "geonameid": 2992090,
+    "name": "Montreuil",
+    "country": {
+      "name": "France",
+      "code": "FR"
+    },
+    "timezone": "Europe/Paris",
+    "feature": {
+      "class": "P",
+      "code": "PPL"
+    },
+    "population": 90652,
+    "location": {
+      "latitude": 48.86415,
+      "longitude": 2.44322
+    },
+    "names": [
+      "montreuil",
+      "montrej",
+      "montreuil",
+      "montreuil-sous-bois",
+      "монтрей"
+    ],
+    "admin1Code": "A8",
+    "admin2Code": 93,
+    "admin3Code": 931,
+    "admin4Code": 93048,
+    "updatedOn": "2012-01-18",
+    "region": {
+      "code": "FR.A8",
+      "name": "Île-de-France"
     }
-  }
 })
 ```
 
@@ -257,188 +252,183 @@ query parameter parameter up to 100.
 Here is the result returned for the request `/city/name=paris&limit=2` 
 
 ```json
-{
-    "results": {
-        "total": "2",
-        "data": [
-            {
-                "score": 884.5834,
-                "geonameid": 2988507,
-                "name": "Paris",
-                "country": {
-                    "name": "France",
-                    "code": "FR"
-                },
-                "timezone": "Europe/Paris",
-                "feature": {
-                    "class": "P",
-                    "code": "PPLC"
-                },
-                "population": 2138551,
-                "location": {
-                    "latitude": 48.85341,
-                    "longitude": 2.3488
-                },
-                "names": [
-                    "paris",
-                    "baariis",
-                    "bahliz",
-                    "gorad paryzh",
-                    "lungsod ng paris",
-                    "lutece",
-                    "lutetia",
-                    "lutetia parisorum",
-                    "par",
-                    "pa-ri",
-                    "paarys",
-                    "palika",
-                    "paname",
-                    "pantruche",
-                    "paraeis",
-                    "paras",
-                    "pari",
-                    "paries",
-                    "parigge",
-                    "pariggi",
-                    "parighji",
-                    "parigi",
-                    "pariis",
-                    "pariisi",
-                    "parij",
-                    "parijs",
-                    "paris",
-                    "parisi",
-                    "parixe",
-                    "pariz",
-                    "parize",
-                    "parizh",
-                    "parizh osh",
-                    "parizh'",
-                    "parizo",
-                    "parizs",
-                    "pariž",
-                    "parys",
-                    "paryz",
-                    "paryzius",
-                    "paryż",
-                    "paryžius",
-                    "paräis",
-                    "parís",
-                    "paríž",
-                    "parîs",
-                    "parĩ",
-                    "parī",
-                    "parīze",
-                    "paříž",
-                    "páras",
-                    "párizs",
-                    "ville-lumiere",
-                    "ville-lumière",
-                    "ba li",
-                    "barys",
-                    "pairisa",
-                    "pali",
-                    "pari",
-                    "paris",
-                    "parys",
-                    "paryzh",
-                    "perisa",
-                    "pryz",
-                    "pyaris",
-                    "pyarisa",
-                    "pyrs",
-                    "παρίσι",
-                    "горад парыж",
-                    "париж",
-                    "париж ош",
-                    "парижь",
-                    "париз",
-                    "парис",
-                    "паріж",
-                    "փարիզ",
-                    "פאריז",
-                    "פריז",
-                    "باريس",
-                    "پارىژ",
-                    "پاريس",
-                    "پاریس",
-                    "پیرس",
-                    "ܦܐܪܝܣ",
-                    "पॅरिस",
-                    "पेरिस",
-                    "पैरिस",
-                    "প্যারিস",
-                    "ਪੈਰਿਸ",
-                    "પૅરિસ",
-                    "பாரிஸ்",
-                    "పారిస్",
-                    "ಪ್ಯಾರಿಸ್",
-                    "പാരിസ്",
-                    "ปารีส",
-                    "ཕ་རི།",
-                    "ပါရီမြို့",
-                    "პარიზი",
-                    "ፓሪስ",
-                    "ប៉ារីស",
-                    "パリ",
-                    "巴黎",
-                    "파리"
-                ],
-                "admin1Code": "A8",
-                "admin2Code": 75,
-                "admin3Code": 751,
-                "admin4Code": 75056,
-                "updatedOn": "2012-08-19",
-                "region": {
-                    "code": "FR.A8",
-                    "name": "Île-de-France"
-                }
-            },
-            {
-                "score": 312.7515,
-                "geonameid": 4717560,
-                "name": "Paris",
-                "country": {
-                    "name": "United States",
-                    "code": "US"
-                },
-                "timezone": "America/Chicago",
-                "feature": {
-                    "class": "P",
-                    "code": "PPLA2"
-                },
-                "population": 25171,
-                "location": {
-                    "latitude": 33.66094,
-                    "longitude": -95.55551
-                },
-                "names": [
-                    "paris",
-                    "prx",
-                    "paris",
-                    "parizh",
-                    "barys",
-                    " tksas",
-                    "parys",
-                    " tgzas",
-                    "париж",
-                    "парис",
-                    "باريس، تكساس",
-                    "پاریس، تگزاس"
-                ],
-                "admin1Code": "TX",
-                "admin2Code": 277,
-                "admin3Code": "",
-                "admin4Code": "",
-                "updatedOn": "2011-05-14",
-                "region": {
-                    "code": "US.TX",
-                    "name": "Texas"
-                }
-            }
-        ]
+[
+    {
+        "score": 884.5834,
+        "geonameid": 2988507,
+        "name": "Paris",
+        "country": {
+            "name": "France",
+            "code": "FR"
+        },
+        "timezone": "Europe/Paris",
+        "feature": {
+            "class": "P",
+            "code": "PPLC"
+        },
+        "population": 2138551,
+        "location": {
+            "latitude": 48.85341,
+            "longitude": 2.3488
+        },
+        "names": [
+            "paris",
+            "baariis",
+            "bahliz",
+            "gorad paryzh",
+            "lungsod ng paris",
+            "lutece",
+            "lutetia",
+            "lutetia parisorum",
+            "par",
+            "pa-ri",
+            "paarys",
+            "palika",
+            "paname",
+            "pantruche",
+            "paraeis",
+            "paras",
+            "pari",
+            "paries",
+            "parigge",
+            "pariggi",
+            "parighji",
+            "parigi",
+            "pariis",
+            "pariisi",
+            "parij",
+            "parijs",
+            "paris",
+            "parisi",
+            "parixe",
+            "pariz",
+            "parize",
+            "parizh",
+            "parizh osh",
+            "parizh'",
+            "parizo",
+            "parizs",
+            "pariž",
+            "parys",
+            "paryz",
+            "paryzius",
+            "paryż",
+            "paryžius",
+            "paräis",
+            "parís",
+            "paríž",
+            "parîs",
+            "parĩ",
+            "parī",
+            "parīze",
+            "paříž",
+            "páras",
+            "párizs",
+            "ville-lumiere",
+            "ville-lumière",
+            "ba li",
+            "barys",
+            "pairisa",
+            "pali",
+            "pari",
+            "paris",
+            "parys",
+            "paryzh",
+            "perisa",
+            "pryz",
+            "pyaris",
+            "pyarisa",
+            "pyrs",
+            "παρίσι",
+            "горад парыж",
+            "париж",
+            "париж ош",
+            "парижь",
+            "париз",
+            "парис",
+            "паріж",
+            "փարիզ",
+            "פאריז",
+            "פריז",
+            "باريس",
+            "پارىژ",
+            "پاريس",
+            "پاریس",
+            "پیرس",
+            "ܦܐܪܝܣ",
+            "पॅरिस",
+            "पेरिस",
+            "पैरिस",
+            "প্যারিস",
+            "ਪੈਰਿਸ",
+            "પૅરિસ",
+            "பாரிஸ்",
+            "పారిస్",
+            "ಪ್ಯಾರಿಸ್",
+            "പാരിസ്",
+            "ปารีส",
+            "ཕ་རི།",
+            "ပါရီမြို့",
+            "პარიზი",
+            "ፓሪስ",
+            "ប៉ារីស",
+            "パリ",
+            "巴黎",
+            "파리"
+        ],
+        "admin1Code": "A8",
+        "admin2Code": 75,
+        "admin3Code": 751,
+        "admin4Code": 75056,
+        "updatedOn": "2012-08-19",
+        "region": {
+            "code": "FR.A8",
+            "name": "Île-de-France"
+        }
+    },
+    {
+        "score": 312.7515,
+        "geonameid": 4717560,
+        "name": "Paris",
+        "country": {
+            "name": "United States",
+            "code": "US"
+        },
+        "timezone": "America/Chicago",
+        "feature": {
+            "class": "P",
+            "code": "PPLA2"
+        },
+        "population": 25171,
+        "location": {
+            "latitude": 33.66094,
+            "longitude": -95.55551
+        },
+        "names": [
+            "paris",
+            "prx",
+            "paris",
+            "parizh",
+            "barys",
+            " tksas",
+            "parys",
+            " tgzas",
+            "париж",
+            "парис",
+            "باريس، تكساس",
+            "پاریس، تگزاس"
+        ],
+        "admin1Code": "TX",
+        "admin2Code": 277,
+        "admin3Code": "",
+        "admin4Code": "",
+        "updatedOn": "2011-05-14",
+        "region": {
+            "code": "US.TX",
+            "name": "Texas"
+        }
     }
-}
+]
 ```
 
 ### /city/{id}
@@ -447,7 +437,7 @@ Returns the city which *geonameid* value is equal to the given id.
 
 Result for `/city/2992092`
 
-```
+```json
 {
   "score": 0.034130126,
   "geonameid": 2992092,
@@ -490,46 +480,41 @@ Returns the city in which the given IP address is located
 
 Result for `/ip?ip=5.49.69.114`
 
-```
+```json
 {
-  "result": {
-    "ip": "5.49.69.114",
-    "geoname": {
-      "score": 581701.56,
-      "geonameid": 2992090,
-      "name": "Montreuil",
-      "country": {
-        "name": "France",
-        "code": "FR"
-      },
-      "timezone": "Europe/Paris",
-      "feature": {
-        "class": "P",
-        "code": "PPL"
-      },
-      "population": 90652,
-      "location": {
-        "latitude": 48.86415,
-        "longitude": 2.44322
-      },
-      "names": [
-        "montreuil",
-        "montrej",
-        "montreuil",
-        "montreuil-sous-bois",
-        "монтрей"
-      ],
-      "admin1Code": "A8",
-      "admin2Code": 93,
-      "admin3Code": 931,
-      "admin4Code": 93048,
-      "updatedOn": "2012-01-18",
-      "region": {
-        "code": "FR.A8",
-        "name": "Île-de-France"
-      }
+    "score": 581701.56,
+    "geonameid": 2992090,
+    "name": "Montreuil",
+    "country": {
+      "name": "France",
+      "code": "FR"
+    },
+    "timezone": "Europe/Paris",
+    "feature": {
+      "class": "P",
+      "code": "PPL"
+    },
+    "population": 90652,
+    "location": {
+      "latitude": 48.86415,
+      "longitude": 2.44322
+    },
+    "names": [
+      "montreuil",
+      "montrej",
+      "montreuil",
+      "montreuil-sous-bois",
+      "монтрей"
+    ],
+    "admin1Code": "A8",
+    "admin2Code": 93,
+    "admin3Code": 931,
+    "admin4Code": 93048,
+    "updatedOn": "2012-01-18",
+    "region": {
+      "code": "FR.A8",
+      "name": "Île-de-France"
     }
-  }
 }
 ```
 

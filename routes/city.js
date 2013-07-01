@@ -58,7 +58,7 @@ module.exports = function(app) {
 
                         if (null === point) {
                             app.set('req.sort', 'population');
-                            res.header('X-Geonames-sortby', app.get('req.sort'));
+                            res.header('X-Geonames-SortBy', app.get('req.sort'));
                         }
                     } catch (Exception) {
                         res.send(500, 'An error occured while geolocalizing IP adress');
@@ -66,7 +66,7 @@ module.exports = function(app) {
                     }
                 } else {
                     app.set('req.sort', 'population');
-                    res.header('X-Geonames-sortby', app.get('req.sort'));
+                    res.header('X-Geonames-SortBy', app.get('req.sort'));
                 }
             }
 
@@ -96,6 +96,7 @@ module.exports = function(app) {
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
                     db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
+                        res.header('X-Geonames-Total', datas.length.toString());
                         res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas));
                     });
                 } else {
