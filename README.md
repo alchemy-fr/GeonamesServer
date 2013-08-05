@@ -47,7 +47,8 @@ enough. Otherwise, you can download it from the
 To ensure the proper functioning of these operations,
 `curl <http://fr2.php.net/manual/en/book.curl.php>`_ and
 `mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are
-required.
+required and 
+`composer <http://getcomposer.org/download/>`
 
 See `mongo extension install details here <http://php.net/manual/fr/mongo.installation.php>`_
 
