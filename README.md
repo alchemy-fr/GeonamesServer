@@ -45,10 +45,9 @@ enough. Otherwise, you can download it from the
 
 
 To ensure the proper functioning of these operations,
-`curl <http://fr2.php.net/manual/en/book.curl.php>`_ and
-`mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP are
-required and 
-`composer <http://getcomposer.org/download/>`
+`curl <http://fr2.php.net/manual/en/book.curl.php>`_,
+`mongo <http://fr2.php.net/manual/en/book.mongo.php>`_ extensions for PHP and
+`composer <http://getcomposer.org/download/>` are required.
 
 See `mongo extension install details here <http://php.net/manual/fr/mongo.installation.php>`_
 
@@ -250,7 +249,7 @@ query parameter parameter up to 100.
 
 - **client-ip** (optional, string) : This parameter is used within the *closeness* sort parameter to provide a custom remote IP. `/city?sort=closeness&client-ip=80.12.81.19`
 
-Here is the result returned for the request `/city/name=paris&limit=2` 
+Here is the result returned for the request `/city/name=paris&limit=2`
 
 ```json
 [
