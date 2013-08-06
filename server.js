@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var confParser = require('./lib/configParser');
 var middlewares = require('./lib/middleware');
-
+var http = require('http');
 var app = module.exports = express();
 
 try {
@@ -67,9 +67,21 @@ app.use(function(err, req, res, next) {
     res.status(500); return;
 });
 
-// Start app
-app.listen(app.get('port'), function(err) {
+var handle_errors = function(err) {
     if (err) { next(err); return; }
-    console.log("Express server listening on port " + app.get('port'));
-});
+};
 
+// Start app
+http.createServer(app).listen(app.get('port'), handle_errors);
+console.log('Server listening on port ' + app.get('port'));
+
+var httpsConfig = app.get('app.config').app.https || {"enable":false};
+if (httpsConfig.enable) {
+    var https = require('https');
+    var fs = require('fs');
+    https.createServer({
+        key: fs.readFileSync(httpsConfig.key),
+        cert: fs.readFileSync(httpsConfig.cert)
+    }, app).listen(httpsConfig.port, handle_errors);
+    console.log('Server listening on port ' + httpsConfig.port);
+}

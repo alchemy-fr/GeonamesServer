@@ -2,6 +2,12 @@
     "app": {
         "verbose": false,
         "port": 3000,
+        "https": {
+            "enable": false,
+            "port": 3443,
+            "key": "/path/to/server.key",
+            "cert": "/path/to/server.crt"
+        },
         "allowed_domains": ["*"],
         "max_result_per_page" : 30
     },
