@@ -1,7 +1,6 @@
 var S = require('string');
 var _ = require('underscore');
 var request = require('request');
-var mongojs = require('mongojs');
 
 var geoloc = require('./../lib/geoloc');
 var common = require('./../lib/common');
@@ -9,9 +8,7 @@ var controller = require('./../lib/controller/city');
 
 module.exports = function(app) {
     app.get('/city', function(req, res) {
-        var db = mongojs(app.get('mongo.connection.string')());
-
-        var countryNamesCollection = db.collection('countrynames');
+        var countryNamesCollection = app.get('mongodb').collection('countrynames');
 
         var cityName = S(req.query.name || '').trim().toString();
         var countryName = S(req.query.country || '').trim().toString();
@@ -95,7 +92,7 @@ module.exports = function(app) {
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
-                    db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
+                    app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
                         res.header('X-Geonames-Total', datas.length.toString());
                         res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas));
                     });
@@ -108,9 +105,7 @@ module.exports = function(app) {
     });
 
     app.get('/city/:id', function(req, res) {
-        var db = mongojs(app.get('mongo.connection.string')());
-
-        var countryNamesCollection = db.collection('countrynames');
+        var countryNamesCollection = app.get('mongodb').collection('countrynames');
 
         countryNamesCollection.find({}, function(err, countries) {
             var requestBody = controller.esQuery.findCityById(req.params.id);
@@ -134,7 +129,7 @@ module.exports = function(app) {
                     var datas = controller.sortDatasFromCountries(datas, countries);
                     datas = datas.pop();
 
-                    db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
+                    app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
                         res.jsonp(controller.jsonFromGeonameLookup(result, datas));
                     });
                 } else {
@@ -145,8 +140,6 @@ module.exports = function(app) {
     });
 
     app.get('/ip', function(req, res) {
-        var db = mongojs(app.get('mongo.connection.string')());
-
         var ip = req.query.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         if (!common.isIpV4(ip)) {
@@ -159,7 +152,7 @@ module.exports = function(app) {
             return common.sendNotFoundResponse(res);
         }
 
-        var countryNamesCollection = db.collection('countrynames');
+        var countryNamesCollection = app.get('mongodb').collection('countrynames');
         countryNamesCollection.find({}, function(err, countries) {
             var requestBody = controller.esQuery.findCitiesByName(
                 city.city,
@@ -186,7 +179,7 @@ module.exports = function(app) {
                     var datas = controller.sortDatasFromCountries(datas, countries);
                     datas = datas.pop();
 
-                    db.collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
+                    app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
                         res.jsonp(controller.jsonFromIpLookup(adminCodes, datas, ip));
                     });
                 } else {
