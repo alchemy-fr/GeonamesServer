@@ -39,6 +39,16 @@ app.set('mongo.connection.string', function() {
 });
 
 app.set('mongodb', mongojs(app.get('mongo.connection.string')()));
+
+app.get('mongodb').runCommand({ping:1}, function(err, res) {
+    if(!err && res.ok) {
+        console.log("Connected to mongodb " + app.get('mongo.connection.string')() + "\n");
+    } else {
+        process.stdout.write('Cant connect to mongodb using following connection string: ' + app.get('mongo.connection.string')() + "\n");
+        process.exit(1);
+    }
+});
+
 app.set('port', config.app.port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
