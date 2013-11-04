@@ -140,24 +140,43 @@
 
         <p><em>Request</em></p>
 
-        <p><pre><code>/ip?ip=4.23.171.0&amp;callback=myFunction</code></pre></p>
+        <p><pre><code>/ip?ip=5.49.69.114&amp;callback=myFunction</code></pre></p>
 
         <p><em>Response</em></p>
 
         <p><pre><code>json
-        myFunction(    {
-            "geonames": {
-                  "ip": "4.23.171.0",
-                  "geoname": {
-                        "city": "New York",
-                        "country_code": "US",
-                        "country": "United States",
-                        "longitude": "-73.98",
-                        "latitude": "40.75",
-                        "fips": "New York"
-                  }
-            }
-        })
+        myfunction({
+          "score": 583087.56,
+          "geonameid": 2988998,
+          "name": "Oullins",
+          "country": {
+            "name": "France",
+            "code": "FR"
+          },
+          "timezone": "Europe/Paris",
+          "feature": {
+            "class": "P",
+            "code": "PPL"
+          },
+          "population": 25592,
+          "location": {
+            "latitude": 45.71774,
+            "longitude": 4.80382
+          },
+          "names": [
+            "oullins",
+            "oullins"
+          ],
+          "admin1Code": "B9",
+          "admin2Code": 69,
+          "admin3Code": 691,
+          "admin4Code": 69149,
+          "updatedOn": "2012-01-18",
+          "region": {
+            "code": "FR.B9",
+            "name": "Rhône-Alpes"
+          }
+        });
         </code></pre></p>
 
         <h2>Routes</h2>
@@ -206,7 +225,7 @@
 
         <h3>Examples of response</h3>
 
-        <p>Following are the results returned for the request */city/name=paris&amp;limit=2</p>
+        <p>Following are the results returned for the request */city?name=paris&amp;limit=2</p>
 
         <h4>json</h4>
 
