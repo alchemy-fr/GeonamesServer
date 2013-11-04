@@ -148,7 +148,7 @@ module.exports = function(app) {
 
         var city = geoloc.getCityFromIp(ip, app.get('app.config').geo.geolitepath);
 
-        if (!city) {
+        if (!city || !city.city) {
             return common.sendNotFoundResponse(res);
         }
 
