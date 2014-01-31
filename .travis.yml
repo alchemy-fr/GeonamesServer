@@ -9,7 +9,7 @@ before_install:
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --prefer-source
   - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.10.deb
-  - dpkg -i elasticsearch-0.90.10.deb
+  - sudo dpkg -i elasticsearch-0.90.10.deb
   - sudo /etc/init.d/elasticsearch start
   - cp config/elasticsearch.cfg.sample config/elasticsearch.cfg
   - cp config/mongo.cfg.sample config/mongo.cfg
