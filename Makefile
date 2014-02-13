@@ -5,6 +5,9 @@ test:
 install:
 	bash ./resources/scripts/install.sh
 
+init:
+	bash ./resources/scripts/init.sh
+
 index:
 	bash ./resources/scripts/indexing/index.sh
 
