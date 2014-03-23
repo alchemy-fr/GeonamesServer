@@ -59,9 +59,6 @@ app.use(middlewares.setRequestType(app));
 // Set response appropriate content type
 app.use(middlewares.setContentType(app));
 
-// Lowercase query parameters
-app.use(middlewares.lowercase(app));
-
 // Formalize sort query parameter
 app.use(middlewares.formalizeSortParameter(app));
 
