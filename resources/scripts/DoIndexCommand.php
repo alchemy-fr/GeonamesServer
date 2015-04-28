@@ -80,7 +80,7 @@ class DoIndexCommand extends AbstractIndexCommand
             } catch (Exception $ex) {
                 $output->writeln("Something went wrong within MongoDB: ".$ex->getMessage().", Retrying ...");
                 $flag = 0;
-                $cursor = getCursor($collection);
+                $cursor = $this->getCursor($collection);
             }
         }
 
@@ -88,7 +88,11 @@ class DoIndexCommand extends AbstractIndexCommand
 
         return 0;
     }
-    
+
+    /**
+     * @param int $d
+     * @return string
+     */
     private function secsToString($d) {
         $parts = array();
         foreach (array(
@@ -116,7 +120,11 @@ class DoIndexCommand extends AbstractIndexCommand
             return join(', ', $parts) . " " . $last;
         }
     }
-    
+
+    /**
+     * @param MongoCollection $collection
+     * @return MongoCursor
+     */
     private function getCursor($collection) {
         $cursor = $collection->find(array(
             'featureCode' => array(
