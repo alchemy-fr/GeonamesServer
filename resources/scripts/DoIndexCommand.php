@@ -62,7 +62,7 @@ class DoIndexCommand extends AbstractIndexCommand
                 foreach ($cursor as $obj) {
                     $i++;
                     unset($obj['_id']);
-            
+
                     $requests[] = $guzzle->put($input->getArgument('es-type').'/'.$i, null, json_encode($obj));
 
                     if (0 === $i % 180) {
@@ -76,11 +76,14 @@ class DoIndexCommand extends AbstractIndexCommand
                             . "~" . $this->secsToString(($nbEntries - $i) / $entriesPerSeconds) . " left\tMemory usage : ".(memory_get_usage()>>20)."Mo");
                     }
                 }
+                if ($requests) {
+                    $guzzle->send($requests);
+                }
                 $flag = 1;
             } catch (Exception $ex) {
                 $output->writeln("Something went wrong within MongoDB: ".$ex->getMessage().", Retrying ...");
                 $flag = 0;
-                $cursor = getCursor($collection);
+                $cursor = $this->getCursor($collection);
             }
         }
 
@@ -88,7 +91,11 @@ class DoIndexCommand extends AbstractIndexCommand
 
         return 0;
     }
-    
+
+    /**
+     * @param int $d
+     * @return string
+     */
     private function secsToString($d) {
         $parts = array();
         foreach (array(
@@ -116,7 +123,11 @@ class DoIndexCommand extends AbstractIndexCommand
             return join(', ', $parts) . " " . $last;
         }
     }
-    
+
+    /**
+     * @param MongoCollection $collection
+     * @return MongoCursor
+     */
     private function getCursor($collection) {
         $cursor = $collection->find(array(
             'featureCode' => array(

@@ -120,7 +120,7 @@ abstract class AbstractIndexCommand extends Command
                         'index' => 'not_analyzed',
                     ),
                     'name'             => array(
-                        'type'   => 'multi_field',
+                        'type'   => 'string',
                         'fields' => array(
                             'name'      => array(
                                 'type'     => 'string',
@@ -134,7 +134,7 @@ abstract class AbstractIndexCommand extends Command
                         ),
                     ),
                     'names'            => array(
-                        'type'   => 'multi_field',
+                        'type'   => 'string',
                         'fields' => array(
                             'names'     => array(
                                 'type'     => 'string',
