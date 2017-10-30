@@ -532,7 +532,7 @@ on GitHub, we will be glad to merge your code.
 
 ## Test
 
-This server relies on `Mocha <http://visionmedia.github.com/mocha/>`_
+This server relies on `Mocha <http://mochajs.org/>`_
 and `Supertest <https://github.com/visionmedia/supertest>`_ for unit testing.
 All you have to do is to run the following command in the root folder:
 
