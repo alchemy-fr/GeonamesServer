@@ -81,16 +81,18 @@ cmd_mongo_host="--host $mongo_host"
 cmd_mongo_port="--port $mongo_port"
 cmd_mongo_user=""
 cmd_mongo_pass=""
+cmd_mongo_dbauth="--authenticationDatabase=admin"
 
 if [ -n "$mongo_user" ]; then
     cmd_mongo_user="--username $mongo_user"
 fi
 
 if [ -n "$mongo_pass" ]; then
-    cmd_mongo_pass="--password $mongo_pass"
+    cmd_mongo_pass="-p$mongo_pass"
 fi
 
-echo mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass --eval "printjson(db.adminCommand('listDatabases'))" > /dev/null
+echo "Executing : mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass --eval \"printjson(db.adminCommand(\'listDatabases\'))\"" 
+echo mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $cmd_mongo_dbauth --eval "printjson(db.adminCommand('listDatabases'))" > /dev/null
 
 if [ $? -eq 1 ]; then
     echo "Cannot connect to mongo ..."
@@ -116,7 +118,7 @@ echo "Start fetching Geonames ressources ..."
 if [ ! -f "$SOURCE_DIR/GeoLiteCity.dat.gz" ];then
     cd $SOURCE_DIR
     echo "Downloading GeoliteCity.dat.gz"
-    wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+    wget https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoLiteCity.dat.gz/md5/2ec4a73cd879adddf916df479f3581c7/GeoLiteCity.dat.gz
 fi
 
 if [ ! -f "$DATA_DIR/GeoLiteCity.dat" ];then
@@ -161,13 +163,13 @@ if [ ! -f "$DATA_DIR/countrynames.txt" ];then
 fi
 
 # Droping mongo database
-echo "Droping '$mongo_database' database ..."
-mongo $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass $mongo_database --eval "db.dropDatabase()" > /dev/null
-
-if [ $? -eq 1 ]; then
-    echo "Cannot drop '$mongo_database' database..."
-    exit 1;
-fi
+#echo "Droping '$mongo_database' database ..."
+#mongo $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass $mongo_database --eval "db.dropDatabase()" > /dev/null
+#
+#if [ $? -eq 1 ]; then
+#    echo "Cannot drop '$mongo_database' database..."
+#    exit 1;
+#fi
 
 # Importing collections collection
 echo "Start importing 'allCities.txt' into cities collection ..."
@@ -175,25 +177,25 @@ echo "Start importing 'allCities.txt' into cities collection ..."
 MONGO_VERSION=`mongo --version | sed -e "s|.*: \.*||" | cut -d "." -f -1`
 
 if [ $MONGO_VERSION -gt 1 ]; then
-    mongoimport $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c cities \
+    mongoimport $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass $cmd_mongo_dbauth -d $mongo_database -c cities \
     --type tsv --fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
     --stopOnError "$DATA_DIR/allCities.txt"
 else
-    mongoimport $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c cities \
+    mongoimport $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass $cmd_mongo_dbauth -d $mongo_database -c cities \
     --type tsv --fields geonameid,name,asciiname,alternatenames,latitude,longitude,featureClass,featureCode,countryCode,cc2,admin1Code,admin2Code,admin3Code,admin4Code,population,elevation,DEM,timezone,modificationDate \
     "$DATA_DIR/allCities.txt"
 fi
 
 echo "Setup the mongodb database (adding pin location & all different name for one city) ..."
-mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $mongo_database "$SCRIPT_DIR/setupDB.js"
+mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $cmd_mongo_dbauth $mongo_database "$SCRIPT_DIR/setupDB.js"
 
 echo "Start importing 'admincodes.txt' in admincodes collection ..."
-mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c admincodes \
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $cmd_mongo_dbauth -d $mongo_database -c admincodes \
     --type tsv --fields code,name --stopOnError "$DATA_DIR/admincodes.txt"
 
 echo "Start importing 'countrynames.txt' in countrynames collection"
-mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c countrynames \
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $cmd_mongo_dbauth -d $mongo_database -c countrynames \
     --type tsv --fields code,name --stopOnError  "$DATA_DIR/countrynames.txt"
 
 echo "Start indexing ..."
-php "$SCRIPT_DIR/console.php" do-indexation $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port $mongo_user $mongo_pass
+php "$SCRIPT_DIR/console.php" do-indexation $elastic_host $elastic_port $elastic_scheme $elastic_index cities $mongo_database cities $mongo_host $mongo_port

@@ -1,0 +1,59 @@
+version: "3.4"
+services:
+
+  nginx:
+    build:
+      context: docker/nginx/.
+    restart: always      
+    ports:
+      - "8080:80"
+
+  geonames:
+    build:
+      context: docker/geonames/.
+    depends_on:
+      - mongo 
+    links:
+      - mongo
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/var/GeonamesServer/
+
+#  mongo:
+#    image: mongo
+#    container_name: mongo
+#    restart: always
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+#      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-supersecret}
+#      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-saas}
+#      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-saas}
+#      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-secret}
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - ./data/:/data/db
+
+  mongo:
+    container_name: mongo
+    image: mongo:3.4
+    ports:
+      - 27017:27017
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-admin123456}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-geonames}
+      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
+      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
+    volumes:
+##     - ./docker/mongo-user.sh.d:/docker-entrypoint-initdb.d
+     - ./docker/data1:/data/db
+    command: mongod --bind_ip 0.0.0.0
+
+  elasticsearch:
+    build: docker/elasticsearch/.
+    restart: always
+    ports:
+      - 9200:9200

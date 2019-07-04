@@ -34,7 +34,8 @@ app.set('mongo.connection.string', function() {
         config.mongo.mongo_port,
         config.mongo.mongo_user,
         config.mongo.mongo_pass,
-        config.mongo.mongo_database
+        config.mongo.mongo_database,
+	{authsource: 'admin'}    
     );
 });
 

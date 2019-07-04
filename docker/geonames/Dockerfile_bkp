@@ -1,0 +1,40 @@
+FROM php:5.6-cli
+
+RUN apt-get update && apt-get install -y git wget mongodb-clients libcurl4-openssl-dev pkg-config libsasl2-dev autoconf g++ make openssl libssl-dev zlib1g-dev
+
+RUN wget https://nodejs.org/download/release/v0.10.45/node-v0.10.45-linux-x64.tar.gz \
+&& tar -xzvf node-v0.10.45-linux-x64.tar.gz \
+&& cd node-v0.10.45-linux-x64 \
+&& cp -Rf * /usr/local/
+
+
+RUN pecl install mongo \
+&& docker-php-ext-enable mongo
+
+RUN wget https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoIP-1.4.8.tar.gz/05b7300435336231b556df5ab36f326d/GeoIP-1.4.8.tar.gz \
+&& tar -xvzf GeoIP-1.4.8.tar.gz \
+&& cd GeoIP-1.4.8 \
+&& ./configure --prefix=/usr \
+&& make \
+&& make install
+
+
+RUN apt-get autoremove -y \
+&& apt-get clean all \
+&& rm -rvf /var/lib/apt/lists/* \
+&& rm -rvf /usr/share/doc /usr/share/man /usr/share/locale	\
+&& rm -rf /tmp/*
+
+COPY elasticsearch.cfg /var/elasticsearch.cfg
+COPY mongo.cfg /var/mongo.cfg
+COPY server.json /var/server.json
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+RUN curl -sS https://getcomposer.org/installer | \
+php -- --install-dir=/usr/bin/ --filename=composer
+
+ADD docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
+## CMD ["node /var/GeonamesServer/server.js"]
+CMD ["node"]

@@ -28,7 +28,9 @@ class DoIndexCommand extends AbstractIndexCommand
         if (!empty($mongoPassword)) {
             $options['password'] = $mongoPassword;
         }
-        
+         $options['username'] = "admin";
+	 $options['password'] = "admin123456";
+	 $options['db'] = "admin";
         $m = new MongoClient("mongodb://$mongoHost:$mongoPort", $options);
         $db = $m->$mongoDbName;
         \MongoCursor::$timeout = -1;
