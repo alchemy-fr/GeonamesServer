@@ -2,17 +2,20 @@ version: "3.4"
 services:
 
   nginx:
+    image: $DOCKER_REGISTRY/geoname-nginx:$DOCKER_TAG
     build:
       context: docker/nginx/.
-    restart: always      
+    restart: on-failure
     ports:
       - "8080:80"
 
   geonames:
+    image: $DOCKER_REGISTRY/geoname-app:$DOCKER_TAG
+    restart: on-failure
     build:
       context: docker/geonames/.
     depends_on:
-      - mongo 
+      - mongo
     links:
       - mongo
     ports:
@@ -36,11 +39,11 @@ services:
 #      - ./data/:/data/db
 
   mongo:
-    container_name: mongo
+    image: $DOCKER_REGISTRY/geoname-mongo:$DOCKER_TAG
     image: mongo:3.4
     ports:
       - 27017:27017
-    restart: always
+    restart: on-failure
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-admin123456}
@@ -53,7 +56,8 @@ services:
     command: mongod --bind_ip 0.0.0.0
 
   elasticsearch:
+    image: $DOCKER_REGISTRY/geoname-elasticsearch:$DOCKER_TAG
     build: docker/elasticsearch/.
-    restart: always
+    restart: on-failure
     ports:
-      - 9200:9200
+      - $ELASTICSEARCH_PORT:9200
