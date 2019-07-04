@@ -48,8 +48,8 @@ services:
       MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
       MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
     volumes:
-##     - ./docker/mongo-user.sh.d:/docker-entrypoint-initdb.d
-     - ./docker/data1:/data/db
+     - ./docker/mongo-user.sh.d:/docker-entrypoint-initdb.d
+     - ./docker/data:/data/db
     command: mongod --bind_ip 0.0.0.0
 
   elasticsearch:
