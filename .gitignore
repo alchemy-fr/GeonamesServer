@@ -4,3 +4,4 @@
 /resources/sources
 /config/*
 !/config/*.sample
+data/

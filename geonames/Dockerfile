@@ -63,5 +63,12 @@ RUN cd /var/GeonamesServer/ && \
 ADD ./files/ /
 ADD ./src/  /var/GeonamesServer
 
+
+ENV CONFIG_DIR "/var/GeonamesServer/config"
+ENV DATA_DIR "/data"
+ENV SOURCE_DIR "/sources"
+ENV SCRIPT_DIR "/var/scripts"
+
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/var/scripts/indexation.sh"]

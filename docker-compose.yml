@@ -16,9 +16,8 @@ services:
       - mongo
     links:
       - mongo
-    #volumes:
-      #- ./data/sources/:/sources
-      # - ./data/data/:/data
+    volumes:
+      - $STATE_DIR:/state
     environment:
       - MONGO_USER=$MONGO_NON_ROOT_USERNAME
       - MONGO_PASSWORD=$MONGO_NON_ROOT_PASSWORD
@@ -34,13 +33,12 @@ services:
       MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
       MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
     volumes:
-     - database:/data/db
+     - $MONGO_DATA_DIR:/data/db
 
   elasticsearch:
     image: $DOCKER_REGISTRY/geonames/elasticsearch:$DOCKER_TAG
     build: ./elasticsearch
     restart: on-failure
+    volumes:
+    - $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
 
-volumes:
-  database:
-    driver: local

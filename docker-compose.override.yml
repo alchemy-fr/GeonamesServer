@@ -1,0 +1,6 @@
+version: "3.4"
+services:
+    geonames:
+        volumes:
+          - ./geonames/files/var/scripts:/var/scripts
+        command: "sleep 10000"
