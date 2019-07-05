@@ -46,15 +46,11 @@ if [ $? -eq 1 ]; then
 fi
 
 # Define paths
-if [ -z "$ROOT_PATH" ]; then
- ROOT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-fi
 
-RESOURCE_DIR="$ROOT_PATH/.."
-CONFIG_DIR="$ROOT_PATH/../../config"
-DATA_DIR="$RESOURCE_DIR/data"
-SOURCE_DIR="$RESOURCE_DIR/sources"
-SCRIPT_DIR="$RESOURCE_DIR/scripts"
+CONFIG_DIR="/var/GeonamesServer/config"
+DATA_DIR="/data"
+SOURCE_DIR="/sources"
+SCRIPT_DIR="/var/scripts"
 
 if [ ! -f "$CONFIG_DIR/mongo.cfg" ];then
     echo "Missing $CONFIG_DIR/mongo.cfg configuration file"

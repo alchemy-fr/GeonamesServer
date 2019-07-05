@@ -3,46 +3,29 @@ services:
 
   nginx:
     image: $DOCKER_REGISTRY/geoname-nginx:$DOCKER_TAG
-    build:
-      context: docker/nginx/.
+    build: ./nginx
     restart: on-failure
     ports:
       - "8080:80"
 
   geonames:
     image: $DOCKER_REGISTRY/geoname-app:$DOCKER_TAG
+    build: ./geonames
     restart: on-failure
-    build:
-      context: docker/geonames/.
     depends_on:
       - mongo
     links:
       - mongo
-    ports:
-      - 3000:3000
-    volumes:
-      - ./:/var/GeonamesServer/
-
-#  mongo:
-#    image: mongo
-#    container_name: mongo
-#    restart: always
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
-#      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-supersecret}
-#      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-saas}
-#      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-saas}
-#      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-secret}
-#    ports:
-#      - "27017:27017"
-#    volumes:
-#      - ./data/:/data/db
+    #volumes:
+      #- ./data/sources/:/sources
+      # - ./data/data/:/data
+    environment:
+      - MONGO_USER=$MONGO_NON_ROOT_USERNAME
+      - MONGO_PASSWORD=$MONGO_NON_ROOT_PASSWORD
 
   mongo:
     image: $DOCKER_REGISTRY/geoname-mongo:$DOCKER_TAG
-    image: mongo:3.4
-    ports:
-      - 27017:27017
+    build: ./mongo
     restart: on-failure
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
@@ -51,13 +34,13 @@ services:
       MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
       MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
     volumes:
-     - ./docker/mongo-user.sh.d:/docker-entrypoint-initdb.d
-     - ./docker/data:/data/db
-    command: mongod --bind_ip 0.0.0.0
+     - database:/data/db
 
   elasticsearch:
     image: $DOCKER_REGISTRY/geoname-elasticsearch:$DOCKER_TAG
-    build: docker/elasticsearch/.
+    build: ./elasticsearch
     restart: on-failure
-    ports:
-      - $ELASTICSEARCH_PORT:9200
+
+volumes:
+  database:
+    driver: local

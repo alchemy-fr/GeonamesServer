@@ -6,6 +6,6 @@
         "max_result_per_page" : 30
     },
     "geo": {
-        "geolitepath": "./resources/data/GeoLiteCity.dat"
+        "geolitepath": "/data/GeoLiteCity.dat"
     }
 }

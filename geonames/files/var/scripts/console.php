@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../../vendor/autoload.php';
+require '/var/GeonamesServer/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 

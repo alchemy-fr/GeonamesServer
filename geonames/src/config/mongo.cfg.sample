@@ -1,0 +1,6 @@
+mongo_host="mongo"
+mongo_port="27017"
+mongo_user="$MONGO_USER"
+mongo_pass="$MONGO_PASSWORD"
+mongo_database="geonames"
+mongo_database_test="tests"
