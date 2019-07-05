@@ -2,11 +2,11 @@
 
 if [ ! -f "/state/mongo-import" ]; then
     # Import in mongo database
-    ./mongo-import.sh
+    /var/scripts//mongo-import.sh
 fi
 if [ ! -f "/state/elastic-index" ]; then
     # Indexation in Elasticsearch
-    ./elasticsearch-indexation.sh
+    /var/scripts/elasticsearch-indexation.sh
 fi
 
 node /var/GeonamesServer/server.js
