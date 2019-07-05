@@ -2,14 +2,14 @@ version: "3.4"
 services:
 
   nginx:
-    image: $DOCKER_REGISTRY/geoname-nginx:$DOCKER_TAG
+    image: $DOCKER_REGISTRY/geonames/nginx:$DOCKER_TAG
     build: ./nginx
     restart: on-failure
     ports:
       - "8080:80"
 
   geonames:
-    image: $DOCKER_REGISTRY/geoname-app:$DOCKER_TAG
+    image: $DOCKER_REGISTRY/geonames/app:$DOCKER_TAG
     build: ./geonames
     restart: on-failure
     depends_on:
@@ -24,7 +24,7 @@ services:
       - MONGO_PASSWORD=$MONGO_NON_ROOT_PASSWORD
 
   mongo:
-    image: $DOCKER_REGISTRY/geoname-mongo:$DOCKER_TAG
+    image: $DOCKER_REGISTRY/geonames/mongo:$DOCKER_TAG
     build: ./mongo
     restart: on-failure
     environment:
@@ -37,7 +37,7 @@ services:
      - database:/data/db
 
   elasticsearch:
-    image: $DOCKER_REGISTRY/geoname-elasticsearch:$DOCKER_TAG
+    image: $DOCKER_REGISTRY/geonames/elasticsearch:$DOCKER_TAG
     build: ./elasticsearch
     restart: on-failure
 
