@@ -3,4 +3,4 @@ services:
     geonames:
         volumes:
           - ./geonames/files/var/scripts:/var/scripts
-        command: "sleep 10000"
+          - ./geonames/src:/var/GeonamesServer

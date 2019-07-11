@@ -10,19 +10,19 @@ use Guzzle\Http\Exception\ClientErrorResponseException;
 abstract class AbstractIndexCommand extends Command
 {
     private $guzzle;
-    
+
     public function __construct($name = null)
     {
         parent::__construct($name);
-        
+
         $this
             ->addArgument('es-host')
             ->addArgument('es-port')
             ->addArgument('es-scheme')
-                
+
             ->addArgument('es-index')
             ->addArgument('es-type')
-                
+
             ->addArgument('mongo-db')
             ->addArgument('mongo-collection')
             ->addArgument('mongo-host')
@@ -31,32 +31,32 @@ abstract class AbstractIndexCommand extends Command
             ->addOption('mongo-user')
             ->addOption('mongo-password');
     }
-    
+
     protected function getGuzzle(InputInterface $input)
     {
         if (null !== $this->guzzle) {
             return $this->guzzle;
         }
-        
+
         if (!in_array($input->getArgument('es-scheme'), array('http', 'https'))) {
             throw new InvalidArgumentException("Elastic search scheme must be http or https");
         }
-        
+
         $uri = sprintf(
-                '%s://%s:%s/%s', 
-                $input->getArgument('es-scheme'), 
-                rtrim($input->getArgument('es-host'), '/'), 
-                $input->getArgument('es-port'), 
+                '%s://%s:%s/%s',
+                $input->getArgument('es-scheme'),
+                rtrim($input->getArgument('es-host'), '/'),
+                $input->getArgument('es-port'),
                 $input->getArgument('es-index')
         );
-        
+
         $this->guzzle = new Guzzle($uri);
         $this->guzzle->addSubscriber(BackoffPlugin::getExponentialBackoff());
-        
+
         return $this->guzzle;
     }
-    
-    
+
+
     protected function doCreateIndex(InputInterface $input, OutputInterface $output)
     {
         $settings = array(
@@ -77,16 +77,16 @@ abstract class AbstractIndexCommand extends Command
                 )
             )
         );
-        
+
         $response = $this->getGuzzle($input)->post(null, null, json_encode($settings))->send();
-        
+
         if (!$response->isSuccessful()) {
             throw new RuntimeException('Failed to create index');
         }
-        
+
         return 0;
     }
-    
+
     protected function doDeleteIndex(InputInterface $input, OutputInterface $output)
     {
         $ignoreResponse = false;
@@ -99,14 +99,14 @@ abstract class AbstractIndexCommand extends Command
             }
             $ignoreResponse = true;
         }
-        
+
         if (!$ignoreResponse && !$response->isSuccessful()) {
             throw new RuntimeException('Failed to delete index');
         }
-        
+
         return 0;
     }
-    
+
     protected function doSetupMapping(InputInterface $input, OutputInterface $output)
     {
         $mapping = array(
@@ -214,7 +214,7 @@ abstract class AbstractIndexCommand extends Command
                 )
             )
         );
-        
+
         $uri = sprintf('%s/%s', $input->getArgument('es-type'), '_mapping');
 
         $response = $this->getGuzzle($input)->put($uri, null, json_encode($mapping))->send();
@@ -222,7 +222,7 @@ abstract class AbstractIndexCommand extends Command
         if (!$response->isSuccessful()) {
             throw new RuntimeException('Failed to setup mapping');
         }
-        
+
         return 0;
     }
 }

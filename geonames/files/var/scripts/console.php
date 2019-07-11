@@ -9,6 +9,8 @@ require_once __DIR__ . '/DeleteIndexCommand.php';
 require_once __DIR__ . '/DoIndexCommand.php';
 require_once __DIR__ . '/SetupIndexCommand.php';
 
+date_default_timezone_set('Europe/Paris');
+
 $app = new Application('Geonames Indexer');
 
 $app->addCommands(array(

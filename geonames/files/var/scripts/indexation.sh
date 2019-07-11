@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -xe
+
 if [ ! -f "/state/mongo-import" ]; then
     # Import in mongo database
     /var/scripts//mongo-import.sh

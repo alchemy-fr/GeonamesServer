@@ -1,6 +1,6 @@
 FROM nginx
 
-COPY nginx.conf /etc/nginx/nginx.conf
+ADD ./files/ /
 
-RUN usermod -u 33 www-data 
+RUN usermod -u 33 www-data
 RUN usermod -G staff www-data

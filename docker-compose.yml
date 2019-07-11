@@ -11,7 +11,6 @@ services:
   geonames:
     image: $DOCKER_REGISTRY/geonames/app:$DOCKER_TAG
     build: ./geonames
-    restart: on-failure
     depends_on:
       - mongo
     links:
