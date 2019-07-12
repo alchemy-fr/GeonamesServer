@@ -14,8 +14,9 @@ services:
     volumes:
       - $STATE_DIR:/state
     environment:
+      - MONGO_HOST=$MONGO_HOST
       - MONGO_USER=$MONGO_NON_ROOT_USERNAME
       - MONGO_PASSWORD=$MONGO_NON_ROOT_PASSWORD
       - NEVER_INDEX=$NEVER_INDEX
-
+      - ELASTICSEARCH_HOST=$ELASTICSEARCH_HOST
 

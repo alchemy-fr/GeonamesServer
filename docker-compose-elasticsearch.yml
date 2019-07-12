@@ -5,6 +5,8 @@ services:
     image: $DOCKER_REGISTRY/geonames/elasticsearch:$DOCKER_TAG
     build: ./elasticsearch
     restart: on-failure
+    ports:
+    - 9200:9200
     volumes:
     - $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
 

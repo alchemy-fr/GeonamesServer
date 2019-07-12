@@ -1,4 +1,4 @@
-elastic_host="elasticsearch"
+elastic_host="$ELASTICSEARCH_HOST"
 elastic_port="9200"
 elastic_scheme="http"
 elastic_index="geonames"

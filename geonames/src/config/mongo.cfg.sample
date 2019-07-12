@@ -1,4 +1,4 @@
-mongo_host="mongo"
+mongo_host="$MONGO_HOST"
 mongo_port="27017"
 mongo_user="$MONGO_USER"
 mongo_pass="$MONGO_PASSWORD"
