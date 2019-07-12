@@ -5,3 +5,4 @@
 /config/*
 !/config/*.sample
 data/
+.env

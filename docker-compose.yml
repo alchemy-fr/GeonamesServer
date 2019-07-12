@@ -11,14 +11,11 @@ services:
   geonames:
     image: $DOCKER_REGISTRY/geonames/app:$DOCKER_TAG
     build: ./geonames
-    depends_on:
-      - mongo
-    links:
-      - mongo
     volumes:
       - $STATE_DIR:/state
     environment:
       - MONGO_USER=$MONGO_NON_ROOT_USERNAME
       - MONGO_PASSWORD=$MONGO_NON_ROOT_PASSWORD
+      - NEVER_INDEX=$NEVER_INDEX
 
 
