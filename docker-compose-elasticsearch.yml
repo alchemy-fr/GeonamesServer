@@ -1,0 +1,10 @@
+version: "3.4"
+services:
+
+  elasticsearch:
+    image: $DOCKER_REGISTRY/geonames/elasticsearch:$DOCKER_TAG
+    build: ./elasticsearch
+    restart: on-failure
+    volumes:
+    - $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
+

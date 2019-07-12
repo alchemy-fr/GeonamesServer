@@ -21,23 +21,4 @@ services:
       - MONGO_USER=$MONGO_NON_ROOT_USERNAME
       - MONGO_PASSWORD=$MONGO_NON_ROOT_PASSWORD
 
-  mongo:
-    image: $DOCKER_REGISTRY/geonames/mongo:$DOCKER_TAG
-    build: ./mongo
-    restart: on-failure
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-admin123456}
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-geonames}
-      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
-      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
-    volumes:
-     - $MONGO_DATA_DIR:/data/db
-
-  elasticsearch:
-    image: $DOCKER_REGISTRY/geonames/elasticsearch:$DOCKER_TAG
-    build: ./elasticsearch
-    restart: on-failure
-    volumes:
-    - $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
 
