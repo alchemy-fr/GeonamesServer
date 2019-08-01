@@ -1,18 +1,3 @@
 version: "3.4"
 services:
 
-  mongo:
-    image: $DOCKER_REGISTRY/geonames/mongo:$DOCKER_TAG
-    build: ./mongo
-    restart: on-failure
-    ports:
-    - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-admin123456}
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-geonames}
-      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
-      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
-    volumes:
-     - $MONGO_DATA_DIR:/data/db
-

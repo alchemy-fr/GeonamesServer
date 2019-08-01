@@ -11,6 +11,7 @@ services:
   geonames:
     image: $DOCKER_REGISTRY/geonames/app:$DOCKER_TAG
     build: ./geonames
+    restart: on-failure
     volumes:
       - $STATE_DIR:/state
     environment:
@@ -20,3 +21,51 @@ services:
       - NEVER_INDEX=$NEVER_INDEX
       - ELASTICSEARCH_HOST=$ELASTICSEARCH_HOST
 
+  mongo:
+    image: $DOCKER_REGISTRY/geonames/mongo:$DOCKER_TAG
+    build: ./mongo
+    restart: on-failure
+    ports:
+    - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-admin123456}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-geonames}
+      MONGO_NON_ROOT_USERNAME: ${MONGO_NON_ROOT_USERNAME:-geonames}
+      MONGO_NON_ROOT_PASSWORD: ${MONGO_NON_ROOT_PASSWORD:-geonames}
+    volumes:
+     - $MONGO_DATA_DIR:/data/db
+
+       #  elasticsearch:
+       #    image: elasticsearch:7.2.0
+       # restart: on-failure
+       # ports:
+       # - 9200:9200
+       # volumes:
+       #- $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
+
+  elasticsearch:
+    image: elasticsearch:7.0.0
+    ports:
+    - 9200:9200
+    - 9300:9300
+    environment:
+    - cluster.name=sandbox
+    - node.name=elasticsearch
+    - cluster.initial_master_nodes=elasticsearch
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+    - elasticsearch_data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+volumes:
+    elasticsearch_data:
+        driver: local
+        driver_opts:
+            type: none
+            device: $ELASTICSEARCH_DATA_DIR
+            o: bind

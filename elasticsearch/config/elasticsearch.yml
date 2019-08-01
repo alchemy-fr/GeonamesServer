@@ -1,5 +1,5 @@
 node:
   name: geonames
 path:
-  logs: /var/log/elasticsearch
+  logs: /dev/stdout
   data: /var/data/elasticsearch
