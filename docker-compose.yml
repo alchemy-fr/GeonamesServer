@@ -36,31 +36,15 @@ services:
     volumes:
      - $MONGO_DATA_DIR:/data/db
 
-       #  elasticsearch:
-       #    image: elasticsearch:7.2.0
-       # restart: on-failure
-       # ports:
-       # - 9200:9200
-       # volumes:
-       #- $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
-
   elasticsearch:
-    image: elasticsearch:7.0.0
+    image: $DOCKER_REGISTRY/geonames/elasticsearch:$DOCKER_TAG
+    build: ./elasticsearch
+    restart: on-failure
     ports:
     - 9200:9200
-    - 9300:9300
-    environment:
-    - cluster.name=sandbox
-    - node.name=elasticsearch
-    - cluster.initial_master_nodes=elasticsearch
-    - bootstrap.memory_lock=true
-    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
-    - elasticsearch_data:/usr/share/elasticsearch/data
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+    - $ELASTICSEARCH_DATA_DIR:/var/data/elasticsearch
+
 
 volumes:
     elasticsearch_data:
