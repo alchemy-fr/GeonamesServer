@@ -29,14 +29,15 @@ app.set('es.connection.string', function(node) {
 });
 
 app.set('mongo.connection.string', function() {
-    return common.getMongoConnectionString(
+    var connectionStr = common.getMongoConnectionString(
         config.mongo.mongo_host,
         config.mongo.mongo_port,
         config.mongo.mongo_user,
         config.mongo.mongo_pass,
         config.mongo.mongo_database,
-	{authsource: 'admin'}    
+	{authsource: 'admin'}
     );
+    return connectionStr + '?maxPoolSize=20';
 });
 
 app.set('mongodb', mongojs(app.get('mongo.connection.string')()));
