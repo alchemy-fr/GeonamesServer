@@ -7,7 +7,7 @@
     },
     "dependencies": {
         "express": "3.0.0rc5",
-        "request": "2.11.4",
+        "request": "2.88.0",
         "geoip": "*",
         "mocha": "1.6.0",
         "supertest": "0.4.0",
